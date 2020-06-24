@@ -1,0 +1,63 @@
+{
+  "scheduler": {
+    "thread": {
+      "priority": 20
+    }
+  },
+  "time_provider": {
+    "system_time": {
+    }
+  },
+  "idc": {
+  },
+  "network": {
+    "serial": {
+      "ports": [
+        {
+          "id": "autopilot",
+          "serial_port": "/dev/tnt1",
+          "baud_rate": 115200,
+          "delimiter_string": "*-*",
+          "use_crc": true,
+          "flow_control": "none",
+          "direction": "both",
+          "send_blocking": false
+        }
+      ]
+    }
+  },
+  "data_presentation": {
+    "compress_double": true
+  },
+  "data_handling": {
+    "period": 100,
+    "use_ipc": false,
+    "use_idc": true,
+    "idc_target": "autopilot"
+  },
+  "signal_handler": {
+  },
+  "widget_factory": {
+  },
+  "pid_configurator": {
+  },
+  "map_logic": {
+    "flight_path_size": 600,
+    "resource_path": "/home/mirco/devel/uavGS/resources/",
+    "map_center": {
+      "lat": 40.008878,
+      "lon": -88.558397
+    }
+  },
+  "layout_generator": {
+    "layout": "horizontal",
+    "items": [
+      {
+        "widget": "cp_grid"
+      },
+      {
+        "widget": "overhead_map"
+      }
+    ]
+  }
+}
