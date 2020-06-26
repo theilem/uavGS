@@ -21,16 +21,20 @@ void
 GraphicsMapView::connect()
 {
 	QObject::connect(this, SIGNAL(contentUpdated()), this, SLOT(contentUpdatedSlot()));
+	if (auto sdm = get<SensorDataManager>())
+	{
+		sdm->subscribeOnSensorDataGlobal([this](const auto& sd)
+										 { this->onSensorData(sd); });
+	}
 	if (auto dh = get<DataHandling>())
 	{
 		dh->subscribeOnData<VehicleOneFrame>(Content::LOCAL_FRAME, [this](const auto& f)
 		{ this->onLocalFrame(f); });
-		dh->subscribeOnData<SensorData>(Content::SENSOR_DATA, [this](const auto& sd)
-		{ this->onSensorData(sd); });
 	}
 	if (auto ml = get<MapLogic>())
 	{
-		ml->subscribeOnUpdates([this]{emit contentUpdated();});
+		ml->subscribeOnUpdates([this]
+							   { emit contentUpdated(); });
 	}
 
 }
@@ -208,7 +212,7 @@ GraphicsMapView::drawTrajectory(QPainter* painter)
 void
 GraphicsMapView::drawPathHistory(QPainter* painter)
 {
-	QPointF aircraftCenter = LocalFrameToMapPoint(aircraftLocation_.easting(), aircraftLocation_.northing());
+	QPointF aircraftCenter = UTMToMapPoint(aircraftLocation_.easting(), aircraftLocation_.northing());
 	QPointF first = aircraftCenter;
 	QPointF second;
 	QColor color = QColor(255, 255, 255);
@@ -305,7 +309,7 @@ GraphicsMapView::drawAircraft(QPainter* painter)
 	aircraftPainter.setTransform(aircraftTransform);
 	aircraftPainter.drawPixmap(0, 0, aircraftImage_);
 	aircraftPainter.end();
-	QPointF aircraftCenter = LocalFrameToMapPoint(aircraftLocation_.easting(), aircraftLocation_.northing());
+	QPointF aircraftCenter = UTMToMapPoint(aircraftLocation_.easting(), aircraftLocation_.northing());
 	QPointF halfAircraftSize = QPointF(rotatedAircraftImage.width() / 2.0,
 									   rotatedAircraftImage.height() / 2.0);
 	QPointF aircraftDrawPoint = aircraftCenter - halfAircraftSize;
@@ -541,7 +545,7 @@ void
 GraphicsMapView::onSensorData(const SensorData& sd)
 {
 	aircraftLocation_ = MapLocation(sd.position.x(), sd.position.y());
-	aircraftHeading_ = localFrame_.toInertialFrameRotation(Vector3(0, 0, sd.attitude.z())).z();
+	aircraftHeading_ = sd.attitude.z();
 	emit contentUpdated();
 }
 

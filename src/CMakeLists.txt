@@ -10,6 +10,7 @@ set(QT_RESOURCES)
 add_subdirectory(PID)
 add_subdirectory(MapLogic)
 add_subdirectory(LayoutGenerator)
+add_subdirectory(SensorData)
 
 
 qt5_wrap_cpp(widget_MOCS ${WIDGET_HEADERS})

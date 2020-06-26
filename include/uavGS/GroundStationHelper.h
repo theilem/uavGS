@@ -21,6 +21,7 @@
 #include <uavGS/PID/PIDConfigurator.h>
 #include <uavGS/MapLogic/MapLogic.h>
 #include <uavGS/LayoutGenerator/LayoutGenerator.h>
+#include <uavGS/SensorData/SensorDataManager.h>
 
 #include <cpsCore/Framework/StaticHelper.h>
 
@@ -35,7 +36,8 @@ using GroundStationHelper = StaticHelper<SchedulerFactory,
 		GSWidgetFactory,
 		PIDConfigurator,
 		MapLogic,
-		LayoutGenerator
+		LayoutGenerator,
+		SensorDataManager
 		>;
 
 

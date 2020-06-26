@@ -11,11 +11,12 @@
 #include <uavAP/MissionControl/GlobalPlanner/PathSections/Line.h>
 #include <uavAP/MissionControl/GlobalPlanner/PathSections/CubicSpline.h>
 #include <uavAP/Core/SensorData.h>
+#include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavGS/MapLogic/MapLogic.h>
 #include <cpsCore/Aggregation/AggregatableObject.hpp>
-#include <uavAP/Core/DataHandling/DataHandling.h>
+#include <uavGS/SensorData/SensorDataManager.h>
 
-class GraphicsMapView : public QGraphicsView, public AggregatableObject<MapLogic, DataHandling>
+class GraphicsMapView : public QGraphicsView, public AggregatableObject<MapLogic, SensorDataManager, DataHandling>
 {
 Q_OBJECT
 

@@ -49,14 +49,19 @@
       "lon": -88.558397
     }
   },
+  "sensor_data": {
+  },
   "layout_generator": {
-    "layout": "horizontal",
+    "layout": "quad",
     "items": [
       {
         "widget": "cp_grid"
       },
       {
         "widget": "overhead_map"
+      },
+      {
+        "widget": "sensor_data"
       }
     ]
   }
