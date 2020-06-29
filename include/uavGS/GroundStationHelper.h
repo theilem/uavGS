@@ -22,23 +22,29 @@
 #include <uavGS/MapLogic/MapLogic.h>
 #include <uavGS/LayoutGenerator/LayoutGenerator.h>
 #include <uavGS/SensorData/SensorDataManager.h>
+#include <uavGS/ManeuverPlanner/PlanningManager.h>
 
 #include <cpsCore/Framework/StaticHelper.h>
 
-using GroundStationHelper = StaticHelper<SchedulerFactory,
-		TimeProviderFactory,
+using GroundStationDefaults = StaticHelper<
 		IPC,
 		IDC,
-		NetworkFactory,
-		DataPresentation,
+		SchedulerFactory,
+		TimeProviderFactory,
 		SignalHandler,
+		DataPresentation
+>;
+
+using GroundStationHelper = StaticHelper<GroundStationDefaults,
+		NetworkFactory,
 		DataHandling,
 		GSWidgetFactory,
 		PIDConfigurator,
 		MapLogic,
 		LayoutGenerator,
-		SensorDataManager
-		>;
+		SensorDataManager,
+		PlanningManager
+>;
 
 
 #endif //UAVGS_GROUNDSTATIONHELPER_H

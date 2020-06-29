@@ -11,7 +11,6 @@
 struct MapLogicParams
 {
 	Parameter<unsigned> flightPathSize = {600, "flight_path_size", false};
-	Parameter<std::string> resourcePath = {"./resources/", "resource_path", false};
 	Parameter<MapLocationParams> mapCenter = {{}, "map_center", true};
 
 	template<typename Config>
@@ -19,7 +18,6 @@ struct MapLogicParams
 	configure(Config& c)
 	{
 		c & flightPathSize;
-		c & resourcePath;
 		c & mapCenter;
 	}
 

@@ -38,7 +38,7 @@ LayoutGenerator::run(RunStage stage)
 		}
 		case RunStage::NORMAL:
 		{
-			makeScrollableWin(createLayout(params, nullptr));
+			makeScrollableWin(createLayout(params.layout(), nullptr));
 			break;
 		}
 		case RunStage::FINAL:
@@ -333,4 +333,10 @@ LayoutGenerator::addCustomWin()
 
 	wGrid->setLayout(grid);
 	makeScrollableWin(wGrid);
+}
+
+const std::string&
+LayoutGenerator::getResourcePath() const
+{
+	return params.resourcePath();
 }

@@ -174,5 +174,8 @@ void
 WidgetOverheadMap::on_requestSafetyNet_clicked()
 {
 	if (auto ml = get<MapLogic>())
+	{
 		ml->askForSafetyNet();
+		ml->askForLocalFrame();
+	}
 }

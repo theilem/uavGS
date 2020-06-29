@@ -16,9 +16,10 @@
 class IScheduler;
 class DataHandling;
 class IScheduler;
+class LayoutGenerator;
 class GSWidgetFactory;
 
-class MapLogic: public AggregatableObject<DataHandling, IScheduler, GSWidgetFactory>, public IRunnableObject,
+class MapLogic: public AggregatableObject<DataHandling, IScheduler, GSWidgetFactory, LayoutGenerator>, public IRunnableObject,
 		public ConfigurableObject<MapLogicParams>
 {
 public:
@@ -35,9 +36,6 @@ public:
 
 	const Trajectory&
 	getPath() const;
-
-	const std::vector<MapLocation>&
-	getPathHistory() const;
 
 	int
 	getCurrentPathSection() const;
@@ -86,12 +84,12 @@ private:
 	void
 	addLocation(const Vector3& pos);
 
+	std::string resourcePath_;
 	boost::signals2::signal<void(void)> onUpdates_;
 	Rectanguloid safetyRect_;
 	Mission mission_;
 	Trajectory trajectory_;
 	int currentPath_;
-	std::vector<MapLocation> pathHistory_;
 	ControllerTarget controllerTarget_;
 	SensorData sensorData_;
 	VehicleOneFrame localFrame_;

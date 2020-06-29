@@ -6,6 +6,7 @@
 #include <QtGui>
 #include <QMenu>
 
+#include <uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlannerStatus.h>
 #include "uavGS/MapLogic/Widgets/GraphicsMapView.h"
 
 GraphicsMapView::GraphicsMapView(QWidget* parent) :
@@ -30,11 +31,18 @@ GraphicsMapView::connect()
 	{
 		dh->subscribeOnData<VehicleOneFrame>(Content::LOCAL_FRAME, [this](const auto& f)
 		{ this->onLocalFrame(f); });
+
+		dh->subscribeOnData<ManeuverLocalPlannerStatus>(Content::MANEUVER_LOCAL_PLANNER_STATUS,
+														[this](const ManeuverLocalPlannerStatus& status)
+														{
+															currentSectionIdx_ = status.currentPathSection;
+														});
 	}
 	if (auto ml = get<MapLogic>())
 	{
 		ml->subscribeOnUpdates([this]
 							   { emit contentUpdated(); });
+		flightPathSize_ = ml->getParams().flightPathSize();
 	}
 
 }
@@ -136,11 +144,6 @@ GraphicsMapView::drawMap(QPainter* painter, const QRectF& rect)
 				tile = tile.scaled((int) d, (int) d);
 				mapPainter.drawPixmap(i * d, j * d, d, d, tile);
 			}
-			else
-			{
-				CPSLOG_WARN << "Missing tile for " << nwXY.x() + i << " " << nwXY.y() + j
-							<< "path is: " << path.toStdString();
-			}
 		}
 	}
 	nwCorner_ = MapLocation::fromMapTileCoords(nwXY.x(), nwXY.y(), zoom_);
@@ -163,7 +166,7 @@ GraphicsMapView::drawMission(QPainter* painter)
 	painter->setPen(Qt::cyan);
 	for (auto wp : mapLogic->getWaypoints())
 	{
-		QPointF wpLoc = LocalFrameToMapPoint(wp.location.x(), wp.location.y());
+		QPointF wpLoc = LocalFrameToMapPoint(wp.location().x(), wp.location().y());
 		QRectF r;
 		r.setCoords(wpLoc.x() - 2, wpLoc.y() - 2, wpLoc.x() + 2, wpLoc.y() + 2);
 		painter->fillRect(r, Qt::cyan);
@@ -222,12 +225,11 @@ GraphicsMapView::drawPathHistory(QPainter* painter)
 		CPSLOG_ERROR << "GraphicsMapView: MapLogic not set!";
 		return;
 	}
-	std::vector<MapLocation> flightPath = mapLogic->getPathHistory();
-	for (unsigned int i = 1; i < flightPath.size(); i++)
+	for (unsigned int i = 1; i < pathHistory_.size(); i++)
 	{
-		float f = 1.0 - (float) (i - 1) / flightPath.size();
+		float f = 1.0 - (float) (i - 1) / pathHistory_.size();
 		color.setAlpha(255 * f);
-		second = LocalFrameToMapPoint(flightPath[i].easting(), flightPath[i].northing());
+		second = UTMToMapPoint(pathHistory_[i].easting(), pathHistory_[i].northing());
 		painter->setPen(QPen(QBrush(color), 2));
 		painter->drawLine(first, second);
 		first = second;
@@ -248,32 +250,11 @@ GraphicsMapView::highlightActivePath(QPainter* painter) //highlights active path
 		return;
 	}
 
-	unsigned int pathIndex = 0;
 	bool inApproach = false;
-
-
-//	LocalPlannerStatus lp = ml->getLocalPlannerStatus();
-//	if (lp.has_linear_status())
-//	{
-//		pathIndex =  lp.linear_status().current_path_section();
-//		inApproach = lp.linear_status().is_in_approach();
-//	}
-//	else if (lp.has_maneuver_status())
-//	{
-//		pathIndex =  lp.maneuver_status().current_path_section();
-//		inApproach = lp.maneuver_status().is_in_approach();
-//	}
-//	else
-//	{
-//		CPSLOG_ERROR << "Status cannot be displayed.";
-//		return;
-//	}
-
-
 
 	Trajectory traj = ml->getPath();
 
-	if (pathIndex >= traj.pathSections.size())
+	if (currentSectionIdx_ >= traj.pathSections.size())
 	{
 		return;
 	}
@@ -282,7 +263,7 @@ GraphicsMapView::highlightActivePath(QPainter* painter) //highlights active path
 	if (inApproach)
 		ps = traj.approachSection;
 	else
-		ps = traj.pathSections.at(pathIndex);
+		ps = traj.pathSections.at(currentSectionIdx_);
 
 	if (ps)
 	{
@@ -419,6 +400,7 @@ GraphicsMapView::onLocalFrame(const VehicleOneFrame& frame)
 	int zone = center_.getZone();
 	char hemi = center_.getHemi();
 	center_ = MapLocation::fromVector3(localFrame_.toInertialFramePosition(Vector3(0, 0, 0)), zone, hemi);
+	emit contentUpdated();
 }
 
 void
@@ -545,8 +527,26 @@ void
 GraphicsMapView::onSensorData(const SensorData& sd)
 {
 	aircraftLocation_ = MapLocation(sd.position.x(), sd.position.y());
+	addLocation(aircraftLocation_);
 	aircraftHeading_ = sd.attitude.z();
 	emit contentUpdated();
+}
+
+void
+GraphicsMapView::addLocation(const MapLocation& location)
+{
+	if (pathHistory_.empty())
+	{
+		for (unsigned i = 0; i < flightPathSize_; i++)
+		{
+			pathHistory_.push_back(location);
+		}
+	}
+	else
+	{
+		pathHistory_.pop_back();
+		pathHistory_.insert(pathHistory_.begin(), location);
+	}
 }
 
 void

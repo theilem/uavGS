@@ -87,6 +87,9 @@ private:
 	onLocalFrame(const VehicleOneFrame&);
 
 	void
+	addLocation(const MapLocation& location);
+
+	void
 	drawMap(QPainter* painter, const QRectF& rect);
 
 	void
@@ -143,11 +146,13 @@ private:
 	bool drawPaths_;
 	bool drawSafetyRectangle_;
 	MapLocation aircraftLocation_;
-	IPathSection* currentSection_;
+	int currentSectionIdx_;
 
 	QPointF moveStart_;
 	MapLocation lastCenter_;
 	QPointF lastCenterTileCoords_;
+	std::vector<MapLocation> pathHistory_;
+	unsigned int flightPathSize_;
 
 	VehicleOneFrame localFrame_;
 };

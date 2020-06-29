@@ -42,10 +42,19 @@ struct LayoutParams
 	}
 };
 
-//struct LayoutGeneratorParams
-//{
-//
-//};
+struct LayoutGeneratorParams
+{
+	Parameter<std::string> resourcePath = {"", "resource_path", true};
+	Parameter<LayoutParams> layout = {{}, "layout", true};
+
+	template<typename Config>
+	inline void
+	configure(Config& c)
+	{
+		c & resourcePath;
+		c & layout;
+	}
+};
 
 
 #endif //UAVGS_LAYOUTGENERATORPARAMS_H

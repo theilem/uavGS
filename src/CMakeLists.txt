@@ -5,12 +5,16 @@ set(UAVGS_SRCS
 set(UI_FORMS)
 set(WIDGET_HEADERS)
 set(HEADERS_FOR_MOCS)
-set(QT_RESOURCES)
+set(QT_RESOURCES
+        ${PROJECT_SOURCE_DIR}/resources/qdarkstyle/style.qrc
+        ${PROJECT_SOURCE_DIR}/resources/QFlightInstruments/qfi.qrc
+        )
 
 add_subdirectory(PID)
 add_subdirectory(MapLogic)
 add_subdirectory(LayoutGenerator)
 add_subdirectory(SensorData)
+add_subdirectory(ManeuverPlanner)
 
 
 qt5_wrap_cpp(widget_MOCS ${WIDGET_HEADERS})
@@ -23,6 +27,7 @@ add_executable(uavGS ${UAVGS_SRCS}
         ${ui_HDRS}
         ${widget_MOCS}
         ${misc_MOCS}
+        ${resources_MOCS}
         uavGS.cpp)
 
 include_directories(${SUBMODULE_DIR}/Catch2/single_include

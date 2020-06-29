@@ -3,6 +3,7 @@
 
 #include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavGS/MapLogic/Widgets/WidgetOverheadMap.h>
+#include <uavGS/LayoutGenerator/LayoutGenerator.h>
 
 MapLogic::MapLogic() :
 		currentPath_(-1)
@@ -20,6 +21,10 @@ MapLogic::run(RunStage stage)
 			{
 				CPSLOG_ERROR << "MapLogic: missing dependencies.";
 				return true;
+			}
+			if (auto lg = get<LayoutGenerator>())
+			{
+				resourcePath_ = lg->getResourcePath();
 			}
 
 			auto wf = get<GSWidgetFactory>();
@@ -61,19 +66,13 @@ MapLogic::run(RunStage stage)
 const std::vector<Waypoint>&
 MapLogic::getWaypoints() const
 {
-	return mission_.waypoints;
+	return mission_.waypoints();
 }
 
 const Trajectory&
 MapLogic::getPath() const
 {
 	return trajectory_;
-}
-
-const std::vector<MapLocation>&
-MapLogic::getPathHistory() const
-{
-	return pathHistory_;
 }
 
 int
@@ -137,25 +136,6 @@ MapLogic::getSensorData() const
 }
 
 void
-MapLogic::addLocation(const Vector3& pos)
-{
-	MapLocation loc = MapLocation(pos.x(), pos.y());
-	if (pathHistory_.empty())
-	{
-		for (unsigned i = 0; i < params.flightPathSize(); i++)
-		{
-			pathHistory_.push_back(loc);
-		}
-	}
-	else
-	{
-		pathHistory_.pop_back();
-		pathHistory_.insert(pathHistory_.begin(), loc);
-	}
-
-}
-
-void
 MapLogic::askForLocalFrame()
 {
 	if (auto dh = get<DataHandling>())
@@ -167,13 +147,13 @@ MapLogic::askForLocalFrame()
 std::string
 MapLogic::getMapTileDirectory() const
 {
-	return params.resourcePath() + "/map_tiles/";
+	return resourcePath_ + "/map_tiles/";
 }
 
 std::string
 MapLogic::getIconPath() const
 {
-	return params.resourcePath() + "/icons/";
+	return resourcePath_ + "/icons/";
 }
 
 void

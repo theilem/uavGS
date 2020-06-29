@@ -9,17 +9,20 @@
 #include "uavGS/LayoutGenerator/LayoutGeneratorParams.h"
 
 class WidgetLoader;
+
 class GSWidgetFactory;
+
 class MapLogic;
+
 class WidgetMainWindow;
 
 /**
  * @brief   The LayoutGenerator class handles all the layouts and widgets in the
  *          ground station
  */
-class LayoutGenerator: public AggregatableObject<GSWidgetFactory>,
-		public IRunnableObject,
-		public ConfigurableObject<LayoutParams>
+class LayoutGenerator : public AggregatableObject<GSWidgetFactory>,
+						public IRunnableObject,
+						public ConfigurableObject<LayoutGeneratorParams>
 {
 public:
 
@@ -34,11 +37,14 @@ public:
 	bool
 	run(RunStage stage) override;
 
-/**
- * @brief   addWidget is called when user clicks Add Widget from drop down menu
- */
-void
-addWidget();
+	/**
+	 * @brief   addWidget is called when user clicks Add Widget from drop down menu
+	 */
+	void
+	addWidget();
+
+	const std::string&
+	getResourcePath() const;
 
 private:
 
