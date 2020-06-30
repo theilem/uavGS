@@ -14,6 +14,7 @@ add_subdirectory(PID)
 add_subdirectory(MapLogic)
 add_subdirectory(LayoutGenerator)
 add_subdirectory(SensorData)
+add_subdirectory(ParameterSets)
 add_subdirectory(ManeuverPlanner)
 
 

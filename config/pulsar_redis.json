@@ -64,7 +64,7 @@
 							"widget": "pfd"
 						},
 						{
-							"widget": "sensor_data"
+							"widget": "maneuver_local_planner"
 						}
 					]
 				}

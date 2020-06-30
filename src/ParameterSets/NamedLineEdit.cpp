@@ -6,7 +6,7 @@
  */
 
 
-#include <uavGS/ManeuverPlanner/NamedLineEdit.h>
+#include <uavGS/ParameterSets/NamedLineEdit.h>
 
 NamedLineEdit::NamedLineEdit(const std::string& name, QWidget* parent):
 QWidget(parent), layout_(this)

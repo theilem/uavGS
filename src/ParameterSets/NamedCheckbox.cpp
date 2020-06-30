@@ -4,7 +4,7 @@
  *  Created on: Jul 31, 2018
  *      Author: mircot
  */
-#include <uavGS/ManeuverPlanner/NamedCheckbox.h>
+#include <uavGS/ParameterSets/NamedCheckbox.h>
 
 
 NamedCheckbox::NamedCheckbox(const std::string& name, QWidget* parent) :

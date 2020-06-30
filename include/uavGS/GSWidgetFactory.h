@@ -42,6 +42,10 @@ public:
 	typename std::enable_if<std::is_base_of<QWidget, TYPE>::value, void>::type
 	registerWidget();
 
+	template<typename TYPE>
+	typename std::enable_if<std::is_base_of<QWidget, TYPE>::value, void>::type
+	registerWidget(const std::string& type);
+
 private:
 
 	using WidgetCreator = std::function<QWidget*(QWidget*)>;
@@ -55,6 +59,22 @@ inline typename std::enable_if<std::is_base_of<QWidget, TYPE>::value, void>::typ
 GSWidgetFactory::registerWidget()
 {
 	const std::string type(TYPE::widgetName);
+	CPSLOG_DEBUG << "Added widget " << type;
+	if (creators_.find(type) != creators_.end())
+	{
+		CPSLOG_ERROR << "Widget of that type already exists. Ignore new insertion.";
+		return;
+	}
+	if constexpr (std::is_base_of<IAggregatableObject, TYPE>::value)
+		creators_.insert(std::make_pair(type, [this](QWidget* parent){return this->createWidget<TYPE>(parent);}));
+	else
+		creators_.insert(std::make_pair(type, &TYPE::createGSWidget));
+}
+
+template<typename TYPE>
+inline typename std::enable_if<std::is_base_of<QWidget, TYPE>::value, void>::type
+GSWidgetFactory::registerWidget(const std::string& type)
+{
 	CPSLOG_DEBUG << "Added widget " << type;
 	if (creators_.find(type) != creators_.end())
 	{

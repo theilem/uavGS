@@ -7,16 +7,14 @@
 
 #include <QWidget>
 #include <uavAP/MissionControl/MissionPlanner/Mission.h>
-#include "uavGS/ManeuverPlanner/NamedLineEdit.h"
-#include "uavGS/ManeuverPlanner/NamedCheckbox.h"
+#include "uavGS/ParameterSets/NamedLineEdit.h"
+#include "uavGS/ParameterSets/NamedCheckbox.h"
 #include <uavAP/Core/DataHandling/DataHandling.h>
 
 namespace Ui
 {
 class WidgetManeuverPlanner;
 }
-
-class IWidgetInterface;
 
 class WidgetManeuverPlanner: public QWidget, public AggregatableObject<DataHandling>
 {
