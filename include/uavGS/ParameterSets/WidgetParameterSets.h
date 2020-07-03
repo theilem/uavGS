@@ -42,7 +42,7 @@ WidgetParameterSets<ParameterSet, content, target>::connect()
 {
 	if (auto dh = get<DataHandling>())
 	{
-		dh->subscribeOnData<ParameterSet>(content, [this](const ParameterSet& p)
+		dh->template subscribeOnData<ParameterSet>(content, [this](const ParameterSet& p)
 		{
 			this->params_ = p;
 			this->contentUpdated();
@@ -67,6 +67,7 @@ WidgetParameterSets<ParameterSet, content, target>::WidgetParameterSets(QWidget*
 			   { this->sendHandle(); }, [this]
 			   { this->requestHandle(); }, [this]
 			   { this->updateHandle(); });
+	setTitle(typeid(ParameterSet()).name());
 }
 
 template<class ParameterSet, Content content, Target target>

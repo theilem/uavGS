@@ -1,70 +1,70 @@
 {
-  "network": {
-    "serial": {
-      "ports": [
-        {
-          "id": "autopilot",
-          "serial_port": "/dev/tnt1",
-          "baud_rate": 115200,
-          "delimiter_string": "*-*",
-          "use_crc": true,
-          "flow_control": "none",
-          "direction": "both",
-          "send_blocking": false
-        }
-      ]
-    }
-  },
-  "data_presentation": {
-    "compress_double": true
-  },
-  "data_handling": {
-    "period": 100,
-    "use_ipc": false,
-    "use_idc": true,
-    "idc_target": "autopilot"
-  },
-  "widget_factory": {
-  },
-  "pid_configurator": {
-  },
-  "map_logic": {
-    "flight_path_size": 600,
-    "map_center": {
-      "lat": 40.008878,
-      "lon": -88.558397
-    }
-  },
-  "sensor_data": {
-  },
-  "planning_manager": {
-  },
-  "layout_generator": {
-    "resource_path": "/home/mirco/devel/uavGS/resources/",
-    "layout": {
-      "layout": "quad",
-      "items": [
-        {
-          "widget": "cp_grid"
-        },
-        {
-          "widget": "overhead_map"
-        },
-        {
-          "widget": "maneuver_planner"
-        },
-        {
-          "layout": "horizontal",
-          "items": [
-            {
-              "widget": "pfd"
-            },
-            {
-              "widget": "sensor_data"
-            }
-          ]
-        }
-      ]
-    }
-  }
+	"network": {
+		"serial": {
+			"ports": {
+				"autopilot": {
+					"id": "autopilot",
+					"serial_port": "/dev/tnt1",
+					"baud_rate": 115200,
+					"delimiter_string": "*-*",
+					"use_crc": true,
+					"flow_control": "none",
+					"direction": "both",
+					"send_blocking": false
+				}
+			}
+		}
+	},
+	"data_presentation": {
+		"compress_double": true
+	},
+	"data_handling": {
+		"period": 100,
+		"use_ipc": false,
+		"use_idc": true,
+		"idc_target": "autopilot"
+	},
+	"widget_factory": {
+	},
+	"pid_configurator": {
+	},
+	"map_logic": {
+		"flight_path_size": 600,
+		"map_center": {
+			"lat": 40.008878,
+			"lon": -88.558397
+		}
+	},
+	"sensor_data": {
+	},
+	"planning_manager": {
+	},
+	"layout_generator": {
+		"resource_path": "/home/mirco/devel/uavGS/resources/",
+		"layout": {
+			"layout": "quad",
+			"items": [
+				{
+					"widget": "cp_grid"
+				},
+				{
+					"widget": "overhead_map"
+				},
+				{
+					"widget": "maneuver_planner"
+				},
+				{
+					"layout": "horizontal",
+					"items": [
+						{
+							"widget": "pfd"
+						},
+						{
+							"widget": "sensor_data"
+						}
+					]
+				}
+			]
+		}
+	}
 }

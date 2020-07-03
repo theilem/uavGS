@@ -62,8 +62,6 @@ main(int argc, char** argv)
 		return 1;
 	}
 
-	sched->startSchedule();
-
 	app.exec();
 
 	//Terminated -> Cleanup
