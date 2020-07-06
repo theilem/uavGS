@@ -43,6 +43,8 @@
 	},
 	"planning_manager": {
 	},
+	"packet_forwarding": {
+	},
 	"layout_generator": {
 		"resource_path": "/home/mirco/devel/uavGS/resources/",
 		"layout": {

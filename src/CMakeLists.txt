@@ -16,6 +16,7 @@ add_subdirectory(LayoutGenerator)
 add_subdirectory(SensorData)
 add_subdirectory(ParameterSets)
 add_subdirectory(ManeuverPlanner)
+add_subdirectory(PacketForwarding)
 
 
 qt5_wrap_cpp(widget_MOCS ${WIDGET_HEADERS})

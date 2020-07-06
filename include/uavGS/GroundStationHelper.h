@@ -23,6 +23,7 @@
 #include <uavGS/LayoutGenerator/LayoutGenerator.h>
 #include <uavGS/SensorData/SensorDataManager.h>
 #include <uavGS/ManeuverPlanner/PlanningManager.h>
+#include <uavGS/PacketForwarding/PacketForwarding.h>
 
 #include <cpsCore/Framework/StaticHelper.h>
 
@@ -43,7 +44,8 @@ using GroundStationHelper = StaticHelper<GroundStationDefaults,
 		MapLogic,
 		LayoutGenerator,
 		SensorDataManager,
-		PlanningManager
+		PlanningManager,
+		PacketForwarding
 >;
 
 
