@@ -24,7 +24,11 @@ WidgetSensorData::connect()
 		sdm->subscribeOnSensorDataGlobal([this](const auto& sd)
 										 { sensorDataGlobal_ = sd; emit contentUpdated(); });
 		sdm->subscribeOnSensorDataLocal([this](const auto& sd)
-										 { sensorDataLocal_ = sd; emit contentUpdated(); });
+										{ sensorDataLocal_ = sd; emit contentUpdated(); });
+		sdm->subscribeOnPowerData([this](const auto& pd)
+										{ powerData_ = pd; emit contentUpdated(); });
+		sdm->subscribeOnServoData([this](const auto& sd)
+										{ servoData_ = sd; emit contentUpdated(); });
 	}
 }
 
@@ -89,26 +93,26 @@ WidgetSensorData::contentUpdatedSlot()
 	t.sprintf("%10.5f", sd.angularRate.z() * 180 / M_PI);
 	ui->yawrValue->setText(t);
 
-//	t.sprintf("%10.5f", sd.batteryVoltage);
-//	ui->voltValue->setText(t);
-//
-//	t.sprintf("%10.5f", sd.batteryCurrent);
-//	ui->currValue->setText(t);
-//
-//	t.sprintf("%10.5f", sd.aileron);
-//	ui->aileronValue->setText(t);
-//
-//	t.sprintf("%10.5f", sd.elevator);
-//	ui->elevatorValue->setText(t);
-//
-//	t.sprintf("%10.5f", sd.rudder);
-//	ui->rudderValue->setText(t);
-//
-//	t.sprintf("%10.5f", sd.throttle * 100);
-//	ui->throttleValue->setText(t);
-//
-//	t.sprintf("%10.5f", sd.rpm);
-//	ui->rpmValue->setText(t);
+	t.sprintf("%10.5f", powerData_.batteryVoltage);
+	ui->voltValue->setText(t);
+
+	t.sprintf("%10.5f", powerData_.batteryCurrent);
+	ui->currValue->setText(t);
+
+	t.sprintf("%10.5f", servoData_.aileron);
+	ui->aileronValue->setText(t);
+
+	t.sprintf("%10.5f", servoData_.elevator);
+	ui->elevatorValue->setText(t);
+
+	t.sprintf("%10.5f", servoData_.rudder);
+	ui->rudderValue->setText(t);
+
+	t.sprintf("%10.5f", servoData_.throttle * 100);
+	ui->throttleValue->setText(t);
+
+	t.sprintf("%10.5f", servoData_.rpm);
+	ui->rpmValue->setText(t);
 
 	update();
 }

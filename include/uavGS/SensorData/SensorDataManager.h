@@ -24,12 +24,21 @@ public:
 	run(RunStage stage) override;
 
 	using OnSensorData = boost::signals2::signal<void(const SensorData&)>;
+	using OnPowerData = boost::signals2::signal<void(const PowerData&)>;
+	using OnServoData = boost::signals2::signal<void(const ServoData&)>;
 
 	boost::signals2::connection
 	subscribeOnSensorDataLocal(const OnSensorData::slot_type& slot);
 
 	boost::signals2::connection
 	subscribeOnSensorDataGlobal(const OnSensorData::slot_type& slot);
+
+	boost::signals2::connection
+	subscribeOnPowerData(const OnPowerData::slot_type& slot);
+
+	boost::signals2::connection
+	subscribeOnServoData(const OnServoData::slot_type& slot);
+
 
 private:
 
@@ -42,6 +51,8 @@ private:
 
 	OnSensorData onSensorDataLocal_;
 	OnSensorData onSensorDataGlobal_;
+	OnPowerData onPowerData_;
+	OnServoData onServoData_;
 
 
 };

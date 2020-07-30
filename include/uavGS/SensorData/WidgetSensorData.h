@@ -45,6 +45,8 @@ private:
 
 	SensorData sensorDataGlobal_;
 	SensorData sensorDataLocal_;
+	PowerData powerData_;
+	ServoData servoData_;
 };
 
 #endif // WIDGETSENSORDATA_H

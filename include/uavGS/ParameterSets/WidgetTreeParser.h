@@ -6,10 +6,12 @@
 #define UAVGS_WIDGETTREEPARSER_H
 
 #include <cpsCore/Configuration/Parameter.hpp>
+#include <cpsCore/Utilities/LinearAlgebra.h>
 #include <cpsCore/Logging/CPSLogger.h>
 #include "uavGS/ParameterSets/WidgetTreeNode.h"
-#include "NamedCheckbox.h"
-#include "NamedLineEdit.h"
+#include "uavGS/ParameterSets/NamedCheckbox.h"
+#include "uavGS/ParameterSets/NamedLineEdit.h"
+#include "uavGS/ParameterSets/NamedVectorEdit.h"
 
 class WidgetTreeParser
 {
@@ -51,6 +53,16 @@ WidgetTreeParser::operator&(Type& val)
 				auto checkBox = dynamic_cast<NamedCheckbox*>(node->getWidget());
 				val.setValue(checkBox->get());
 			}
+			else if constexpr (is_eigen_vector<ValueType>::value)
+			{
+				auto vectorEdit = dynamic_cast<NamedVectorEdit*>(node->getWidget());
+				if constexpr (std::is_same<double, typename ValueType::value_type>::value)
+					val.setValue(vectorEdit->getDouble());
+				else if constexpr (std::is_same<float,  typename ValueType::value_type>::value)
+					val.setValue(vectorEdit->getFloat());
+				else if constexpr (std::numeric_limits< typename ValueType::value_type>::is_integer)
+					val.setValue(vectorEdit->getInt());
+			}
 			else
 			{
 				auto lineEdit = dynamic_cast<NamedLineEdit*>(node->getWidget());
@@ -60,6 +72,8 @@ WidgetTreeParser::operator&(Type& val)
 					val.setValue(lineEdit->getFloat());
 				else if constexpr (std::numeric_limits<ValueType>::is_integer)
 					val.setValue(lineEdit->getInt());
+				else if constexpr (is_angle<ValueType>::value)
+					val.setValue(lineEdit->getAngle<typename ValueType::ValueType>());
 			}
 		}
 		return *this;

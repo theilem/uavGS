@@ -78,6 +78,7 @@ NamedLineEdit::set(int val)
 	string.setNum(val);
 	edit_->setText(string);
 }
+
 void
 NamedLineEdit::set(const std::string& val)
 {

@@ -34,6 +34,10 @@ SensorDataManager::run(RunStage stage)
 			auto dh = get<DataHandling>();
 			dh->subscribeOnData<SensorData>(Content::SENSOR_DATA, [this](const auto& sd)
 			{ onSensorData(sd); });
+			dh->subscribeOnData<PowerData>(Content::POWER_DATA, [this](const auto& pd)
+			{ onPowerData_(pd); });
+			dh->subscribeOnData<ServoData>(Content::SERVO_DATA, [this](const auto& sd)
+			{ onServoData_(sd); });
 			dh->subscribeOnData<VehicleOneFrame>(Content::LOCAL_FRAME, [this](const auto& lf)
 			{
 				localFrame_ = lf;
@@ -69,4 +73,18 @@ boost::signals2::connection
 SensorDataManager::subscribeOnSensorDataGlobal(const OnSensorData::slot_type& slot)
 {
 	return onSensorDataGlobal_.connect(slot);
+}
+
+
+
+boost::signals2::connection
+SensorDataManager::subscribeOnPowerData(const OnPowerData::slot_type& slot)
+{
+	return onPowerData_.connect(slot);
+}
+
+boost::signals2::connection
+SensorDataManager::subscribeOnServoData(const OnServoData::slot_type& slot)
+{
+	return onServoData_.connect(slot);
 }

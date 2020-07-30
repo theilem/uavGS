@@ -8,12 +8,14 @@
 #include <cpsCore/Configuration/TypeTraits.hpp>
 #include <cpsCore/Configuration/Parameter.hpp>
 #include <cpsCore/Logging/CPSLogger.h>
+#include <cpsCore/Utilities/LinearAlgebra.h>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QLayout>
 #include <memory>
 #include "uavGS/ParameterSets/NamedCheckbox.h"
 #include "uavGS/ParameterSets/NamedLineEdit.h"
 #include "uavGS/ParameterSets/WidgetTreeNode.h"
+#include "uavGS/ParameterSets/NamedVectorEdit.h"
 
 
 class WidgetPopulator
@@ -59,6 +61,11 @@ WidgetPopulator::operator&(Type& val)
 				auto checkBox = dynamic_cast<NamedCheckbox*>(node->getWidget());
 				checkBox->set(val.value);
 			}
+			else if constexpr (is_eigen_vector<ValueType>::value)
+			{
+				auto vectorEdit = dynamic_cast<NamedVectorEdit*>(node->getWidget());
+				vectorEdit->set(val.value);
+			}
 			else
 			{
 				auto lineEdit = dynamic_cast<NamedLineEdit*>(node->getWidget());
@@ -83,7 +90,6 @@ WidgetPopulator::operator&(Type& val)
 	}
 	else
 	{
-		static_assert(std::is_pod<ValueType>::value, "Can only handle POD so far");
 		if constexpr (std::is_same<ValueType, bool>::value)
 		{
 			auto checkBox = new NamedCheckbox(val.id, node_->getGroupBox());
@@ -94,8 +100,20 @@ WidgetPopulator::operator&(Type& val)
 			node->set(checkBox);
 			node_->add(val.id, node);
 		}
+		else if constexpr (is_eigen_vector<ValueType>::value)
+		{
+			auto vectorEdit = new NamedVectorEdit(val.id, node_->getGroupBox());
+			vectorEdit->set(val.value);
+			node_->getGroupBox()->layout()->addWidget(vectorEdit);
+
+			auto node = std::make_shared<WidgetTreeNode>();
+			node->set(vectorEdit);
+			node_->add(val.id, node);
+		}
 		else
 		{
+			static_assert(std::is_pod<ValueType>::value || is_angle<ValueType>::value,
+						  "Can only handle Eigen Vector, Angle, and POD so far");
 			auto lineEdit = new NamedLineEdit(val.id, node_->getGroupBox());
 			lineEdit->set(val.value);
 			node_->getGroupBox()->layout()->addWidget(lineEdit);

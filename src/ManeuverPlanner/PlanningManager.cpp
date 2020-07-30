@@ -11,6 +11,7 @@
 #include <uavAP/Core/DataHandling/Content.hpp>
 #include <uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlannerParams.h>
 #include <uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlannerParams.h>
+#include <uavAP/MissionControl/LocalFrameManager/LocalFrameManagerParams.h>
 
 bool
 PlanningManager::run(RunStage stage)
@@ -34,6 +35,9 @@ PlanningManager::run(RunStage stage)
 			wf->registerWidget<WidgetParameterSets<SplineGlobalPlannerParams,
 					Content::SPLINE_GLOBAL_PLANNER_PARAMS,
 					Target::MISSION_CONTROL>>("spline_global_planner");
+			wf->registerWidget<WidgetParameterSets<LocalFrameManagerParams,
+					Content::LOCAL_FRAME_MANAGER_PARAMS,
+					Target::MISSION_CONTROL>>("local_frame_manager");
 			break;
 		}
 		case RunStage::NORMAL:
