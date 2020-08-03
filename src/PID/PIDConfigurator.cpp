@@ -4,7 +4,9 @@
 
 #include "uavGS/PID/PIDConfigurator.h"
 #include "uavGS/GSWidgetFactory.h"
+#include "uavGS/ParameterSets/WidgetParameterSets.h"
 #include <uavAP/Core/DataHandling/DataHandling.h>
+#include <uavAP/FlightControl/ThrottleLimiter/ThrottleLimiterParams.h>
 #include <uavGS/PID/Widgets/WidgetCPGrid.h>
 #include <uavGS/PID/Widgets/WidgetPIDPlots.h>
 
@@ -41,6 +43,9 @@ PIDConfigurator::run(RunStage stage)
 			auto wf = get<GSWidgetFactory>();
 			wf->registerWidget<WidgetCPGrid>();
 			wf->registerWidget<WidgetPIDPlots>();
+			wf->registerWidget<WidgetParameterSets<ThrottleLimiterParams,
+					Content::THROTTLE_LIMITER_PARAMS,
+					Target::FLIGHT_CONTROL>>("throttle_limit");
 			break;
 		}
 		case RunStage::NORMAL:
