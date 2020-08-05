@@ -1,28 +1,39 @@
 {
-  "scheduler": {
-    "thread": {
-      "priority": 20
-    }
-  },
-  "time_provider": {
-    "system_time": {
-    }
-  },
-  "idc": {
-  },
-  "network": {
-    "serial": {
-    }
-  },
-  "data_presentation": {
-    "compress_double": true
-  },
-  "data_handling": {
-    "period": 100,
-    "use_ipc": false,
-    "use_idc": true,
-    "idc_target": "autopilot"
-  },
-  "signal_handler": {
-  }
+	"scheduler": {
+		"thread": {
+			"priority": 20
+		}
+	},
+	"time_provider": {
+		"system_time": {
+		}
+	},
+	"idc": {
+	},
+	"network": {
+		"serial": {
+			"ports": {
+				"autopilot": {
+					"serial_port": "/dev/ttyUSB0",
+					"baud_rate": 115200,
+					"delimiter_string": "--*",
+					"use_crc": true,
+					"flow_control": "none",
+					"direction": "both",
+					"send_blocking": false
+				}
+			}
+		}
+	},
+	"data_presentation": {
+		"compress_double": true
+	},
+	"data_handling": {
+		"period": 100,
+		"use_ipc": false,
+		"use_idc": true,
+		"idc_target": "autopilot"
+	},
+	"signal_handler": {
+	}
 }
