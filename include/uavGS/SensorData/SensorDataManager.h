@@ -26,6 +26,7 @@ public:
 	using OnSensorData = boost::signals2::signal<void(const SensorData&)>;
 	using OnPowerData = boost::signals2::signal<void(const PowerData&)>;
 	using OnServoData = boost::signals2::signal<void(const ServoData&)>;
+	using OnMiscValues = boost::signals2::signal<void(const std::map<std::string, FloatingType>&)>;
 
 	boost::signals2::connection
 	subscribeOnSensorDataLocal(const OnSensorData::slot_type& slot);
@@ -38,6 +39,9 @@ public:
 
 	boost::signals2::connection
 	subscribeOnServoData(const OnServoData::slot_type& slot);
+
+	boost::signals2::connection
+	subscribeOnMiscValues(const OnMiscValues::slot_type& slot);
 
 
 private:
@@ -53,6 +57,7 @@ private:
 	OnSensorData onSensorDataGlobal_;
 	OnPowerData onPowerData_;
 	OnServoData onServoData_;
+	OnMiscValues onMiscValues_;
 
 
 };

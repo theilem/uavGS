@@ -6,6 +6,7 @@
 #include <QWidget>
 #include <cpsCore/Aggregation/AggregatableObject.hpp>
 #include <uavAP/Core/DataHandling/DataHandling.h>
+#include "uavGS/ParameterSets/LabeledValue.h"
 #include "uavGS/SensorData/SensorDataManager.h"
 
 namespace Ui
@@ -41,12 +42,17 @@ signals:
 
 private:
 
+	void
+	updateMiscValues();
+
 	Ui::WidgetSensorData* ui;
 
 	SensorData sensorDataGlobal_;
 	SensorData sensorDataLocal_;
 	PowerData powerData_;
 	ServoData servoData_;
+	std::map<std::string, FloatingType> miscValues_;
+	std::map<std::string, LabeledValue*> miscValueWidget_;
 };
 
 #endif // WIDGETSENSORDATA_H

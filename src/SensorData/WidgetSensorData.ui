@@ -1733,6 +1733,14 @@
     </layout>
    </item>
    <item>
+    <widget class="QGroupBox" name="miscValuesBox">
+     <property name="title">
+      <string>Misc Values</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_10"/>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

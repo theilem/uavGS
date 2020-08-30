@@ -26,11 +26,14 @@ WidgetSensorData::connect()
 		sdm->subscribeOnSensorDataLocal([this](const auto& sd)
 										{ sensorDataLocal_ = sd; emit contentUpdated(); });
 		sdm->subscribeOnPowerData([this](const auto& pd)
-										{ powerData_ = pd; emit contentUpdated(); });
+								  { powerData_ = pd; emit contentUpdated(); });
 		sdm->subscribeOnServoData([this](const auto& sd)
-										{ servoData_ = sd; emit contentUpdated(); });
+								  { servoData_ = sd; emit contentUpdated(); });
+		sdm->subscribeOnMiscValues([this](const auto& mv)
+								   { miscValues_ = mv; emit contentUpdated(); });
 	}
 }
+
 
 void
 WidgetSensorData::contentUpdatedSlot()
@@ -114,5 +117,39 @@ WidgetSensorData::contentUpdatedSlot()
 	t.sprintf("%10.5f", servoData_.rpm);
 	ui->rpmValue->setText(t);
 
+
+	updateMiscValues();
+
+
 	update();
+}
+
+
+void
+WidgetSensorData::updateMiscValues()
+{
+	auto compKey = [](const auto& rhs, const auto& lhs)
+	{ return rhs.first == lhs.first; };
+	if (!std::equal(miscValues_.begin(), miscValues_.end(), miscValueWidget_.begin(), compKey))
+	{
+		for (const auto&[name, widget] : miscValueWidget_)
+		{
+			ui->miscValuesBox->layout()->removeWidget(widget);
+			delete widget;
+		}
+		miscValueWidget_.clear();
+		for (const auto&[name, value] : miscValues_)
+		{
+			auto labeledValue = new LabeledValue(name, ui->miscValuesBox);
+			ui->miscValuesBox->layout()->addWidget(labeledValue);
+			miscValueWidget_.emplace(std::make_pair(name, labeledValue));
+		}
+	}
+
+	for (const auto& [name, value]: miscValues_)
+	{
+		miscValueWidget_.at(name)->set(value);
+	}
+
+
 }

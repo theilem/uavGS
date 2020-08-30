@@ -38,6 +38,8 @@ SensorDataManager::run(RunStage stage)
 			{ onPowerData_(pd); });
 			dh->subscribeOnData<ServoData>(Content::SERVO_DATA, [this](const auto& sd)
 			{ onServoData_(sd); });
+			dh->subscribeOnData<std::map<std::string, FloatingType>>(Content::MISC_VALUES, [this](const auto& mv)
+			{ onMiscValues_(mv); });
 			dh->subscribeOnData<VehicleOneFrame>(Content::LOCAL_FRAME, [this](const auto& lf)
 			{
 				localFrame_ = lf;
@@ -88,3 +90,10 @@ SensorDataManager::subscribeOnServoData(const OnServoData::slot_type& slot)
 {
 	return onServoData_.connect(slot);
 }
+
+boost::signals2::connection
+SensorDataManager::subscribeOnMiscValues(const OnMiscValues::slot_type& slot)
+{
+	return onMiscValues_.connect(slot);
+}
+
