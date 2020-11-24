@@ -51,6 +51,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include
   ${Qt5OpenGL_INCLUDE_DIRS})
 
 add_subdirectory(extern/QCustomPlot)
+add_subdirectory(extern/QFlightInstruments)
 
 add_subdirectory(src)
 #add_subdirectory(tests)

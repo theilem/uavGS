@@ -7,7 +7,6 @@ set(WIDGET_HEADERS)
 set(HEADERS_FOR_MOCS)
 set(QT_RESOURCES
         ${PROJECT_SOURCE_DIR}/resources/qdarkstyle/style.qrc
-        ${PROJECT_SOURCE_DIR}/resources/QFlightInstruments/qfi.qrc
         )
 
 add_subdirectory(PID)
@@ -18,6 +17,9 @@ add_subdirectory(ParameterSets)
 add_subdirectory(ManeuverPlanner)
 add_subdirectory(PacketForwarding)
 
+# TODO fixme
+# In the QFI project, both directories are included https://github.com/marek-cel/QFlightinstruments/blob/master/src/example.pro#L23
+include_directories(${CMAKE_SOURCE_DIR}/extern/QFlightInstruments)
 
 add_executable(uavGS ${UAVGS_SRCS}
 		${UI_FORMS}
@@ -48,7 +50,8 @@ target_link_libraries(uavGS
         Qt5::PrintSupport
 		cps_core
         uavap_core
-		QCustomPlot)
+		QCustomPlot
+		QFlightInstruments)
 
 install(TARGETS uavGS
         RUNTIME DESTINATION bin
