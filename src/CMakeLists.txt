@@ -19,17 +19,11 @@ add_subdirectory(ManeuverPlanner)
 add_subdirectory(PacketForwarding)
 
 
-qt5_wrap_cpp(widget_MOCS ${WIDGET_HEADERS})
-qt5_wrap_cpp(misc_MOCS ${HEADERS_FOR_MOCS})
-qt5_wrap_ui(ui_HDRS ${UI_FORMS})
-qt5_add_resources(resources_MOCS ${QT_RESOURCES})
-
-
 add_executable(uavGS ${UAVGS_SRCS}
-        ${ui_HDRS}
-        ${widget_MOCS}
-        ${misc_MOCS}
-        ${resources_MOCS}
+		${UI_FORMS}
+		${WIDGET_HEADERS}
+		${HEADERS_FOR_MOCS}
+		${QT_RESOURCES}
         uavGS.cpp)
 
 include_directories(${SUBMODULE_DIR}/Catch2/single_include
@@ -53,7 +47,8 @@ target_link_libraries(uavGS
         Qt5::OpenGL
         Qt5::PrintSupport
 		cps_core
-        uavap_core)
+        uavap_core
+		QCustomPlot)
 
 install(TARGETS uavGS
         RUNTIME DESTINATION bin
