@@ -1,4 +1,4 @@
-# Wraspper CMakeLists to allow QCustomPlot to compile with CMake
+# Wrapper CMakeLists to allow QCustomPlot to compile with CMake
 # THIS FILE IS MADE BY THE AUTHORS OF uavGS AND IS NOT PROVIDED BY QCustomPlot
 
 # Loosely adapted from https://doc.qt.io/qt-5/cmake-get-started.html
@@ -9,7 +9,11 @@ endif()
 
 find_package(Qt5 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
 
-add_library(QCustomPlot QCustomPlot.cpp
-		QCustomPlot.h)
+add_library(QCustomPlot QCustomPlot.cpp)
 
 target_link_libraries(QCustomPlot Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
+
+install(TARGETS QCustomPlot
+		RUNTIME DESTINATION bin
+		LIBRARY DESTINATION lib
+		ARCHIVE DESTINATION lib)
