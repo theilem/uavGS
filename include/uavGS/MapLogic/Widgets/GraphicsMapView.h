@@ -146,7 +146,7 @@ private:
 	bool drawPaths_;
 	bool drawSafetyRectangle_;
 	MapLocation aircraftLocation_;
-	int currentSectionIdx_;
+	unsigned currentSectionIdx_;
 
 	QPointF moveStart_;
 	MapLocation lastCenter_;
