@@ -8,14 +8,28 @@
 #include <cpsCore/Aggregation/AggregatableObject.hpp>
 #include <uavAP/Core/SensorData.h>
 
-#include "QFlightInstruments/example/WidgetPFD.h"
+#include "QFlightInstruments/WidgetPFD.h"
 #include "uavGS/SensorData/SensorDataManager.h"
 
+namespace Ui
+{
+class WidgetPFD_GS;
+}
 
-class WidgetPFD_GS : public AggregatableObject<SensorDataManager>, public QWidget
+class WidgetPFD_GS : public QWidget, public AggregatableObject<SensorDataManager>
 {
 Q_OBJECT
+
 public:
+
+	static constexpr auto widgetName = "pfd";
+
+	explicit
+	WidgetPFD_GS(QWidget* parent = 0);
+
+	virtual
+	~WidgetPFD_GS();
+
 	void
 	connect();
 
@@ -30,8 +44,10 @@ signals:
 	contentUpdated();
 
 private:
+
 	SensorData sensorData_;
-	WidgetPFD wPFD_;
+	WidgetPFD* wPFD_;
+	QGridLayout* layout_;
 };
 
 
