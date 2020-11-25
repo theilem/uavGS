@@ -17,10 +17,6 @@ add_subdirectory(ParameterSets)
 add_subdirectory(ManeuverPlanner)
 add_subdirectory(PacketForwarding)
 
-# TODO fixme
-# In the QFI project, both directories are included https://github.com/marek-cel/QFlightinstruments/blob/master/src/example.pro#L23
-include_directories(${CMAKE_SOURCE_DIR}/extern/QFlightInstruments)
-
 add_executable(uavGS ${UAVGS_SRCS}
 		${UI_FORMS}
 		${WIDGET_HEADERS}
@@ -30,7 +26,8 @@ add_executable(uavGS ${UAVGS_SRCS}
 
 include_directories(${SUBMODULE_DIR}/Catch2/single_include
         ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_BINARY_DIR}/src)
+        ${CMAKE_BINARY_DIR}/src
+		${CMAKE_SOURCE_DIR}/extern/QFlightInstruments)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     target_compile_definitions(uavGS PRIVATE NODEBUG)
