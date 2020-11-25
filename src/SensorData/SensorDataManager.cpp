@@ -5,8 +5,9 @@
 #include "uavGS/SensorData/SensorDataManager.h"
 #include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavGS/SensorData/WidgetSensorData.h>
-#include <uavGS/SensorData/QFlightInstruments/WidgetPFD.h>
-#include <uavGS/SensorData/QFlightInstruments/WidgetSix.h>
+#include <uavGS/SensorData/QFI-Derived/WidgetPFD_GS.h>
+#include <uavGS/SensorData/QFI-Derived/WidgetSix_GS.h>
+#include <uavGS/SensorData/QFI-Derived/WidgetNAV_GS.h>
 #include <uavAP/Core/Frames/InertialFrame.h>
 #include "uavGS/GSWidgetFactory.h"
 
@@ -25,8 +26,9 @@ SensorDataManager::run(RunStage stage)
 
 			auto wf = get<GSWidgetFactory>();
 			wf->registerWidget<WidgetSensorData>();
-			wf->registerWidget<WidgetPFD>();
-			wf->registerWidget<WidgetSix>();
+			wf->registerWidget<WidgetPFD_GS>();
+			wf->registerWidget<WidgetSix_GS>();
+			wf->registerWidget<WidgetNAV_GS>();
 			break;
 		}
 		case RunStage::NORMAL:
