@@ -33,12 +33,17 @@ WidgetPFD_GS::~WidgetPFD_GS()
 void
 WidgetPFD_GS::contentUpdatedSlot()
 {
+	//NOTE TODO FIXME - WidgetPFD expects imperial units... we could change the images to have SI units, or convert to imperial
 	wPFD_->setAltitude(sensorData_.position.z());
 	wPFD_->setAirspeed(sensorData_.airSpeed);
 	wPFD_->setClimbRate(sensorData_.velocity.z());
 	wPFD_->setRoll(sensorData_.attitude.x() * 180. / M_PI);
 	wPFD_->setPitch(sensorData_.attitude.y() * 180. / M_PI);
 	wPFD_->setHeading(sensorData_.attitude.z() * 180. / M_PI);
+	wPFD_->setFlightPathMarker(sensorData_.angleOfAttack * 180. / M_PI,
+			sensorData_.angleOfSideslip * 180. / M_PI);
+//	wPFD_->setSlipSkid(sensorData_.angleOfSideslip * 180. / M_PI);
+	wPFD_->setPressure(sensorData_.pressure);
 	wPFD_->update();
 }
 
