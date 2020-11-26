@@ -42,6 +42,26 @@ WidgetSensorData::contentUpdatedSlot()
 
 	ui->timeValue->setText("N/A");
 
+	//TODO maybe use a map
+	switch (sd.frame)
+	{
+		case Frame::INERTIAL:
+			ui->frameValue->setText("intertial");
+			break;
+		case Frame::BODY:
+			ui->frameValue->setText("body");
+			break;
+		case Frame::VEHICLE_1:
+			ui->frameValue->setText("vehicle 1");
+			break;
+		case Frame::VEHICLE_2:
+			ui->frameValue->setText("vehicle 2");
+			break;
+		default:
+			ui->frameValue->setText("unknown");
+			break;
+	}
+
 	ui->peValue->setText(QString::asprintf("%10.5f", sd.position.x()));
 	ui->pnValue->setText(QString::asprintf("%10.5f", sd.position.y()));
 	ui->puValue->setText(QString::asprintf("%10.5f", sd.position.z()));
@@ -66,7 +86,7 @@ WidgetSensorData::contentUpdatedSlot()
 	ui->rudderValue->setText(QString::asprintf("%10.5f", servoData_.rudder));
 	ui->throttleValue->setText(QString::asprintf("%10.5f", servoData_.throttle * 100));
 	ui->rpmValue->setText(QString::asprintf("%10.5f", servoData_.rpm));
-
+	ui->courseValue->setText(QString::asprintf("%10.5f", sd.courseAngle * 180 / M_PI));
 	updateMiscValues();
 
 	update();
@@ -94,7 +114,7 @@ WidgetSensorData::updateMiscValues()
 		}
 	}
 
-	for (const auto& [name, value]: miscValues_)
+	for (const auto&[name, value]: miscValues_)
 	{
 		miscValueWidget_.at(name)->set(value);
 	}

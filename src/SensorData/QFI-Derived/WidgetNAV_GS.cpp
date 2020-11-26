@@ -45,4 +45,5 @@ WidgetNAV_GS::contentUpdatedSlot()
 {
 	wNav_->setHeading(sensorData_.attitude.z() * 180. / M_PI);
 	wNav_->setCourse(sensorData_.courseAngle * 180. / M_PI);
+	wNav_->update();
 }
