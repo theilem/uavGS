@@ -9,6 +9,9 @@ set(QT_RESOURCES
         ${PROJECT_SOURCE_DIR}/resources/qdarkstyle/style.qrc
         )
 
+# When using autoRCC, creating a library with the resource and then linking it apparently doesn't work
+set(EXTERNAL_RESOURCES ${CMAKE_SOURCE_DIR}/extern/QFlightInstruments/qfi.qrc)
+
 add_subdirectory(PID)
 add_subdirectory(MapLogic)
 add_subdirectory(LayoutGenerator)
@@ -22,6 +25,7 @@ add_executable(uavGS ${UAVGS_SRCS}
 		${WIDGET_HEADERS}
 		${HEADERS_FOR_MOCS}
 		${QT_RESOURCES}
+		${EXTERNAL_RESOURCES}
         uavGS.cpp)
 
 include_directories(${SUBMODULE_DIR}/Catch2/single_include
