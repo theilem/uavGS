@@ -44,6 +44,8 @@ WidgetPFD_GS::contentUpdatedSlot()
 			sensorData_.angleOfSideslip * 180. / M_PI);
 //	wPFD_->setSlipSkid(sensorData_.angleOfSideslip * 180. / M_PI);
 	wPFD_->setPressure(sensorData_.pressure);
+	// http://www.aerospaceweb.org/question/atmosphere/q0126.shtml
+	wPFD_->setMachNo(sensorData_.airSpeed / sqrtf(1.4 * 287 * (sensorData_.temperature + 273.15)));
 	wPFD_->update();
 }
 
