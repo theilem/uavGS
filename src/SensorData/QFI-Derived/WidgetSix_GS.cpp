@@ -31,6 +31,7 @@ WidgetSix_GS::~WidgetSix_GS()
 void
 WidgetSix_GS::contentUpdatedSlot()
 {
+	//NOTE TODO FIXME - WidgetSix expects imperial units... we could change the images to have SI units, or convert to imperial
 	wSix_->setAltitude(sensorData_.position.z());
 	wSix_->setAirspeed(sensorData_.airSpeed);
 	wSix_->setClimbRate(sensorData_.velocity.z());
@@ -38,6 +39,8 @@ WidgetSix_GS::contentUpdatedSlot()
 	wSix_->setPitch(sensorData_.attitude.y() * 180. / M_PI);
 	wSix_->setHeading(sensorData_.attitude.z() * 180. / M_PI);
 	wSix_->setTurnRate(sensorData_.angularRate.z() * 180. / M_PI);
+	wSix_->setSlipSkid(sensorData_.angleOfSideslip * 180. / M_PI); /** slip/skid ball angle [deg] */
+	wSix_->setPressure(sensorData_.pressure);
 	wSix_->update();
 }
 
