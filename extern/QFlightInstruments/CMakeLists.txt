@@ -47,7 +47,8 @@ add_library(QFlightInstruments qfi.qrc
 
 target_link_libraries(QFlightInstruments Qt5::Svg Qt5::Widgets)
 
-install(TARGETS QFlightInstruments
-		RUNTIME DESTINATION bin
-		LIBRARY DESTINATION lib
-		ARCHIVE DESTINATION lib)
+# These are compiled into static libraries
+#install(TARGETS QFlightInstruments
+#		RUNTIME DESTINATION bin
+#		LIBRARY DESTINATION lib
+#		ARCHIVE DESTINATION lib)
