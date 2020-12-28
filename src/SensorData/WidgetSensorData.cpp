@@ -87,6 +87,8 @@ WidgetSensorData::contentUpdatedSlot()
 	ui->throttleValue->setText(QString::asprintf("%10.5f", servoData_.throttle * 100));
 	ui->rpmValue->setText(QString::asprintf("%10.5f", servoData_.rpm));
 	ui->courseValue->setText(QString::asprintf("%10.5f", sd.courseAngle * 180 / M_PI));
+	ui->aoaValue->setText(QString::asprintf("%10.5f", sd.angleOfAttack * 180 / M_PI));
+	ui->aosValue->setText(QString::asprintf("%10.5f", sd.angleOfSideslip * 180 / M_PI));
 	updateMiscValues();
 
 	update();
