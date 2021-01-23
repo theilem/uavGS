@@ -4,7 +4,7 @@
 #include <uavAP/MissionControl/GlobalPlanner/Trajectory.h>
 #include <uavAP/MissionControl/MissionPlanner/Mission.h>
 #include <uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h>
-#include <uavAP/Core/Frames/VehicleOneFrame.h>
+#include <uavAP/Core/Frames/LocalFrame.h>
 #include <uavAP/Core/Rectanguloid.h>
 
 #include "MapLocation.h"
@@ -59,7 +59,7 @@ public:
 	setSafetyBounds(const Rectanguloid& rect);
 
 	void
-	setLocalFrame(const VehicleOneFrame& frame);
+	setLocalFrame(const LocalFrame& frame);
 
 	const Rectanguloid&
 	getSafetyBounds() const;
@@ -92,7 +92,7 @@ private:
 	int currentPath_;
 	ControllerTarget controllerTarget_;
 	SensorData sensorData_;
-	VehicleOneFrame localFrame_;
+	LocalFrame localFrame_;
 };
 
 #endif // MAPLOGIC_H

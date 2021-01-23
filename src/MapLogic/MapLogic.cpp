@@ -157,7 +157,7 @@ MapLogic::getIconPath() const
 }
 
 void
-MapLogic::setLocalFrame(const VehicleOneFrame& frame)
+MapLogic::setLocalFrame(const LocalFrame& frame)
 {
 	localFrame_ = frame;
 }

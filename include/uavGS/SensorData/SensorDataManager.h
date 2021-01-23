@@ -7,7 +7,7 @@
 
 #include <cpsCore/cps_object>
 #include <uavAP/Core/SensorData.h>
-#include <uavAP/Core/Frames/VehicleOneFrame.h>
+#include <uavAP/Core/Frames/LocalFrame.h>
 
 #include <boost/signals2.hpp>
 
@@ -54,7 +54,7 @@ private:
 
 	SensorData sensorDataLocal_;
 	SensorData sensorDataGlobal_;
-	VehicleOneFrame localFrame_;
+	LocalFrame localFrame_;
 
 	OnSensorData onSensorDataLocal_;
 	OnSensorData onSensorDataGlobal_;
