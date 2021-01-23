@@ -2,3 +2,6 @@
 build
 resources/map_tiles
 .idea
+
+# ignoring Qt Creator files
+uavGS.*

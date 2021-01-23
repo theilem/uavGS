@@ -40,27 +40,23 @@ WidgetSensorData::contentUpdatedSlot()
 {
 	const SensorData& sd = ui->earthFrameCheckBox->isChecked() ? sensorDataGlobal_ : sensorDataLocal_;
 
-	ui->timeValue->setText("N/A");
+//	if(sd.orientation == Orientation::ENU) {
+//		ui->peLabel->setText("Position E:");
+//		ui->pnLabel->setText("Position N:");
+//		ui->puLabel->setText("Position U:");
+//		ui->veLabel->setText("Velocity E:");
+//		ui->vnLabel->setText("Velocity N:");
+//		ui->vuLabel->setText("Velocity U:");
+//		ui->auLabel->setText("Acc. U (ENU):");
+//		ui->avLabel->setText("Acc. V (ENU):");
+//		ui->awLabel->setText("Acc. W (ENU):");
+//	} else {
+//		ui->peLabel->setText("Position N:");
+//		ui->pnLabel->setText("Position E:");
+//		ui->puLabel->setText("Position D:");
+//	}
 
-	//TODO maybe use a map
-	switch (sd.frame)
-	{
-		case Frame::INERTIAL:
-			ui->frameValue->setText("intertial");
-			break;
-		case Frame::BODY:
-			ui->frameValue->setText("body");
-			break;
-		case Frame::VEHICLE_1:
-			ui->frameValue->setText("vehicle 1");
-			break;
-		case Frame::VEHICLE_2:
-			ui->frameValue->setText("vehicle 2");
-			break;
-		default:
-			ui->frameValue->setText("unknown");
-			break;
-	}
+	ui->timeValue->setText("N/A");
 
 	ui->peValue->setText(QString::asprintf("%10.5f", sd.position.x()));
 	ui->pnValue->setText(QString::asprintf("%10.5f", sd.position.y()));
