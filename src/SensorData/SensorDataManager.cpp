@@ -42,7 +42,7 @@ SensorDataManager::run(RunStage stage)
 			{ onServoData_(sd); });
 			dh->subscribeOnData<std::map<std::string, FloatingType>>(Content::MISC_VALUES, [this](const auto& mv)
 			{ onMiscValues_(mv); });
-			dh->subscribeOnData<VehicleOneFrame>(Content::LOCAL_FRAME, [this](const auto& lf)
+			dh->subscribeOnData<LocalFrame>(Content::LOCAL_FRAME, [this](const auto& lf)
 			{
 				localFrame_ = lf;
 			});
@@ -61,7 +61,7 @@ SensorDataManager::onSensorData(const SensorData& sd)
 	sensorDataLocal_ = sd;
 	sensorDataGlobal_ = sd;
 
-	changeFrame(localFrame_, InertialFrame(), sensorDataGlobal_);
+	localFrame_.toGlobalFrame(sensorDataGlobal_);
 
 	onSensorDataLocal_(sensorDataLocal_);
 	onSensorDataGlobal_(sensorDataGlobal_);

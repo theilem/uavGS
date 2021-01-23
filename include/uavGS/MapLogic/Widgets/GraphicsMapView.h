@@ -11,10 +11,11 @@
 #include <uavAP/MissionControl/GlobalPlanner/PathSections/Line.h>
 #include <uavAP/MissionControl/GlobalPlanner/PathSections/CubicSpline.h>
 #include <uavAP/Core/SensorData.h>
-#include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavGS/MapLogic/MapLogic.h>
 #include <cpsCore/Aggregation/AggregatableObject.hpp>
 #include <uavGS/SensorData/SensorDataManager.h>
+#include <uavAP/Core/Frames/LocalFrame.h>
+#include <uavAP/Core/DataHandling/DataHandling.h>
 
 class GraphicsMapView : public QGraphicsView, public AggregatableObject<MapLogic, SensorDataManager, DataHandling>
 {
@@ -84,7 +85,7 @@ private:
 	onSensorData(const SensorData& sd);
 
 	void
-	onLocalFrame(const VehicleOneFrame&);
+	onLocalFrame(const LocalFrame&);
 
 	void
 	addLocation(const MapLocation& location);
@@ -154,7 +155,7 @@ private:
 	std::vector<MapLocation> pathHistory_;
 	unsigned int flightPathSize_;
 
-	VehicleOneFrame localFrame_;
+	LocalFrame localFrame_;
 };
 
 #endif // GRAPHICSMAPVIEW_H

@@ -29,7 +29,7 @@ GraphicsMapView::connect()
 	}
 	if (auto dh = get<DataHandling>())
 	{
-		dh->subscribeOnData<VehicleOneFrame>(Content::LOCAL_FRAME, [this](const auto& f)
+		dh->subscribeOnData<LocalFrame>(Content::LOCAL_FRAME, [this](const auto& f)
 		{ this->onLocalFrame(f); });
 
 		dh->subscribeOnData<ManeuverLocalPlannerStatus>(Content::MANEUVER_LOCAL_PLANNER_STATUS,
@@ -392,12 +392,12 @@ GraphicsMapView::drawOrbit(QPainter* painter, std::shared_ptr<Orbit> orbit, Vect
 }
 
 void
-GraphicsMapView::onLocalFrame(const VehicleOneFrame& frame)
+GraphicsMapView::onLocalFrame(const LocalFrame& frame)
 {
 	localFrame_ = frame;
 	int zone = center_.getZone();
 	char hemi = center_.getHemi();
-	center_ = MapLocation::fromVector3(localFrame_.toInertialFramePosition(Vector3(0, 0, 0)), zone, hemi);
+	center_ = MapLocation::fromVector3(localFrame_.origin, zone, hemi);
 	emit contentUpdated();
 }
 
@@ -517,7 +517,7 @@ QPointF
 GraphicsMapView::LocalFrameToMapPoint(double e, double n) const
 {
 	Vector3 local(e, n, 0);
-	local = localFrame_.toInertialFramePosition(local);
+	local = local + localFrame_.origin;
 	return UTMToMapPoint(local.x(), local.y());
 }
 
