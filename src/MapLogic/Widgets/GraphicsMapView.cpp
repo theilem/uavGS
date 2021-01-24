@@ -516,9 +516,9 @@ GraphicsMapView::UTMToMapPoint(double e, double n) const
 QPointF
 GraphicsMapView::LocalFrameToMapPoint(double e, double n) const
 {
-	Vector3 local(e, n, 0);
-	local = local + localFrame_.origin;
-	return UTMToMapPoint(local.x(), local.y());
+	Vector3 pos(e, n, 0);
+	pos = localFrame_.localPositionToGlobal(pos);
+	return UTMToMapPoint(pos.x(), pos.y());
 }
 
 void
