@@ -18,6 +18,3 @@ set(WIDGET_HEADERS 	${WIDGET_HEADERS}
         ${PROJECT_SOURCE_DIR}/include/uavGS/SensorData/WidgetSensorData.h
         ${QFI_DERIVED_HDRS}
         PARENT_SCOPE)
-
-set(HEADERS_FOR_MOCS 	${HEADERS_FOR_MOCS}
-        PARENT_SCOPE)
