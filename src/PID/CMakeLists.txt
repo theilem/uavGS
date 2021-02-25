@@ -17,6 +17,3 @@ set(WIDGET_HEADERS 	${WIDGET_HEADERS}
         ${PROJECT_SOURCE_DIR}/include/uavGS/PID/Widgets/WidgetCPGrid.h
         ${PROJECT_SOURCE_DIR}/include/uavGS/PID/Widgets/WidgetPIDPlots.h
         PARENT_SCOPE)
-
-set(HEADERS_FOR_MOCS 	${HEADERS_FOR_MOCS}
-        PARENT_SCOPE)

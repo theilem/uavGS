@@ -4,7 +4,6 @@ set(UAVGS_SRCS
 
 set(UI_FORMS)
 set(WIDGET_HEADERS)
-set(HEADERS_FOR_MOCS)
 set(QT_RESOURCES
         ${PROJECT_SOURCE_DIR}/resources/qdarkstyle/style.qrc
         )
@@ -23,7 +22,6 @@ add_subdirectory(PacketForwarding)
 add_executable(uavGS ${UAVGS_SRCS}
 		${UI_FORMS}
 		${WIDGET_HEADERS}
-		${HEADERS_FOR_MOCS}
 		${QT_RESOURCES}
 		${EXTERNAL_RESOURCES}
         uavGS.cpp)

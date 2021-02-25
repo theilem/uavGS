@@ -12,6 +12,3 @@ set(WIDGET_HEADERS 	${WIDGET_HEADERS}
         ${PROJECT_SOURCE_DIR}/include/uavGS/LayoutGenerator/Widgets/WidgetLoader.h
         ${PROJECT_SOURCE_DIR}/include/uavGS/LayoutGenerator/Widgets/WidgetMainWindow.h
         PARENT_SCOPE)
-
-set(HEADERS_FOR_MOCS 	${HEADERS_FOR_MOCS}
-        PARENT_SCOPE)
