@@ -80,7 +80,7 @@ GraphicsMapView::drawForeground(QPainter* painter, const QRectF&)
 void
 GraphicsMapView::drawMap(QPainter* painter, const QRectF& rect)
 {
-	painter->setRenderHint(QPainter::HighQualityAntialiasing);
+	painter->setRenderHint(QPainter::Antialiasing);
 	if (viewMode_ == ViewMode::FOLLOW_MODE)
 	{
 		focus_ = aircraftLocation_;    //FOLLOW DOES NOT WORK BECAUSE NEED TO CONVERT UTM TO LAT LON
@@ -134,9 +134,7 @@ GraphicsMapView::drawMap(QPainter* painter, const QRectF& rect)
 	{
 		for (int j = 0; j < seXY.y() - nwXY.y(); j++)
 		{
-			QString path;
-			path = path.sprintf("%s/%d/%d/%d.jpg", tileDir.c_str(), zoom_, nwXY.x() + i,
-								nwXY.y() + j);
+			auto path = QString::asprintf("%s/%d/%d/%d.jpg", tileDir.c_str(), zoom_, nwXY.x() + i, nwXY.y() + j);
 			CPSLOG_TRACE << "tile path is: " << path.toStdString();
 			QPixmap tile; // load from tileDirectory or cache
 			if (tile.load(path))

@@ -38,88 +38,58 @@ WidgetSensorData::connect()
 void
 WidgetSensorData::contentUpdatedSlot()
 {
-	QString t;
 	const SensorData& sd = ui->earthFrameCheckBox->isChecked() ? sensorDataGlobal_ : sensorDataLocal_;
 
+	ui->timeValue->setText("N/A");
 
-	t = QString::fromStdString("N/A");
-	ui->timeValue->setText(t);
+	//TODO maybe use a map
+	switch (sd.frame)
+	{
+		case Frame::INERTIAL:
+			ui->frameValue->setText("intertial");
+			break;
+		case Frame::BODY:
+			ui->frameValue->setText("body");
+			break;
+		case Frame::VEHICLE_1:
+			ui->frameValue->setText("vehicle 1");
+			break;
+		case Frame::VEHICLE_2:
+			ui->frameValue->setText("vehicle 2");
+			break;
+		default:
+			ui->frameValue->setText("unknown");
+			break;
+	}
 
-	t.sprintf("%10.5f", sd.position.x());
-	ui->peValue->setText(t);
-
-	t.sprintf("%10.5f", sd.position.y());
-	ui->pnValue->setText(t);
-
-	t.sprintf("%10.5f", sd.position.z());
-	ui->puValue->setText(t);
-
-	t.sprintf("%10.5f", sd.velocity.x());
-	ui->veValue->setText(t);
-
-	t.sprintf("%10.5f", sd.velocity.y());
-	ui->vnValue->setText(t);
-
-	t.sprintf("%10.5f", sd.velocity.z());
-	ui->vuValue->setText(t);
-
-	t.sprintf("%10.5f", sd.airSpeed);
-	ui->vaValue->setText(t);
-
-	t.sprintf("%10.5f", sd.groundSpeed);
-	ui->vgValue->setText(t);
-
-	t.sprintf("%10.5f", sd.acceleration.x());
-	ui->auValue->setText(t);
-
-	t.sprintf("%10.5f", sd.acceleration.y());
-	ui->avValue->setText(t);
-
-	t.sprintf("%10.5f", sd.acceleration.z());
-	ui->awValue->setText(t);
-
-	t.sprintf("%10.5f", sd.attitude.x() * 180 / M_PI);
-	ui->rollValue->setText(t);
-
-	t.sprintf("%10.5f", sd.attitude.y() * 180 / M_PI);
-	ui->pitchValue->setText(t);
-
-	t.sprintf("%10.5f", sd.attitude.z() * 180 / M_PI);
-	ui->yawValue->setText(t);
-
-	t.sprintf("%10.5f", sd.angularRate.x() * 180 / M_PI);
-	ui->rollrValue->setText(t);
-
-	t.sprintf("%10.5f", sd.angularRate.y() * 180 / M_PI);
-	ui->pitchrValue->setText(t);
-
-	t.sprintf("%10.5f", sd.angularRate.z() * 180 / M_PI);
-	ui->yawrValue->setText(t);
-
-	t.sprintf("%10.5f", powerData_.batteryVoltage);
-	ui->voltValue->setText(t);
-
-	t.sprintf("%10.5f", powerData_.batteryCurrent);
-	ui->currValue->setText(t);
-
-	t.sprintf("%10.5f", servoData_.aileron);
-	ui->aileronValue->setText(t);
-
-	t.sprintf("%10.5f", servoData_.elevator);
-	ui->elevatorValue->setText(t);
-
-	t.sprintf("%10.5f", servoData_.rudder);
-	ui->rudderValue->setText(t);
-
-	t.sprintf("%10.5f", servoData_.throttle * 100);
-	ui->throttleValue->setText(t);
-
-	t.sprintf("%10.5f", servoData_.rpm);
-	ui->rpmValue->setText(t);
-
-
+	ui->peValue->setText(QString::asprintf("%10.5f", sd.position.x()));
+	ui->pnValue->setText(QString::asprintf("%10.5f", sd.position.y()));
+	ui->puValue->setText(QString::asprintf("%10.5f", sd.position.z()));
+	ui->veValue->setText(QString::asprintf("%10.5f", sd.velocity.x()));
+	ui->vnValue->setText(QString::asprintf("%10.5f", sd.velocity.y()));
+	ui->vuValue->setText(QString::asprintf("%10.5f", sd.velocity.z()));
+	ui->vaValue->setText(QString::asprintf("%10.5f", sd.airSpeed));
+	ui->vgValue->setText(QString::asprintf("%10.5f", sd.groundSpeed));
+	ui->auValue->setText(QString::asprintf("%10.5f", sd.acceleration.x()));
+	ui->avValue->setText(QString::asprintf("%10.5f", sd.acceleration.y()));
+	ui->awValue->setText(QString::asprintf("%10.5f", sd.acceleration.z()));
+	ui->rollValue->setText(QString::asprintf("%10.5f", sd.attitude.x() * 180 / M_PI));
+	ui->pitchValue->setText(QString::asprintf("%10.5f", sd.attitude.y() * 180 / M_PI));
+	ui->yawValue->setText(QString::asprintf("%10.5f", sd.attitude.z() * 180 / M_PI));
+	ui->rollrValue->setText(QString::asprintf("%10.5f", sd.angularRate.x() * 180 / M_PI));
+	ui->pitchrValue->setText(QString::asprintf("%10.5f", sd.angularRate.y() * 180 / M_PI));
+	ui->yawrValue->setText(QString::asprintf("%10.5f", sd.angularRate.z() * 180 / M_PI));
+	ui->voltValue->setText(QString::asprintf("%10.5f", powerData_.batteryVoltage));
+	ui->currValue->setText(QString::asprintf("%10.5f", powerData_.batteryCurrent));
+	ui->aileronValue->setText(QString::asprintf("%10.5f", servoData_.aileron));
+	ui->elevatorValue->setText(QString::asprintf("%10.5f", servoData_.elevator));
+	ui->rudderValue->setText(QString::asprintf("%10.5f", servoData_.rudder));
+	ui->throttleValue->setText(QString::asprintf("%10.5f", servoData_.throttle * 100));
+	ui->rpmValue->setText(QString::asprintf("%10.5f", servoData_.rpm));
+	ui->courseValue->setText(QString::asprintf("%10.5f", sd.courseAngle * 180 / M_PI));
+	ui->aoaValue->setText(QString::asprintf("%10.5f", sd.angleOfAttack * 180 / M_PI));
+	ui->aosValue->setText(QString::asprintf("%10.5f", sd.angleOfSideslip * 180 / M_PI));
 	updateMiscValues();
-
 
 	update();
 }
@@ -146,7 +116,7 @@ WidgetSensorData::updateMiscValues()
 		}
 	}
 
-	for (const auto& [name, value]: miscValues_)
+	for (const auto&[name, value]: miscValues_)
 	{
 		miscValueWidget_.at(name)->set(value);
 	}

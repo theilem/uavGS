@@ -1,7 +1,7 @@
 #ifndef PIDCUSTOMPLOT_H
 #define PIDCUSTOMPLOT_H
 
-#include "uavGS/PID/Widgets/QCustomPlot.h"
+#include "QCustomPlot/QCustomPlot.h"
 #include <cpsCore/Aggregation/AggregatableObject.hpp>
 
 class PIDConfigurator;
