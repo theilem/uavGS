@@ -1,10 +1,12 @@
 set(UAVGS_SRCS 	${UAVGS_SRCS}
         ${CMAKE_CURRENT_SOURCE_DIR}/WidgetManeuverPlanner.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/WidgetManeuverEditor.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/PlanningManager.cpp
         PARENT_SCOPE)
 
 set(UI_FORMS 	${UI_FORMS}
         ${CMAKE_CURRENT_SOURCE_DIR}/WidgetManeuverPlanner.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/WidgetManeuverEditor.ui
         PARENT_SCOPE)
 
 set(WIDGET_HEADERS 	${WIDGET_HEADERS}
