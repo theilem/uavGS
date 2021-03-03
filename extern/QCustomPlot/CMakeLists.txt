@@ -9,12 +9,11 @@ endif()
 
 find_package(Qt5 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
 
-add_library(QCustomPlot QCustomPlot.cpp)
+add_library(QCustomPlot SHARED QCustomPlot.cpp)
 
 target_link_libraries(QCustomPlot Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
 
-# These are compiled into static libraries
-#install(TARGETS QCustomPlot
-#		RUNTIME DESTINATION bin
-#		LIBRARY DESTINATION lib
-#		ARCHIVE DESTINATION lib)
+install(TARGETS QCustomPlot
+		RUNTIME DESTINATION bin
+		LIBRARY DESTINATION lib
+		ARCHIVE DESTINATION lib)
