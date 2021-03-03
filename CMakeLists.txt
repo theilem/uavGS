@@ -23,11 +23,11 @@ find_package(Qt5 #5.6
         PrintSupport
     REQUIRED)
  
-message(Qt5_VERSION ${Qt5_VERSION})
-message(Qt5Core_VERSION ${Qt5Core_VERSION})
-message(Qt5Gui_VERSION: ${Qt5Gui_VERSION})
-message(Qt5OpenGL_VERSION: ${Qt5OpenGL_VERSION})
-message(Qt5PrintSupport_VERSION: ${Qt5PrintSupport_VERSION})
+#message(Qt5_VERSION ${Qt5_VERSION})
+#message(Qt5Core_VERSION ${Qt5Core_VERSION})
+#message(Qt5Gui_VERSION: ${Qt5Gui_VERSION})
+#message(Qt5OpenGL_VERSION: ${Qt5OpenGL_VERSION})
+#message(Qt5PrintSupport_VERSION: ${Qt5PrintSupport_VERSION})
 
 
 set(SYSTEM_LIBS pthread
@@ -56,4 +56,7 @@ add_subdirectory(extern/QFlightInstruments)
 add_subdirectory(src)
 #add_subdirectory(tests)
 
-install(DIRECTORY include/uavGS DESTINATION include)
+install(DIRECTORY include/${CMAKE_PROJECT_NAME} DESTINATION include)
+# Not to conflict with uavAP. We should probably do this inside uavAP too
+install(DIRECTORY config DESTINATION config/${CMAKE_PROJECT_NAME})
+install(DIRECTORY resources DESTINATION resources/${CMAKE_PROJECT_NAME})

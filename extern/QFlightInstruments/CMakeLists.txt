@@ -33,7 +33,7 @@ set(QFI_EX_UI WidgetADI.ui
 include_directories(.)
 
 
-add_library(QFlightInstruments qfi.qrc
+add_library(QFlightInstruments SHARED qfi.qrc
 		qfi_ADI.cpp
 		qfi_ALT.cpp
 		qfi_ASI.cpp
@@ -47,8 +47,7 @@ add_library(QFlightInstruments qfi.qrc
 
 target_link_libraries(QFlightInstruments Qt5::Svg Qt5::Widgets)
 
-# These are compiled into static libraries
-#install(TARGETS QFlightInstruments
-#		RUNTIME DESTINATION bin
-#		LIBRARY DESTINATION lib
-#		ARCHIVE DESTINATION lib)
+install(TARGETS QFlightInstruments
+		RUNTIME DESTINATION bin
+		LIBRARY DESTINATION lib
+		ARCHIVE DESTINATION lib)
