@@ -42,8 +42,10 @@
 	"sensor_data": {
 	},
 	"planning_manager": {
-	},
-	"packet_forwarding": {
+		"default_overrides": [
+			"pid/roll",
+			"pid/pitch"
+		]
 	},
 	"layout_generator": {
 		"resource_path": "/usr/local/resources/uavGS/resources/",

@@ -3,20 +3,21 @@
 
 
 #include <cpsCore/Aggregation/AggregatableObject.hpp>
-#include <uavAP/MissionControl/ManeuverPlanner/Override.h>
 
 #include <QWidget>
 #include <uavAP/MissionControl/MissionPlanner/Mission.h>
 #include "uavGS/ParameterSets/NamedLineEdit.h"
 #include "uavGS/ParameterSets/NamedCheckbox.h"
 #include <uavAP/Core/DataHandling/DataHandling.h>
+#include "uavGS/ParameterSets/NamedLineEdit.h"
 
 namespace Ui
 {
 class WidgetManeuverPlanner;
 }
+class PlanningManager;
 
-class WidgetManeuverPlanner: public QWidget, public AggregatableObject<DataHandling>
+class WidgetManeuverPlanner: public QWidget, public AggregatableObject<DataHandling, PlanningManager>
 {
 Q_OBJECT
 
@@ -25,7 +26,7 @@ public:
 	static constexpr auto widgetName = "maneuver_planner";
 
 	explicit
-	WidgetManeuverPlanner(QWidget* parent = 0);
+	WidgetManeuverPlanner(QWidget* parent = nullptr);
 	~WidgetManeuverPlanner();
 
 	void
@@ -48,6 +49,15 @@ private slots:
 	void
 	on_update_clicked();
 
+	void
+	on_addOverride_clicked();
+
+	void
+	on_removeOverride_clicked();
+
+	void
+	on_defaultsButton_clicked();
+
 private slots:
 
 	void
@@ -59,16 +69,16 @@ signals:
 	contentUpdated();
 
 private:
+
+	void
+	addOverrideWidget(const std::string& id);
+
 	Ui::WidgetManeuverPlanner* ui;
 
 	std::map<std::string, Mission> missionMap_;
-
-	std::map<LocalPlannerTargets, NamedLineEdit*> localPlannerTargets_;
-	std::map<ControllerTargets, NamedLineEdit*> controllerTargets_;
-	std::map<PIDs, NamedLineEdit*> pids_;
-	std::map<ControllerOutputs, NamedLineEdit*> controllerOutputs_;
-	std::map<ControllerConstraints, NamedLineEdit*> controllerConstraints_;
-	std::map<CustomOverrideIDs, NamedLineEdit*> custom_;
+	std::map<std::string, NamedLineEdit*> overrides_;
+	std::vector<std::string> overrideList_;
+	std::vector<std::string> maneuversList_;
 };
 
 #endif // WIDGETMANEUVERPLANNER_H

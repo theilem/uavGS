@@ -113,7 +113,7 @@ MapLogic::askForSafetyNet()
 {
 	if (auto dh = get<DataHandling>())
 	{
-		dh->sendData(DataRequest::SAFETY_BOUNDS, Content::REQUEST_DATA, Target::MISSION_CONTROL);
+		dh->sendData(DataRequest::SAFETY_BOUNDS, Content::REQUEST_DATA, Target::FLIGHT_CONTROL);
 	}
 }
 
