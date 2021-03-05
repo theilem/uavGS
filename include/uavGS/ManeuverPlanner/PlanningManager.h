@@ -22,6 +22,9 @@ public:
 
 	bool
 	run(RunStage stage) override;
+
+	const std::vector<std::string>&
+	getDefaultOverrides() const;
 };
 
 

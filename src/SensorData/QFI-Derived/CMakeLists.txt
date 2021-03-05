@@ -5,7 +5,7 @@ set(QFI_DERIVED_SRCS 	${UAVGS_SRCS}
         PARENT_SCOPE)
 
 set(QFI_DERIVED_HDRS 	${UAVGS_SRCS}
-		../../include/uavGS/SensorData/QFI-Derived/WidgetPFD_GS.h
-		../../include/uavGS/SensorData/QFI-Derived/WidgetSix_GS.h
-		../../include/uavGS/SensorData/QFI-Derived/WidgetNAV_GS.h
+		${PROJECT_SOURCE_DIR}/include/uavGS/SensorData/QFI-Derived/WidgetPFD_GS.h
+		${PROJECT_SOURCE_DIR}/include/uavGS/SensorData/QFI-Derived/WidgetSix_GS.h
+		${PROJECT_SOURCE_DIR}/include/uavGS/SensorData/QFI-Derived/WidgetNAV_GS.h
 		PARENT_SCOPE)
