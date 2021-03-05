@@ -48,7 +48,7 @@
 		]
 	},
 	"layout_generator": {
-		"resource_path": "/home/mirco/devel/uavGS/resources/",
+		"resource_path": "/usr/local/resources/uavGS/resources/",
 		"layout": {
 			"layout": "quad",
 			"items": [
