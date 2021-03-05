@@ -12,8 +12,8 @@
 #include "uavAP/Core/DataHandling/DataHandling.h"
 #include <cpsCore/cps_object>
 #include <QtCore/QObject>
-#include "uavGS/GSWidgetFactory.h"
-
+//#include "uavGS/GSWidgetFactory.h"
+class GSWidgetFactory;
 /**
  * @brief   The IPIDConfigurator class serves as an interface for all classes
  *          that have PID tuning functionality.

@@ -414,10 +414,10 @@ GraphicsMapView::drawSafetyNet(QPainter* painter)
 
 	const auto& bounds = mapLogic->getSafetyBounds();
 
-	const auto& boundsCenter = bounds.center;
-	double rotation = bounds.majorSideOrientation * M_PI / 180.0;
-	double majorOffset = bounds.majorSideLength / 2;
-	double minorOffset = bounds.minorSideLength / 2;
+	const auto& boundsCenter = bounds.center();
+	double rotation = bounds.majorSideOrientation() * M_PI / 180.0;
+	double majorOffset = bounds.majorSideLength() / 2;
+	double minorOffset = bounds.minorSideLength() / 2;
 
 	Vector2 Q1 = rotate2Drad(Vector2(majorOffset, minorOffset), rotation) + boundsCenter.head(2);
 	Vector2 Q2 = rotate2Drad(Vector2(-majorOffset, minorOffset), rotation) + boundsCenter.head(2);

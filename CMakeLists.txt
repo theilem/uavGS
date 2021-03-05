@@ -58,5 +58,5 @@ add_subdirectory(src)
 
 install(DIRECTORY include/${CMAKE_PROJECT_NAME} DESTINATION include)
 # Not to conflict with uavAP. We should probably do this inside uavAP too
-install(DIRECTORY config DESTINATION config/${CMAKE_PROJECT_NAME})
-install(DIRECTORY resources DESTINATION resources/${CMAKE_PROJECT_NAME})
+install(DIRECTORY config/ DESTINATION config/${CMAKE_PROJECT_NAME})
+install(DIRECTORY resources/ DESTINATION resources/${CMAKE_PROJECT_NAME})

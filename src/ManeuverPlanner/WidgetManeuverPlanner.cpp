@@ -91,12 +91,17 @@ WidgetManeuverPlanner::on_abort_clicked()
 	auto dh = get<DataHandling>();
 
 	dh->sendData(std::map<std::string, FloatingType>(), Content::OVERRIDE, Target::FLIGHT_CONTROL);
+	dh->sendData(true, Content::ABORT_MANEUVER, Target::FLIGHT_ANALYSIS);
 }
 
 void
 WidgetManeuverPlanner::on_sendManeuver_clicked()
 {
-	CPSLOG_ERROR << "Not yet implemented";
+	if (auto dh = get<DataHandling>())
+	{
+		dh->sendData(ui->maneuverOptions->currentText().toStdString(), Content::SELECT_MANEUVER_SET,
+					 Target::FLIGHT_ANALYSIS);
+	}
 }
 
 void
@@ -191,6 +196,11 @@ void
 WidgetManeuverPlanner::on_defaultsButton_clicked()
 {
 	auto pm = get<PlanningManager>();
+	if (!pm)
+	{
+		CPSLOG_ERROR << "Planning manager missing";
+		return;
+	}
 	auto defaultOverrides = pm->getDefaultOverrides();
 
 	for (auto& it : overrides_)

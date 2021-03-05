@@ -48,7 +48,7 @@
 		]
 	},
 	"layout_generator": {
-		"resource_path": "/usr/local/resources/uavGS/resources/",
+		"resource_path": "/usr/local/resources/uavGS/",
 		"layout": {
 			"layout": "quad",
 			"items": [
