@@ -5,7 +5,7 @@
 #include <uavAP/MissionControl/MissionPlanner/Mission.h>
 #include <uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h>
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
-#include <uavAP/MissionControl/Geofencing/Rectanguloid.h>
+#include <uavAP/Core/Rectanguloid.h>
 
 #include "MapLocation.h"
 #include "MapLogicParams.h"

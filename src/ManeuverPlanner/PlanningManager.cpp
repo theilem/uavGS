@@ -54,7 +54,7 @@ PlanningManager::run(RunStage stage)
 	return false;
 }
 
-const std::vector<std::string>&
+std::vector<std::string>
 PlanningManager::getDefaultOverrides() const
 {
 	return params.defaultOverrides();

@@ -15,6 +15,7 @@
 
 #include <cpsCore/Aggregation/AggregatableObjectMaster.hpp>
 #include <functional>
+#include "uavGS/GroundStationHelper.h"
 
 class GSWidgetFactory : public AggregatableObjectMaster<>
 {
