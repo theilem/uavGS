@@ -8,8 +8,8 @@
 
 struct PacketForwardingParams
 {
-	Parameter<bool> sendData = {true, "send_data", false};
-	Parameter<bool> receiveData = {true, "receive_data", false};
+	Parameter<bool> sendData = {false, "send_data", false};
+	Parameter<bool> receiveData = {false, "receive_data", false};
 
 	template<typename Config>
 	inline void

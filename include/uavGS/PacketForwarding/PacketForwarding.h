@@ -30,7 +30,11 @@ private:
 	void
 	forwardPacket(const Packet& packet);
 
+	void
+	onForwardingPacket(const Packet& packet);
+
 	IDCSender packetForwarding_;
+	IDCSender forwardedToAutopilot_;
 
 };
 

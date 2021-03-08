@@ -26,6 +26,7 @@ PacketForwarding::run(RunStage stage)
 			wf->registerWidget<WidgetConfigurableObject<PacketForwarding>>("packet_forwarding");
 			auto idc = get<IDC>();
 			packetForwarding_ = idc->createSender("forwarding");
+			forwardedToAutopilot_ = idc->createSender("autopilot");
 
 		}
 		case RunStage::NORMAL:
@@ -33,6 +34,9 @@ PacketForwarding::run(RunStage stage)
 			auto dh = get<DataHandling>();
 
 			dh->subscribeOnPackets([this](const auto& p){forwardPacket(p);});
+
+			auto idc = get<IDC>();
+			idc->subscribeOnPacket("forwarding", [this](const auto& packet){onForwardingPacket(packet);});
 
 		}
 		default:
@@ -47,5 +51,14 @@ PacketForwarding::forwardPacket(const Packet& packet)
 	if (params.sendData())
 	{
 		packetForwarding_.sendPacket(packet);
+	}
+}
+
+void
+PacketForwarding::onForwardingPacket(const Packet& packet)
+{
+	if (params.receiveData())
+	{
+		forwardedToAutopilot_.sendPacket(packet);
 	}
 }
