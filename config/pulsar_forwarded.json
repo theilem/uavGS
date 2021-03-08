@@ -11,21 +11,13 @@
 			"sub": {
 				"autopilot": {
 					"host": "localhost",
-					"channel": "to_uavgs"
-				},
-				"forwarding": {
-					"host": "localhost",
-					"channel": "forwarding_to_main"
+					"channel": "forwarding_from_main"
 				}
 			},
 			"pub": {
 				"autopilot": {
 					"host": "localhost",
-					"channel": "to_uavap"
-				},
-				"forwarding": {
-					"host": "localhost",
-					"channel": "forwarding_from_main"
+					"channel": "forwarding_to_main"
 				}
 			}
 		}
@@ -58,7 +50,6 @@
 			"pid/pitch"
 		]
 	},
-	"packet_forwarding": {},
 	"layout_generator": {
 		"resource_path": "/usr/local/resources/uavGS/",
 		"layout": {
