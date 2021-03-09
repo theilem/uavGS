@@ -8,11 +8,19 @@
 
 #include <QGraphicsScene>
 
-class WidgetManeuverEditor: public QGraphicsScene
+
+class QToolBox;
+
+class WidgetManeuverViewer: public QGraphicsScene
 {
 	Q_OBJECT
+public:
+	WidgetManeuverViewer() = default;
 
 
+private:
+	Ui::WidgetManeuverViewer* ui;
+	QToolBox* toolBox_;
 };
 
 
