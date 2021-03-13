@@ -73,7 +73,7 @@ WidgetManeuverPlanner::~WidgetManeuverPlanner()
 void
 WidgetManeuverPlanner::on_apply_clicked()
 {
-	std::map<std::string, FloatingType> overrides;
+	ManeuverOverride overrides;
 	for (const auto&[id, edit]: overrides_)
 	{
 		if (edit->isEmpty())
@@ -90,7 +90,7 @@ WidgetManeuverPlanner::on_abort_clicked()
 {
 	auto dh = get<DataHandling>();
 
-	dh->sendData(std::map<std::string, FloatingType>(), Content::OVERRIDE, Target::FLIGHT_CONTROL);
+	dh->sendData(ManeuverOverride(), Content::OVERRIDE, Target::FLIGHT_CONTROL);
 	dh->sendData(true, Content::ABORT_MANEUVER, Target::FLIGHT_ANALYSIS);
 }
 

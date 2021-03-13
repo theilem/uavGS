@@ -1,6 +1,7 @@
 set(UAVGS_SRCS 	${UAVGS_SRCS}
         ${CMAKE_CURRENT_SOURCE_DIR}/WidgetManeuverPlanner.cpp
 		${CMAKE_CURRENT_SOURCE_DIR}/ManeuverViewer/WidgetManeuverViewer.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/ManeuverViewer/GraphicsManeuverItem.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/PlanningManager.cpp
         PARENT_SCOPE)
 
