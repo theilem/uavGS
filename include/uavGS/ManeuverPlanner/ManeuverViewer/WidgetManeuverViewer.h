@@ -15,12 +15,15 @@ namespace Ui {
 class WidgetManeuverViewer;
 }
 
-class QToolBox;
+class QGraphicsScene;
 
 class WidgetManeuverViewer: public QWidget, public AggregatableObject<PlanningManager, GSWidgetFactory>
 {
 	Q_OBJECT
 public:
+
+	static constexpr auto widgetName = "maneuver_viewer";
+
 	WidgetManeuverViewer(QWidget* parent = nullptr);
 
 	~WidgetManeuverViewer();
@@ -29,9 +32,17 @@ public:
 	connect();
 
 private slots:
-	void on_update_clicked();
+	void
+	on_update_clicked();
+
+	void
+	drawManeuverSet();
+
+signals:
+	void maneuverUpdated();
 
 private:
+	QGraphicsScene *scene;
 	Ui::WidgetManeuverViewer* ui;
 };
 
