@@ -43,6 +43,9 @@ public:
 	boost::signals2::connection
 	subscribeOnMiscValues(const OnMiscValues::slot_type& slot);
 
+	const SensorData&
+	getSensorDataLocal();
+
 
 private:
 

@@ -40,7 +40,7 @@ WidgetSensorData::contentUpdatedSlot()
 {
 	const SensorData& sd = ui->earthFrameCheckBox->isChecked() ? sensorDataGlobal_ : sensorDataLocal_;
 
-	ui->timeValue->setText("N/A");
+	ui->timeValue->setText(QString::fromStdString(humanReadableTimeOfDay(sd.timestamp)));
 
 	//TODO maybe use a map
 	switch (sd.frame)

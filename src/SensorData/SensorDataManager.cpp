@@ -9,6 +9,7 @@
 #include <uavGS/SensorData/QFI-Derived/WidgetSix_GS.h>
 #include <uavGS/SensorData/QFI-Derived/WidgetNAV_GS.h>
 #include <uavAP/Core/Frames/InertialFrame.h>
+#include <uavGS/SensorData/Recording/Recording.h>
 #include "uavGS/GSWidgetFactory.h"
 
 bool
@@ -29,6 +30,7 @@ SensorDataManager::run(RunStage stage)
 			wf->registerWidget<WidgetPFD_GS>();
 			wf->registerWidget<WidgetSix_GS>();
 			wf->registerWidget<WidgetNAV_GS>();
+			wf->registerWidget<Recording>();
 			break;
 		}
 		case RunStage::NORMAL:
@@ -97,5 +99,11 @@ boost::signals2::connection
 SensorDataManager::subscribeOnMiscValues(const OnMiscValues::slot_type& slot)
 {
 	return onMiscValues_.connect(slot);
+}
+
+const SensorData&
+SensorDataManager::getSensorDataLocal()
+{
+	return sensorDataLocal_;
 }
 

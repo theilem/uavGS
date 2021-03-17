@@ -6,6 +6,11 @@
 					"ip": "127.0.0.1",
 					"auth": "",
 					"port": 6379
+				},
+				"desktop": {
+					"ip": "10.162.12.247",
+					"auth": "",
+					"port": 6379
 				}
 			},
 			"sub": {
@@ -14,7 +19,7 @@
 					"channel": "to_uavgs"
 				},
 				"forwarding": {
-					"host": "localhost",
+					"host": "desktop",
 					"channel": "forwarding_to_main"
 				}
 			},
@@ -24,7 +29,7 @@
 					"channel": "to_uavap"
 				},
 				"forwarding": {
-					"host": "localhost",
+					"host": "desktop",
 					"channel": "forwarding_from_main"
 				}
 			}
