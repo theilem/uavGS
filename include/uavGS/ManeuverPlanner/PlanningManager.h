@@ -11,17 +11,23 @@
 #include <cpsCore/cps_object>
 #include <boost/signals2/signal.hpp>
 
+class IScheduler;
 class DataHandling;
 class GSWidgetFactory;
 
 class PlanningManager
-		: public AggregatableObject<DataHandling, GSWidgetFactory>,
+		: public AggregatableObject<DataHandling, GSWidgetFactory, IScheduler>,
 		  public ConfigurableObject<PlanningManagerParams>,
 		  public IRunnableObject
 {
+
 public:
 
 	static constexpr TypeId typeId = "planning_manager";
+
+	using OnManeuverOverrides = boost::signals2::signal<void(const ManeuverDescriptor&)>;
+
+	using OnManeuverStatus = boost::signals2::signal<void(const unsigned int&)>;
 
 	bool
 	run(RunStage stage) override;
@@ -32,20 +38,23 @@ public:
 	std::vector<std::string>
 	getDefaultOverrides() const;
 
-	const std::vector<ManeuverOverride>&
+	const ManeuverDescriptor&
 	getCurrentManeuverSet() const;
-
-	using OnManeuverOverrides = boost::signals2::signal<void(const std::vector<ManeuverOverride>&)>;
-
 
 	boost::signals2::connection
 	subscribeOnManeuverSet(const OnManeuverOverrides::slot_type& slot);
 
+	boost::signals2::connection
+	subscribeOnManeuverStatus(const OnManeuverStatus::slot_type& slot);
+
+	unsigned int
+	getCurrentManeuverIdx() const;
 
 private:
-	std::vector<ManeuverOverride> currentManeuverSet_;
-
+	ManeuverDescriptor currentManeuverSet_;
 	OnManeuverOverrides onManeuverSet_;
+	OnManeuverStatus onManeuverStatus_;
+	unsigned int currentManeuverIdx_;
 };
 
 

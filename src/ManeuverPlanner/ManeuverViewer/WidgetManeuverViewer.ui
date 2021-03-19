@@ -24,12 +24,16 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>Select Maneuvers</string>
+          <string>Current Maneuver:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox"/>
+        <widget class="QLabel" name="currentManeuverLabel">
+         <property name="text">
+          <string>N/A</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="update">

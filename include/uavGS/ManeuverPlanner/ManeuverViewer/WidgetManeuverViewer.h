@@ -2,8 +2,8 @@
 // Created by seedship on 2/25/21.
 //
 
-#ifndef UAVGS_WIDGETMANEUVEREDITOR_H
-#define UAVGS_WIDGETMANEUVEREDITOR_H
+#ifndef UAVGS_WIDGETMANEUVERVIEWER_H
+#define UAVGS_WIDGETMANEUVERVIEWER_H
 
 
 #include <QGraphicsScene>
@@ -47,4 +47,4 @@ private:
 };
 
 
-#endif //UAVGS_WIDGETMANEUVEREDITOR_H
+#endif //UAVGS_WIDGETMANEUVERVIEWER_H
