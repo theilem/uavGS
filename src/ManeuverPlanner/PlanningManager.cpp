@@ -13,7 +13,6 @@
 #include <uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlannerParams.h>
 #include <uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlannerParams.h>
 #include <uavAP/MissionControl/LocalFrameManager/LocalFrameManagerParams.h>
-#include <uavAP/FlightControl/Safety/OverrideSafetyParams.h>
 
 bool
 PlanningManager::run(RunStage stage)
@@ -22,7 +21,7 @@ PlanningManager::run(RunStage stage)
 	{
 		case RunStage::INIT:
 		{
-			if (!checkIsSet<DataHandling, GSWidgetFactory>())
+			if (!checkIsSetAll())
 			{
 				CPSLOG_ERROR << "Missing dependencies";
 				return true;
@@ -50,10 +49,29 @@ PlanningManager::run(RunStage stage)
 		{
 			if (auto dh = get<DataHandling>())
 			{
-				dh->subscribeOnData<std::vector<ManeuverOverride>>(Content::MANEUVER, [this](const auto & data){
+				dh->subscribeOnData<ManeuverDescriptor>(Content::MANEUVER, [this](const auto & data){
 					currentManeuverSet_ = data;
 					onManeuverSet_(data);
 				});
+				dh->subscribeOnData<unsigned int>(Content::MANEUVER_STATUS, [this](const auto & data){
+					currentManeuverIdx_ = data;
+					onManeuverStatus_(data);
+				});
+				dh->subscribeOnData<unsigned int>(Content::MANEUVER_STATUS, [this](const auto & data){
+					currentManeuverIdx_ = data;
+				});
+			}
+			if (auto sched = get<IScheduler>())
+			{
+				sched->schedule([this]
+								{
+									if (auto dh = get<DataHandling>())
+									{
+										dh->sendData(DataRequest::MANEUVER_STATUS, Content::REQUEST_DATA,
+													 Target::FLIGHT_ANALYSIS);
+									}
+								}, Seconds(0), Seconds(1));
+
 			}
 			break;
 		}
@@ -66,11 +84,9 @@ PlanningManager::run(RunStage stage)
 void
 PlanningManager::requestCurrentManeuver() const
 {
-	CPSLOG_DEBUG << "Received request";
 	if(auto dh = get<DataHandling>())
 	{
 		dh->sendData(DataRequest::MANEUVER_SET, Content::REQUEST_DATA, Target::FLIGHT_ANALYSIS);
-		CPSLOG_DEBUG << "Maneuver set request sent";
 	} else {
 		CPSLOG_ERROR << "Missing DataHandling";
 	}
@@ -82,7 +98,7 @@ PlanningManager::getDefaultOverrides() const
 	return params.defaultOverrides();
 }
 
-const std::vector<ManeuverOverride>&
+const ManeuverDescriptor&
 PlanningManager::getCurrentManeuverSet() const
 {
 	return currentManeuverSet_;
@@ -92,4 +108,16 @@ boost::signals2::connection
 PlanningManager::subscribeOnManeuverSet(const OnManeuverOverrides::slot_type& slot)
 {
 	return onManeuverSet_.connect(slot);
+}
+
+boost::signals2::connection
+PlanningManager::subscribeOnManeuverStatus(const OnManeuverStatus::slot_type& slot)
+{
+	return onManeuverStatus_.connect(slot);
+}
+
+unsigned int
+PlanningManager::getCurrentManeuverIdx() const
+{
+	return currentManeuverIdx_;
 }
