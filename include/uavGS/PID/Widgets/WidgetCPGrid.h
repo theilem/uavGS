@@ -14,7 +14,7 @@ class WidgetCPGrid;
 
 class PIDConfigPlot;
 
-class WidgetCPGrid : public QWidget, public AggregatableObject<PIDConfigurator, GSWidgetFactory, DataHandling>
+class WidgetCPGrid: public QWidget, public AggregatableObject<PIDConfigurator, GSWidgetFactory, DataHandling, IScheduler>
 {
 Q_OBJECT
 
@@ -55,15 +55,14 @@ signals:
 private:
 
 	void
-	onPIDStati(const PIDStati& data);
+	populateGrid();
 
 	void
-	drawPlots();
+	clearPlots();
 
 	PIDStati pidStati_;
-	QString title;
 	Ui::WidgetCPGrid* ui;
-	std::map<int, PIDConfigPlot*> plots;
+	std::unordered_map<PIDs, PIDConfigPlot*> plots;
 };
 
 #endif // WIDGETCPGRID_H

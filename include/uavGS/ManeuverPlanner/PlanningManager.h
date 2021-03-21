@@ -25,9 +25,9 @@ public:
 
 	static constexpr TypeId typeId = "planning_manager";
 
-	using OnManeuverOverrides = boost::signals2::signal<void(const ManeuverDescriptor&)>;
-
-	using OnManeuverStatus = boost::signals2::signal<void(const int&)>;
+//	using OnManeuverOverrides = boost::signals2::signal<void(const ManeuverDescriptor&)>;
+//
+//	using OnManeuverStatus = boost::signals2::signal<void(const unsigned int&)>;
 
 	PlanningManager();
 
@@ -44,18 +44,22 @@ public:
 	getCurrentManeuverSet() const;
 
 	boost::signals2::connection
-	subscribeOnManeuverSet(const OnManeuverOverrides::slot_type& slot);
+//	subscribeOnManeuverSet(const OnManeuverOverrides::slot_type& slot);
+	subscribeOnManeuverSet(const boost::signals2::signal<void(void)>::slot_type& slot);
 
 	boost::signals2::connection
-	subscribeOnManeuverStatus(const OnManeuverStatus::slot_type& slot);
+//	subscribeOnManeuverStatus(const OnManeuverStatus::slot_type& slot);
+	subscribeOnManeuverStatus(const boost::signals2::signal<void(void)>::slot_type& slot);
 
 	int
 	getCurrentManeuverIdx() const;
 
 private:
 	ManeuverDescriptor currentManeuverSet_;
-	OnManeuverOverrides onManeuverSet_;
-	OnManeuverStatus onManeuverStatus_;
+//	OnManeuverOverrides onManeuverSet_;
+//	OnManeuverStatus onManeuverStatus_;
+	boost::signals2::signal<void(void)> onManeuverSet_;
+	boost::signals2::signal<void(void)> onManeuverStatus_;
 	int currentManeuverIdx_;
 };
 

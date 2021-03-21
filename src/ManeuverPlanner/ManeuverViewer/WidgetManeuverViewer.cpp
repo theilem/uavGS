@@ -28,18 +28,10 @@ WidgetManeuverViewer::connect()
 	if (auto pm = get<PlanningManager>())
 	{
 		drawManeuverSet();
-		pm->subscribeOnManeuverSet([this](const auto&)
-								   {
-									   // NOTE Boost doesn't let me create a parameterless signal, so I am passing the reference to the current
-									   // ManeuverSet but it is ignored. I tried passing it as a parameter to the draw function, but it involved
-									   // too much Qt wrapping, so I decided it would be easier to just ask the PlanningManager for the Maneuver again
-									   emit maneuverUpdated();
-								   });
-		pm->subscribeOnManeuverStatus([this](const auto&)
-								   {
-									   // NOTE same as above, ignore input data and trigger repaint
-									   emit maneuverUpdated();
-								   });
+		pm->subscribeOnManeuverSet([this]()->void
+								   { emit maneuverUpdated(); });
+		pm->subscribeOnManeuverStatus([this]()->void
+								   { emit maneuverUpdated(); });
 	}
 }
 

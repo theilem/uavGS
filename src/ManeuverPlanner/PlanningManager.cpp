@@ -54,11 +54,11 @@ PlanningManager::run(RunStage stage)
 			{
 				dh->subscribeOnData<ManeuverDescriptor>(Content::MANEUVER, [this](const auto & data){
 					currentManeuverSet_ = data;
-					onManeuverSet_(data);
+					onManeuverSet_();
 				});
 				dh->subscribeOnData<int>(Content::MANEUVER_STATUS, [this](const auto & data){
 					currentManeuverIdx_ = data;
-					onManeuverStatus_(data);
+					onManeuverStatus_();
 				});
 			}
 			if (auto sched = get<IScheduler>())
@@ -101,13 +101,13 @@ PlanningManager::getCurrentManeuverSet() const
 }
 
 boost::signals2::connection
-PlanningManager::subscribeOnManeuverSet(const OnManeuverOverrides::slot_type& slot)
+PlanningManager::subscribeOnManeuverSet(const boost::signals2::signal<void(void)>::slot_type& slot)
 {
 	return onManeuverSet_.connect(slot);
 }
 
 boost::signals2::connection
-PlanningManager::subscribeOnManeuverStatus(const OnManeuverStatus::slot_type& slot)
+PlanningManager::subscribeOnManeuverStatus(const boost::signals2::signal<void(void)>::slot_type& slot)
 {
 	return onManeuverStatus_.connect(slot);
 }
