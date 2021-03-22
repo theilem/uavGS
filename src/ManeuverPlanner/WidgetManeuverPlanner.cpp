@@ -126,6 +126,14 @@ WidgetManeuverPlanner::connect()
 		dh->subscribeOnData<std::vector<std::string>>(Content::MANEUVER_LIST, [this](const auto& m)
 		{ maneuversList_ = m; emit contentUpdated(); });
 	}
+	if (auto sched = get<IScheduler>())
+	{
+		sched->schedule([this]
+						{
+							on_update_clicked();
+						}, Seconds(1));
+
+	}
 }
 
 void

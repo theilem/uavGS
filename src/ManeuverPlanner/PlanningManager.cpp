@@ -14,6 +14,9 @@
 #include <uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlannerParams.h>
 #include <uavAP/MissionControl/LocalFrameManager/LocalFrameManagerParams.h>
 
+PlanningManager::PlanningManager() : currentManeuverIdx_(-1)
+{}
+
 bool
 PlanningManager::run(RunStage stage)
 {
@@ -53,24 +56,17 @@ PlanningManager::run(RunStage stage)
 					currentManeuverSet_ = data;
 					onManeuverSet_(data);
 				});
-				dh->subscribeOnData<unsigned int>(Content::MANEUVER_STATUS, [this](const auto & data){
+				dh->subscribeOnData<int>(Content::MANEUVER_STATUS, [this](const auto & data){
 					currentManeuverIdx_ = data;
 					onManeuverStatus_(data);
-				});
-				dh->subscribeOnData<unsigned int>(Content::MANEUVER_STATUS, [this](const auto & data){
-					currentManeuverIdx_ = data;
 				});
 			}
 			if (auto sched = get<IScheduler>())
 			{
 				sched->schedule([this]
 								{
-									if (auto dh = get<DataHandling>())
-									{
-										dh->sendData(DataRequest::MANEUVER_STATUS, Content::REQUEST_DATA,
-													 Target::FLIGHT_ANALYSIS);
-									}
-								}, Seconds(0), Seconds(1));
+									requestCurrentManeuver();
+								}, Seconds(1));
 
 			}
 			break;
@@ -116,7 +112,7 @@ PlanningManager::subscribeOnManeuverStatus(const OnManeuverStatus::slot_type& sl
 	return onManeuverStatus_.connect(slot);
 }
 
-unsigned int
+int
 PlanningManager::getCurrentManeuverIdx() const
 {
 	return currentManeuverIdx_;

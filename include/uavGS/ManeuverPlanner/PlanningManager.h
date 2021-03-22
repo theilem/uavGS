@@ -27,7 +27,9 @@ public:
 
 	using OnManeuverOverrides = boost::signals2::signal<void(const ManeuverDescriptor&)>;
 
-	using OnManeuverStatus = boost::signals2::signal<void(const unsigned int&)>;
+	using OnManeuverStatus = boost::signals2::signal<void(const int&)>;
+
+	PlanningManager();
 
 	bool
 	run(RunStage stage) override;
@@ -47,14 +49,14 @@ public:
 	boost::signals2::connection
 	subscribeOnManeuverStatus(const OnManeuverStatus::slot_type& slot);
 
-	unsigned int
+	int
 	getCurrentManeuverIdx() const;
 
 private:
 	ManeuverDescriptor currentManeuverSet_;
 	OnManeuverOverrides onManeuverSet_;
 	OnManeuverStatus onManeuverStatus_;
-	unsigned int currentManeuverIdx_;
+	int currentManeuverIdx_;
 };
 
 

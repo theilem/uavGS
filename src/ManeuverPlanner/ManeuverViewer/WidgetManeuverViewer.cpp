@@ -66,14 +66,14 @@ WidgetManeuverViewer::drawManeuverSet()
 	{
 		const ManeuverDescriptor& currentManeuverSet = pm->getCurrentManeuverSet();
 		auto activeIdx = pm->getCurrentManeuverIdx();
-		if (currentManeuverSet.overrides.empty())
+		if (activeIdx < 0 || currentManeuverSet.overrides.empty())
 		{
 			scene->addItem(new QGraphicsTextItem(tr("No Maneuver Set Active")));
 			ui->currentManeuverLabel->setText(tr("N/A"));
 		}
 		else
 		{
-			if (activeIdx > currentManeuverSet.overrides.size())
+			if ((unsigned) activeIdx > currentManeuverSet.overrides.size())
 			{
 				CPSLOG_ERROR << "Current active maneuver idx is greater than number of maneuver items. Consider refreshing.";
 			}
@@ -106,12 +106,12 @@ WidgetManeuverViewer::drawManeuverSet()
 				auto text_rect = textItem->boundingRect();
 				rect->setRect(text_rect);
 				rect->setX(lastX);
-				if (activeIdx == idx)
+				if ((unsigned) activeIdx == idx)
 				{
 					//active maneuver
 					rect->setBrush(QColor(0, 255, 0));
 				}
-				else if (activeIdx > idx)
+				else if ((unsigned) activeIdx > idx)
 				{
 					//completed maneuver
 					rect->setBrush(QColor(0, 0, 128));
