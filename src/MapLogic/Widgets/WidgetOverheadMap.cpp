@@ -32,6 +32,8 @@ WidgetOverheadMap::WidgetOverheadMap(QWidget* parent) :
 
 WidgetOverheadMap::~WidgetOverheadMap()
 {
+	//https://doc.qt.io/qt-5/qgraphicsview.html#setScene -- view does not take ownership of scene so it must be deleted
+	delete ui->mapView->scene();
 	delete ui;
 }
 

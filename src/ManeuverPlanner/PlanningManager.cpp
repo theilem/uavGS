@@ -5,6 +5,7 @@
 #include "uavGS/ManeuverPlanner/PlanningManager.h"
 #include "uavGS/GSWidgetFactory.h"
 #include <uavGS/ManeuverPlanner/WidgetManeuverPlanner.h>
+#include <uavGS/ManeuverPlanner/ManeuverViewer/WidgetManeuverViewer.h>
 #include <uavGS/ParameterSets/WidgetParameterSets.h>
 #include <uavAP/Core/DataHandling/DataHandling.h>
 #include "uavGS/ParameterSets/WidgetGeneric.h"
@@ -12,7 +13,9 @@
 #include <uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlannerParams.h>
 #include <uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlannerParams.h>
 #include <uavAP/MissionControl/LocalFrameManager/LocalFrameManagerParams.h>
-#include <uavAP/FlightControl/Safety/OverrideSafetyParams.h>
+
+PlanningManager::PlanningManager() : currentManeuverIdx_(-1)
+{}
 
 bool
 PlanningManager::run(RunStage stage)
@@ -21,7 +24,7 @@ PlanningManager::run(RunStage stage)
 	{
 		case RunStage::INIT:
 		{
-			if (!checkIsSet<DataHandling, GSWidgetFactory>())
+			if (!checkIsSetAll())
 			{
 				CPSLOG_ERROR << "Missing dependencies";
 				return true;
@@ -42,10 +45,30 @@ PlanningManager::run(RunStage stage)
 //			wf->registerWidget<WidgetParameterSets<OverrideSafetyParams,
 //					Content::OVERRIDE_SAFETY_PARAMS,
 //					Target::FLIGHT_CONTROL>>("override_safety");
+			wf->registerWidget<WidgetManeuverViewer>();
 			break;
 		}
 		case RunStage::NORMAL:
 		{
+			if (auto dh = get<DataHandling>())
+			{
+				dh->subscribeOnData<ManeuverDescriptor>(Content::MANEUVER, [this](const auto & data){
+					currentManeuverSet_ = data;
+					onManeuverSet_();
+				});
+				dh->subscribeOnData<int>(Content::MANEUVER_STATUS, [this](const auto & data){
+					currentManeuverIdx_ = data;
+					onManeuverStatus_();
+				});
+			}
+			if (auto sched = get<IScheduler>())
+			{
+				sched->schedule([this]
+								{
+									requestCurrentManeuver();
+								}, Seconds(1));
+
+			}
 			break;
 		}
 		default:
@@ -54,8 +77,43 @@ PlanningManager::run(RunStage stage)
 	return false;
 }
 
+void
+PlanningManager::requestCurrentManeuver() const
+{
+	if(auto dh = get<DataHandling>())
+	{
+		dh->sendData(DataRequest::MANEUVER_SET, Content::REQUEST_DATA, Target::FLIGHT_ANALYSIS);
+	} else {
+		CPSLOG_ERROR << "Missing DataHandling";
+	}
+}
+
 std::vector<std::string>
 PlanningManager::getDefaultOverrides() const
 {
 	return params.defaultOverrides();
+}
+
+const ManeuverDescriptor&
+PlanningManager::getCurrentManeuverSet() const
+{
+	return currentManeuverSet_;
+}
+
+boost::signals2::connection
+PlanningManager::subscribeOnManeuverSet(const boost::signals2::signal<void(void)>::slot_type& slot)
+{
+	return onManeuverSet_.connect(slot);
+}
+
+boost::signals2::connection
+PlanningManager::subscribeOnManeuverStatus(const boost::signals2::signal<void(void)>::slot_type& slot)
+{
+	return onManeuverStatus_.connect(slot);
+}
+
+int
+PlanningManager::getCurrentManeuverIdx() const
+{
+	return currentManeuverIdx_;
 }

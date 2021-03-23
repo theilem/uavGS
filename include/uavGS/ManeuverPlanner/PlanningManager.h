@@ -5,26 +5,62 @@
 #ifndef UAVGS_PLANNINGMANAGER_H
 #define UAVGS_PLANNINGMANAGER_H
 
+#include <uavAP/FlightAnalysis/ManeuverPlanner/Maneuver.h>
+
 #include "uavGS/ManeuverPlanner/PlanningManagerParams.h"
 #include <cpsCore/cps_object>
+#include <boost/signals2/signal.hpp>
 
+class IScheduler;
 class DataHandling;
 class GSWidgetFactory;
 
 class PlanningManager
-		: public AggregatableObject<DataHandling, GSWidgetFactory>,
+		: public AggregatableObject<DataHandling, GSWidgetFactory, IScheduler>,
 		  public ConfigurableObject<PlanningManagerParams>,
 		  public IRunnableObject
 {
+
 public:
 
 	static constexpr TypeId typeId = "planning_manager";
 
+//	using OnManeuverOverrides = boost::signals2::signal<void(const ManeuverDescriptor&)>;
+//
+//	using OnManeuverStatus = boost::signals2::signal<void(const unsigned int&)>;
+
+	PlanningManager();
+
 	bool
 	run(RunStage stage) override;
 
+	void
+	requestCurrentManeuver() const;
+
 	std::vector<std::string>
 	getDefaultOverrides() const;
+
+	const ManeuverDescriptor&
+	getCurrentManeuverSet() const;
+
+	boost::signals2::connection
+//	subscribeOnManeuverSet(const OnManeuverOverrides::slot_type& slot);
+	subscribeOnManeuverSet(const boost::signals2::signal<void(void)>::slot_type& slot);
+
+	boost::signals2::connection
+//	subscribeOnManeuverStatus(const OnManeuverStatus::slot_type& slot);
+	subscribeOnManeuverStatus(const boost::signals2::signal<void(void)>::slot_type& slot);
+
+	int
+	getCurrentManeuverIdx() const;
+
+private:
+	ManeuverDescriptor currentManeuverSet_;
+//	OnManeuverOverrides onManeuverSet_;
+//	OnManeuverStatus onManeuverStatus_;
+	boost::signals2::signal<void(void)> onManeuverSet_;
+	boost::signals2::signal<void(void)> onManeuverStatus_;
+	int currentManeuverIdx_;
 };
 
 

@@ -17,7 +17,7 @@ class WidgetManeuverPlanner;
 }
 class PlanningManager;
 
-class WidgetManeuverPlanner: public QWidget, public AggregatableObject<DataHandling, PlanningManager>
+class WidgetManeuverPlanner: public QWidget, public AggregatableObject<DataHandling, PlanningManager, IScheduler>
 {
 Q_OBJECT
 

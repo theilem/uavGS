@@ -16,13 +16,6 @@ WidgetCPGrid::WidgetCPGrid(QWidget* parent) :
 }
 
 void
-WidgetCPGrid::onPIDStati(const PIDStati& stati)
-{
-	pidStati_ = stati;
-	emit contentUpdated();
-}
-
-void
 WidgetCPGrid::on_saveGains_clicked()
 {
 	QJsonObject config;
@@ -36,7 +29,6 @@ WidgetCPGrid::on_saveGains_clicked()
 		gains["imax"] = it.second->getIMax();
 		config[it.second->title] = gains;
 	}
-	//QJsonObject config = cm_->getFlightConfig();
 	QJsonDocument d(config);
 	QFileDialog dialog;
 	dialog.setWindowTitle("Save json configs");
@@ -111,7 +103,7 @@ WidgetCPGrid::on_requestParams_clicked()
 	if (auto pc = get<PIDConfigurator>())
 	{
 		pc->requestPIDParams();
-		plots.clear();
+		clearPlots();
 	}
 }
 
@@ -125,31 +117,33 @@ WidgetCPGrid::on_sendAllParams_clicked()
 }
 
 void
-WidgetCPGrid::drawPlots()
+WidgetCPGrid::populateGrid()
 {
-	for (auto it : plots)
-	{
-		ui->gridLayout->removeWidget(it.second);
-		delete it.second;
-	}
-	plots.clear();
+	clearPlots();
 	if (auto pc = get<PIDConfigurator>())
 	{
 		auto wf = get<GSWidgetFactory>();
 		if (!wf)
+		{
+			CPSLOG_ERROR << "WidgetFactory missing.";
 			return;
+		}
 		int count = 0;
 		for (auto& it : pc->getPIDMap())
 		{
 			auto cp = wf->createWidget<PIDConfigPlot>(this);
 			cp->setParams(it.first, it.second);
+			//TODO we are using it as a horizontal layout, might as well change it to one
 			ui->gridLayout->addWidget(cp, 0, count);
-			plots.insert(std::make_pair(static_cast<int>(it.first), cp));
+			plots.insert(std::make_pair(it.first, cp));
 			++count;
 		}
 	}
 	else
-		CPSLOG_ERROR << "Cannot connect WidgetCPGrid to PIDMap. ConfigManager missing.";
+	{
+		CPSLOG_ERROR << "Cannot connect WidgetCPGrid to PIDMap. PIDConfigurator missing.";
+	}
+
 }
 
 WidgetCPGrid::~WidgetCPGrid()
@@ -163,10 +157,19 @@ WidgetCPGrid::connect()
 	QObject::connect(this, SIGNAL(contentUpdated()), this, SLOT(contentUpdatedSlot()));
 	if (auto dh = get<DataHandling>())
 	{
-		dh->subscribeOnData<PIDStati>(Content::PID_STATUS, [this](const auto& status){onPIDStati(status);});
+		dh->subscribeOnData<PIDStati>(Content::PID_STATUS, [this](const auto& status)
+		{
+			pidStati_ = status;
+			emit contentUpdated();
+		});
 	}
 
-	drawPlots();
+	if (auto sched = get<IScheduler>()){
+		sched->schedule([this]()->void
+		{
+			on_requestParams_clicked();
+		}, Seconds(1));
+	}
 }
 
 void
@@ -174,19 +177,48 @@ WidgetCPGrid::contentUpdatedSlot()
 {
 	if (plots.empty())
 	{
-		drawPlots();
+		populateGrid();
 	}
-	if (plots.empty())
-		return;
 	for (auto& it : pidStati_)
 	{
-		auto plot = plots.find(static_cast<int>(it.first));
-		if (plot == plots.end())
+		auto plot = plots.find(it.first);
+		if (plot != plots.end())
 		{
-			CPSLOG_WARN << "PID status id " << static_cast<int>(it.first) << " does not match any plot";
-			continue;
+			plot->second->setData(it.second.value, it.second.target);
 		}
-		plot->second->setData(it.second.value, it.second.target);
+		else
+		{
+			CPSLOG_WARN << "PID status " << EnumMap<PIDs>::convert(it.first) << " (id " << static_cast<int>(it.first)
+						<< ") does not match any plot";
+		}
 	}
 	this->update();
+}
+
+
+// https://stackoverflow.com/questions/4857188/clearing-a-layout-in-qt
+void
+clearLayout(QLayout* layout)
+{
+	QLayoutItem* item;
+	while ((item = layout->takeAt(0)))
+	{
+		if (item->layout())
+		{
+			clearLayout(item->layout());
+			delete item->layout();
+		}
+		if (item->widget())
+		{
+			delete item->widget();
+		}
+		delete item;
+	}
+}
+
+void
+WidgetCPGrid::clearPlots()
+{
+	plots.clear();
+	clearLayout(ui->gridLayout);
 }
