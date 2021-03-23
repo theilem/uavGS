@@ -28,10 +28,10 @@ WidgetManeuverViewer::connect()
 	if (auto pm = get<PlanningManager>())
 	{
 		drawManeuverSet();
-		pm->subscribeOnManeuverSet([this]()->void
+		pm->subscribeOnManeuverSet([this]() -> void
 								   { emit maneuverUpdated(); });
-		pm->subscribeOnManeuverStatus([this]()->void
-								   { emit maneuverUpdated(); });
+		pm->subscribeOnManeuverStatus([this]() -> void
+									  { emit maneuverUpdated(); });
 	}
 }
 
@@ -73,27 +73,58 @@ WidgetManeuverViewer::drawManeuverSet()
 			ui->currentManeuverLabel->setText(tr(currentManeuverSet.maneuverName.data()));
 			qreal lastX = 0;
 			// Assuming same number of overrides and transitions, so only checking overrideIt != end
-			for (auto[overrideIt, transitionIt, idx] = std::tuple(currentManeuverSet.overrides.begin(),
-																  currentManeuverSet.conditions.begin(), unsigned{0});
-				 overrideIt != currentManeuverSet.overrides.end(); overrideIt++, transitionIt++, idx++)
+			for (auto[overrideIt, maintainIt, waveformIt, transitionIt, idx] =
+				 std::tuple(currentManeuverSet.overrides.begin(), currentManeuverSet.maintains.begin(),
+							currentManeuverSet.waveforms.begin(), currentManeuverSet.transitions.begin(), unsigned{0});
+				 overrideIt != currentManeuverSet.overrides.end();
+				 overrideIt++, maintainIt++, waveformIt++, transitionIt++, idx++)
 			{
 				QString text;
-				text += tr("-----------------\n");
-				text += tr("Override Settings\n");
-				text += tr("-----------------\n");
-				for (const auto& override: *overrideIt)
+				if (!overrideIt->empty())
 				{
-					text += QString::fromStdString(override.first) + tr(":") + QString::number(override.second) +
-							tr("\n");
+					text += tr("-----------------\n");
+					text += tr("Override Settings\n");
+					text += tr("-----------------\n");
+					for (const auto& override: *overrideIt)
+					{
+						text += QString::fromStdString(override.first) + tr(":") + QString::number(override.second) +
+								tr("\n");
+					}
 				}
 
-				text += tr("---------------------\n");
-				text += tr("Transition Conditions\n");
-				text += tr("---------------------\n");
-				text += tr((transitionIt->data()));
+				if (!maintainIt->empty())
+				{
+					text += tr("-----------------\n");
+					text += tr("Maintain Settings\n");
+					text += tr("-----------------\n");
+					for (const auto& maintainElem : *maintainIt)
+					{
+						text += (tr(maintainElem.data()) + tr("\n"));
+					}
+				}
+
+				if(!waveformIt->empty())
+				{
+					text += tr("-----------------\n");
+					text += tr("Waveform Settings\n");
+					text += tr("-----------------\n");
+					for (const auto& waveElem : *waveformIt)
+					{
+						text += (tr(waveElem.first.data()) + tr(":") + tr(waveElem.second.data()) + tr("\n"));
+					}
+				}
+
+				if(!transitionIt->empty())
+				{
+					text += tr("-------------------\n");
+					text += tr("Transition Settings\n");
+					text += tr("-------------------\n");
+					text += tr((transitionIt->data()));
+				}
 
 				auto rect = new QGraphicsRectItem();
 				auto textItem = new QGraphicsTextItem(text, rect);
+				textItem->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
 				textItem->setDefaultTextColor(QColor(255, 255, 255));
 				auto text_rect = textItem->boundingRect();
 				rect->setRect(text_rect);
