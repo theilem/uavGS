@@ -2,9 +2,7 @@
 // Created by mirco on 30.06.20.
 //
 
-#include <uavGS/ParameterSets/NamedLineEdit.h>
 #include "uavGS/ParameterSets/WidgetGeneric.h"
-#include "uavGS/ParameterSets/WidgetPopulator.h"
 #include "uavGS/ParameterSets/WidgetTreeParser.h"
 
 

@@ -15,19 +15,41 @@ PIDConfigPlot::setParams(PIDs pid, const Control::PIDParameters& params)
 	key_ = static_cast<int>(pid);
 	auto name = EnumMap<PIDs>::convert(pid);
 	ui->customPlot->setTitle(name);
-	//ui->customPlot->setTname
-	title = QString::fromStdString(name);
+
 	// Set title and PID params
-	ui->kP->setText(QString::number(params.kp()));
-	ui->kP->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
-	ui->kI->setText(QString::number(params.ki()));
-	ui->kI->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
-	ui->kD->setText(QString::number(params.kd()));
-	ui->kD->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
-	ui->IMax->setText(QString::number(params.imax()));
-	ui->IMax->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
-	ui->FF->setText(QString::number(params.ff()));
-	ui->FF->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
+	title = QString::fromStdString(name);
+	angle_ = params.isAngle.value;
+	// Maybe we want to automate this using the techniques from WidgetGeneric
+	kp_ = new NamedLineEdit(params.kp.id, this);
+	ki_ = new NamedLineEdit(params.ki.id, this);
+	kd_ = new NamedLineEdit(params.kd.id, this);
+	imax_ = new NamedLineEdit(params.imax.id, this);
+	ff_ = new NamedLineEdit(params.ff.id, this);
+
+	kp_->set(params.kp.value);
+	ki_->set(params.ki.value);
+	kd_->set(params.kd.value);
+	imax_->set(params.imax.value);
+	ff_->set(params.ff.value);
+
+	QString stylesheet = tr("border: 1px solid gray; height:25px;");
+
+	kp_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	ki_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	kd_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	ff_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	imax_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	kp_->setStyleSheet(stylesheet);
+	ki_->setStyleSheet(stylesheet);
+	kd_->setStyleSheet(stylesheet);
+	ff_->setStyleSheet(stylesheet);
+	imax_->setStyleSheet(stylesheet);
+
+	ui->verticalLayout->insertWidget(1, ff_);
+	ui->verticalLayout->insertWidget(1, imax_);
+	ui->verticalLayout->insertWidget(1, kd_);
+	ui->verticalLayout->insertWidget(1, ki_);
+	ui->verticalLayout->insertWidget(1, kp_);
 }
 
 PIDConfigPlot::~PIDConfigPlot()
@@ -56,31 +78,31 @@ PIDConfigPlot::connect()
 double
 PIDConfigPlot::getkP()
 {
-	return ui->kP->text().toDouble();
+	return kp_->getDouble();
 }
 
 double
 PIDConfigPlot::getkI()
 {
-	return ui->kI->text().toDouble();
+	return ki_->getDouble();
 }
 
 double
 PIDConfigPlot::getkD()
 {
-	return ui->kD->text().toDouble();;
+	return kd_->getDouble();;
 }
 
 double
 PIDConfigPlot::getFF()
 {
-	return ui->FF->text().toDouble();
+	return ff_->getDouble();
 }
 
 double
 PIDConfigPlot::getIMax()
 {
-	return ui->IMax->text().toDouble();
+	return imax_->getDouble();
 }
 
 void
@@ -92,42 +114,43 @@ PIDConfigPlot::resetGraph()
 void
 PIDConfigPlot::setkP(double kP)
 {
-	ui->kP->setText(QString::number(kP));
+	kp_->set(kP);
 }
 
 void
 PIDConfigPlot::setkI(double kI)
 {
-	ui->kI->setText(QString::number(kI));
+	ki_->set(kI);
 }
 
 void
 PIDConfigPlot::setkD(double kD)
 {
-	ui->kD->setText(QString::number(kD));
+	kd_->set(kD);
 }
 
 void
 PIDConfigPlot::setFF(double ff)
 {
-	ui->FF->setText(QString::number(ff));
+	ff_->set(ff);
 }
 
 void
 PIDConfigPlot::setIMax(double iMax)
 {
-	ui->IMax->setText(QString::number(iMax));
+	imax_->set(iMax);
 }
 
 void
 PIDConfigPlot::on_send_clicked()
 {
 	Control::PIDParameters a;
-	a.kp = ui->kP->text().toDouble();
-	a.ki = ui->kI->text().toDouble();
-	a.kd = ui->kD->text().toDouble();
-	a.ff = ui->FF->text().toDouble();
-	a.imax = ui->IMax->text().toDouble();
+	a.kp = getkP();
+	a.ki = getkI();
+	a.kd = getkD();
+	a.ff = getFF();
+	a.imax = getIMax();
+	a.isAngle = angle_;
 	PIDTuning tune;
 	tune.pid = key_;
 	tune.params = a;
