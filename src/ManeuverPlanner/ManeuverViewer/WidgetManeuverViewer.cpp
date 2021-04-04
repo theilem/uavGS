@@ -5,6 +5,7 @@
 #include <QtWidgets>
 #include "ui_WidgetManeuverViewer.h"
 #include "uavGS/ManeuverPlanner/ManeuverViewer/WidgetManeuverViewer.h"
+#include "uavGS/ManeuverPlanner/PlanningManager.h"
 
 WidgetManeuverViewer::WidgetManeuverViewer(QWidget* parent) :
 		QWidget(parent), scene(new QGraphicsScene), ui(new Ui::WidgetManeuverViewer)

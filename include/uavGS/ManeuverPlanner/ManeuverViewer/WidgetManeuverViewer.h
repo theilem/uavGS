@@ -9,15 +9,15 @@
 #include <QGraphicsScene>
 #include <cpsCore/Aggregation/AggregatableObject.hpp>
 #include <uavAP/Core/DataHandling/DataHandling.h>
-#include <uavGS/GSWidgetFactory.h>
 
 namespace Ui {
 class WidgetManeuverViewer;
 }
 
 class QGraphicsScene;
+class PlanningManager;
 
-class WidgetManeuverViewer: public QWidget, public AggregatableObject<PlanningManager, GSWidgetFactory>
+class WidgetManeuverViewer: public QWidget, public AggregatableObject<PlanningManager>
 {
 	Q_OBJECT
 public:

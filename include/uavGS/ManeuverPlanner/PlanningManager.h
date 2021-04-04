@@ -14,6 +14,7 @@
 class IScheduler;
 class DataHandling;
 class GSWidgetFactory;
+class Mission;
 
 class PlanningManager
 		: public AggregatableObject<DataHandling, GSWidgetFactory, IScheduler>,
@@ -25,10 +26,6 @@ public:
 
 	static constexpr TypeId typeId = "planning_manager";
 
-//	using OnManeuverOverrides = boost::signals2::signal<void(const ManeuverDescriptor&)>;
-//
-//	using OnManeuverStatus = boost::signals2::signal<void(const unsigned int&)>;
-
 	PlanningManager();
 
 	bool
@@ -37,30 +34,75 @@ public:
 	void
 	requestCurrentManeuver() const;
 
+	void
+	requestOverrides() const;
+
+	void
+	requestManeuvers() const;
+
+	void
+	requestMaintains() const;
+
+	void
+	requestMission() const;
+
+	void
+	requestAll() const;
+
 	std::vector<std::string>
 	getDefaultOverrides() const;
 
 	const ManeuverDescriptor&
 	getCurrentManeuverSet() const;
 
-	boost::signals2::connection
-//	subscribeOnManeuverSet(const OnManeuverOverrides::slot_type& slot);
-	subscribeOnManeuverSet(const boost::signals2::signal<void(void)>::slot_type& slot);
+	const std::vector<std::string>&
+	getOverrides() const;
 
-	boost::signals2::connection
-//	subscribeOnManeuverStatus(const OnManeuverStatus::slot_type& slot);
-	subscribeOnManeuverStatus(const boost::signals2::signal<void(void)>::slot_type& slot);
+	const std::vector<std::string>&
+	getManeuvers() const;
+
+	const std::vector<std::string>&
+	getMaintains() const;
+
+	const std::map<std::string, Mission>&
+	getMission() const;
 
 	int
 	getCurrentManeuverIdx() const;
 
+	boost::signals2::connection
+	subscribeOnManeuverSet(const boost::signals2::signal<void(void)>::slot_type& slot);
+
+	boost::signals2::connection
+	subscribeOnManeuverStatus(const boost::signals2::signal<void(void)>::slot_type& slot);
+
+	boost::signals2::connection
+	subscribeOnOverrides(const boost::signals2::signal<void(void)>::slot_type& slot);
+
+	boost::signals2::connection
+	subscribeOnManeuvers(const boost::signals2::signal<void(void)>::slot_type& slot);
+
+	boost::signals2::connection
+	subscribeOnMaintains(const boost::signals2::signal<void(void)>::slot_type& slot);
+
+	boost::signals2::connection
+	subscribeOnMission(const boost::signals2::signal<void(void)>::slot_type& slot);
+
 private:
 	ManeuverDescriptor currentManeuverSet_;
-//	OnManeuverOverrides onManeuverSet_;
-//	OnManeuverStatus onManeuverStatus_;
-	boost::signals2::signal<void(void)> onManeuverSet_;
-	boost::signals2::signal<void(void)> onManeuverStatus_;
+	std::vector<std::string> overrideList_;
+	std::vector<std::string> maneuverList_;
+	std::vector<std::string> maintainList_;
+	// Note, the mission isn't actually used, I suggest just saving the mission names
+	std::map<std::string, Mission> missionMap_;
 	int currentManeuverIdx_;
+
+	boost::signals2::signal<void(void)> onManeuverSet_;
+	boost::signals2::signal<void(void)> onOverrides_;
+	boost::signals2::signal<void(void)> onManeuvers_;
+	boost::signals2::signal<void(void)> onMaintains_;
+	boost::signals2::signal<void(void)> onMission_;
+	boost::signals2::signal<void(void)> onManeuverStatus_;
 };
 
 
