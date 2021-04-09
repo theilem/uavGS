@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WidgetMotionPrimitive</class>
+ <widget class="QWidget" name="WidgetMotionPrimitive">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1289</width>
+    <height>1067</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <widget class="QGroupBox" name="mainGroupBox">
+     <property name="title">
+      <string>Maneuver Element</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <layout class="QHBoxLayout" name="closeHorizontalLayout">
+        <item>
+         <spacer name="closeSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="close">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>x</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Motion Primitive</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="topMargin">
+            <number>24</number>
+           </property>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QGroupBox" name="overrideGroupBox">
+               <property name="title">
+                <string>Overrides</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_15">
+                <property name="topMargin">
+                 <number>24</number>
+                </property>
+                <item>
+                 <layout class="QVBoxLayout" name="overrideLayout">
+                  <item>
+                   <layout class="QHBoxLayout" name="overrideAddLayout">
+                    <item>
+                     <widget class="QComboBox" name="overrideOptions"/>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="addOverride">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string>Add</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <spacer name="overridesVerticalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="waveformGroupBox">
+               <property name="title">
+                <string>Waveforms</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_16">
+                <property name="topMargin">
+                 <number>24</number>
+                </property>
+                <item>
+                 <layout class="QVBoxLayout" name="waveformLayout">
+                  <item>
+                   <layout class="QHBoxLayout" name="waveformAddLayout">
+                    <item>
+                     <widget class="QComboBox" name="waveformOptions"/>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="addWaveform">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string>Add</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <spacer name="waveformVerticalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="maintainsGroupBox">
+               <property name="title">
+                <string>Maintains</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_17">
+                <property name="topMargin">
+                 <number>24</number>
+                </property>
+                <item>
+                 <layout class="QVBoxLayout" name="maintainsLayout">
+                  <item>
+                   <layout class="QHBoxLayout" name="maintainsAddLayout">
+                    <item>
+                     <widget class="QComboBox" name="maintainsOptions"/>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="addMaintains">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string>Add</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <spacer name="maintainsVerticalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="conditionVerticalLayout">
+          <item>
+           <spacer name="conditionSpacerTop">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="conditionGroupBox">
+            <property name="title">
+             <string>Transition Condition</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_19">
+             <property name="topMargin">
+              <number>24</number>
+             </property>
+             <item>
+              <layout class="QVBoxLayout" name="conditionLayout">
+               <item>
+                <layout class="QHBoxLayout" name="conditionAddLayout">
+                 <item>
+                  <widget class="QComboBox" name="conditionOptions">
+                   <item>
+                    <property name="text">
+                     <string>Duration Condition</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Steady State Condition</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Sensor Data Condition</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="selectCondition">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Select</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer name="conditionSpacerBottom">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

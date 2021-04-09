@@ -40,13 +40,16 @@ private slots:
 	on_addOverride_clicked();
 
 	void
-	onButtonClickedOverride(const std::string& key, SelectionValue* wid);
+	onOverrideDeleteClicked(const std::string& key, SelectionValue* wid);
 
 	void
 	on_addMaintain_clicked();
 
 	void
-	onButtonClickedMaintain(const std::string& key, Selection* wid);
+	onManeuverDeleteClicked(const std::string& key, Selection* wid);
+
+	void
+	conditionSelected(const QString &op);
 
 private:
 
@@ -65,6 +68,9 @@ private:
 
 	std::unordered_map<std::string, QWidget*> maintains_;
 	std::set<std::string> maintainOrder_;
+
+	std::unordered_map<std::string, std::string> conditionMappings_;
+	std::unordered_map<std::string, std::string> waveformMappings_;
 };
 
 #endif // WIDGETSINGLETONMANEUVER_H

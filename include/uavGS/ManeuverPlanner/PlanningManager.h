@@ -10,6 +10,7 @@
 #include "uavGS/ManeuverPlanner/PlanningManagerParams.h"
 #include <cpsCore/cps_object>
 #include <boost/signals2/signal.hpp>
+#include <uavGS/ManeuverPlanner/ManeuverEditor/Reflection/ReflectionInterpreter.h>
 
 class IScheduler;
 class DataHandling;

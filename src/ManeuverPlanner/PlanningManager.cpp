@@ -14,7 +14,7 @@
 #include <uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlannerParams.h>
 #include <uavAP/MissionControl/LocalFrameManager/LocalFrameManagerParams.h>
 #include <uavAP/MissionControl/MissionPlanner/Mission.h>
-#include <uavGS/ManeuverPlanner/ManeuverEditor/WidgetManeuverEditor.h>
+#include <uavGS/ManeuverPlanner/VisualScripter/WidgetVisualScripter.h>
 
 PlanningManager::PlanningManager() : currentManeuverIdx_(-1)
 {}
@@ -35,7 +35,7 @@ PlanningManager::run(RunStage stage)
 			auto wf = get<GSWidgetFactory>();
 			wf->registerWidget<WidgetManeuverPlanner>();
 			wf->registerWidget<WidgetManeuverViewer>();
-			wf->registerWidget<WidgetManeuverEditor>();
+			wf->registerWidget<WidgetVisualScripter>();
 //			wf->registerWidget<WidgetGeneric>();
 			wf->registerWidget<WidgetParameterSets<ManeuverLocalPlannerParams,
 					Content::MANEUVER_LOCAL_PLANNER_PARAMS,

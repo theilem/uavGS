@@ -46,7 +46,7 @@ WidgetManeuverEditor::deleteSingleton(WidgetSingletonManeuver* toDelete)
 }
 
 const std::vector<std::string>&
-WidgetManeuverEditor::getOverrides()
+WidgetManeuverEditor::getOverrides() const
 {
 	if (auto pm = get<PlanningManager>())
 	{
@@ -59,7 +59,7 @@ WidgetManeuverEditor::getOverrides()
 }
 
 const std::vector<std::string>&
-WidgetManeuverEditor::getMaintains()
+WidgetManeuverEditor::getMaintains() const
 {
 	if (auto pm = get<PlanningManager>())
 	{
@@ -68,5 +68,44 @@ WidgetManeuverEditor::getMaintains()
 	{
 		CPSLOG_ERROR << "Missing PlanningManager";
 		throw std::runtime_error("Missing PlanningManager");
+	}
+}
+
+const std::unordered_map<std::string, std::unordered_map<std::string, std::string>>&
+WidgetManeuverEditor::getMapping() const
+{
+	if (auto ri = get<ReflectionInterpreter>())
+	{
+		return ri->getMapping();
+	} else
+	{
+		CPSLOG_ERROR << "Missing ReflectionInterpreter";
+		throw std::runtime_error("Missing ReflectionInterpreter");
+	}
+}
+
+const std::unordered_map<std::string, Configuration>&
+WidgetManeuverEditor::getConfiguration() const
+{
+	if (auto ri = get<ReflectionInterpreter>())
+	{
+		return ri->getConfiguration();
+	} else
+	{
+		CPSLOG_ERROR << "Missing ReflectionInterpreter";
+		throw std::runtime_error("Missing ReflectionInterpreter");
+	}
+}
+
+const std::unordered_map<std::string, std::unordered_set<std::string>>&
+WidgetManeuverEditor::getEnumDefs() const
+{
+	if (auto ri = get<ReflectionInterpreter>())
+	{
+		return ri->getEnumDefs();
+	} else
+	{
+		CPSLOG_ERROR << "Missing ReflectionInterpreter";
+		throw std::runtime_error("Missing ReflectionInterpreter");
 	}
 }
