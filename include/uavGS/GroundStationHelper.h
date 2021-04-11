@@ -26,6 +26,7 @@
 #include <uavGS/PacketForwarding/PacketForwarding.h>
 
 #include <cpsCore/Framework/StaticHelper.h>
+#include <uavGS/ParameterSets/GenericParameterConfigurators.h>
 
 using GroundStationDefaults = StaticHelper<
 		IPC,
@@ -33,7 +34,8 @@ using GroundStationDefaults = StaticHelper<
 		SchedulerFactory,
 		TimeProviderFactory,
 		SignalHandler,
-		DataPresentation
+		DataPresentation,
+		GenericParameterConfigurators
 >;
 
 using GroundStationHelper = StaticHelper<GroundStationDefaults,

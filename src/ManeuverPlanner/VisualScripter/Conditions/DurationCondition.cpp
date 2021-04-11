@@ -1,3 +1,4 @@
+
 #include "uavGS/ManeuverPlanner/VisualScripter/Conditions/DurationCondition.h"
 #include "ui_DurationCondition.h"
 
@@ -11,4 +12,14 @@ DurationCondition::DurationCondition(QWidget *parent) :
 DurationCondition::~DurationCondition()
 {
 	delete ui;
+}
+
+QJsonObject
+DurationCondition::get() const
+{
+	QJsonObject config;
+	QJsonObject ans;
+	config["duration"] = ui->duration->text().toDouble();
+	ans["duration"] = config;
+	return ans;
 }

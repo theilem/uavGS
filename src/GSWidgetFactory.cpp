@@ -6,9 +6,7 @@
  */
 
 #include <uavGS/GSWidgetFactory.h>
-#include <uavGS/PID/Widgets/WidgetCPGrid.h>
 #include <uavGS/PID/Widgets/WidgetPIDPlots.h>
-#include "uavGS/GroundStationHelper.h"
 
 
 QWidget*

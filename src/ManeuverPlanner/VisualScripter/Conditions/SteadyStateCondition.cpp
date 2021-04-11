@@ -10,11 +10,11 @@ SteadyStateCondition::SteadyStateCondition(QWidget* parent) :
 {
 	ui->setupUi(this);
 	std::set<std::string> orderedKeys;
-	for (const auto &it: EnumMap<SensorEnum>::getInstance())
+	for (const auto& it: EnumMap<SensorEnum>::getInstance())
 	{
 		orderedKeys.insert(it.second);
 	}
-	for (const auto &it: orderedKeys)
+	for (const auto& it: orderedKeys)
 	{
 		ui->addOption->addItem(QString::fromStdString(it));
 	}
@@ -50,4 +50,24 @@ SteadyStateCondition::onDeleteClicked(const std::string& key, SelectionValue* wi
 	values_[key] = nullptr;
 	ui->groupBoxLayout->removeWidget(wid);
 	delete wid;
+}
+
+QJsonObject
+SteadyStateCondition::get() const
+{
+	QJsonObject ans;
+	QJsonObject config;
+	QJsonObject mapping;
+
+	config["duration"] = ui->duration->text().toDouble();
+
+	for (const auto& it: values_)
+	{
+		mapping[QString::fromStdString(it.first)] = it.second->get().second;
+	}
+
+	config["sensor_values"] = mapping;
+
+	ans["steady_state"] = config;
+	return ans;
 }

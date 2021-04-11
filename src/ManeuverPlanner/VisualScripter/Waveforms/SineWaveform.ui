@@ -37,7 +37,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>f(t) = A sin(2πωt + γ) + D</string>
+           <string>f(t) = A sin(2πf t + γ) + D</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -124,7 +124,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>ω</string>
+             <string>f</string>
             </property>
            </widget>
           </item>

@@ -1,3 +1,4 @@
+
 #include "uavGS/ManeuverPlanner/VisualScripter/Conditions/SensorDataCondition.h"
 #include "ui_SensorDataCondition.h"
 
@@ -25,9 +26,36 @@ SensorDataCondition::SensorDataCondition(QWidget* parent) :
 	{
 		ui->relationOptions->addItem(QString::fromStdString(it.second));
 	}
+	ui->tolerance->setEnabled(ui->useTolerance->isChecked());
 }
 
 SensorDataCondition::~SensorDataCondition()
 {
 	delete ui;
+}
+
+void
+SensorDataCondition::on_useTolerance_clicked(bool checked)
+{
+	ui->tolerance->setEnabled(checked);
+}
+
+QJsonObject
+SensorDataCondition::get() const
+{
+	QJsonObject ans;
+	QJsonObject config;
+
+	config["sensor"] = ui->sensorEnumOptions->currentText();
+	config["relational"] = ui->relationOptions->currentText();
+	config["threshold"] = ui->threshold->text().toDouble();
+
+	config["use_tolerance"] = ui->useTolerance->isChecked();
+	if (ui->useTolerance->isChecked())
+	{
+		config["tolerance"] = ui->tolerance->text().toDouble();
+	}
+
+	ans["sensor_data"] = config;
+	return ans;
 }

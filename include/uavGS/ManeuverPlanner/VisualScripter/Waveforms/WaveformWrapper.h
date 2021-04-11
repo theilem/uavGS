@@ -8,7 +8,7 @@ namespace Ui
 class WaveformWrapper;
 }
 
-class WaveformWrapper: public QWidget
+class WaveformWrapper: public QWidget, IGettableJsonObject
 {
 Q_OBJECT
 
@@ -17,8 +17,12 @@ public:
 
 	~WaveformWrapper();
 
+	QJsonObject
+	get() const override;
+
 private:
 	Ui::WaveformWrapper* ui;
+	IGettableJsonObject* widget_;
 
 signals:
 

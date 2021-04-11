@@ -8,10 +8,10 @@ namespace Ui {
 class WidgetVisualScripter;
 }
 
-class PlanningManager;
+class IOverridesProvider;
 class WidgetMotionPrimitive;
 
-class WidgetVisualScripter : public QWidget, public AggregatableObject<PlanningManager>
+class WidgetVisualScripter : public QWidget, public AggregatableObject<IOverridesProvider>
 {
 	Q_OBJECT
 
@@ -27,6 +27,9 @@ public:
 private slots:
 	void
 	on_add_clicked();
+
+	void
+	on_save_clicked();
 
 	void
 	deletePrimitive(WidgetMotionPrimitive* toDelete);

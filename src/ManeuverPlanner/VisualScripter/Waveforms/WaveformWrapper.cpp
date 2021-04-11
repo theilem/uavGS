@@ -7,7 +7,8 @@
 
 WaveformWrapper::WaveformWrapper(const std::string& title, QWidget *parent) :
 	QWidget(parent),
-	ui(new Ui::WaveformWrapper)
+	ui(new Ui::WaveformWrapper),
+	widget_(nullptr)
 {
 	ui->setupUi(this);
 	ui->waveformGroupBox->setTitle(QString::fromStdString(title));
@@ -32,9 +33,11 @@ WaveformWrapper::on_selectWaveform_clicked()
 	if (op == "Sine Wave") {
 		auto sw = new SineWaveform(this);
 		ui->waveformLayout->addWidget(sw);
+		widget_ = sw;
 	} else if (op == "Square Wave") {
 		auto sw = new SquareWaveform(this);
 		ui->waveformLayout->addWidget(sw);
+		widget_ = sw;
 	} else {
 		CPSLOG_ERROR << "Unknown option" << op;
 	}
@@ -44,4 +47,17 @@ void
 WaveformWrapper::on_deleteButton_clicked()
 {
 	emit buttonClicked(ui->waveformGroupBox->title().toStdString(), this);
+}
+
+QJsonObject
+WaveformWrapper::get() const
+{
+	QJsonObject ans;
+	if(!widget_)
+	{
+		CPSLOG_WARN << "Waveform wrapper with missing config";
+		return ans;
+	}
+	ans[ui->waveformGroupBox->title()] = widget_->get();
+	return ans;
 }

@@ -8,11 +8,13 @@
 #include <uavGS/ManeuverPlanner/VisualScripter/Conditions/SensorDataCondition.h>
 #include <uavGS/ManeuverPlanner/VisualScripter/Conditions/SteadyStateCondition.h>
 #include <uavGS/ManeuverPlanner/VisualScripter/Waveforms/WaveformWrapper.h>
+#include <QJsonObject>
+#include <QJsonArray>
 
-WidgetMotionPrimitive::WidgetMotionPrimitive(const PlanningManager& pm, int index, QWidget* parent) :
+WidgetMotionPrimitive::WidgetMotionPrimitive(const IOverridesProvider& pm, int index, QWidget* parent) :
 		QWidget(parent),
 		ui(new Ui::WidgetMotionPrimitive),
-		pm_(pm)
+		condition_(nullptr)
 {
 	ui->setupUi(this);
 	setIdx(index);
@@ -42,12 +44,59 @@ WidgetMotionPrimitive::setIdx(int index)
 	ui->mainGroupBox->setTitle(QString::asprintf("Maneuver Element %u", index + 1));
 }
 
+QJsonObject
+WidgetMotionPrimitive::get()
+{
+	QJsonObject ans;
+
+	// Overrides
+	QJsonObject overrides;
+	for (const auto& it : overrideOrder_)
+	{
+		auto val = it.second->get();
+		overrides[QString::fromStdString(it.first)] = val.second;
+	}
+	ans["overrides"] = overrides;
+
+	// Maintains
+	QJsonArray maintains;
+	for (const auto& it: maintainOrder_)
+	{
+		auto val = it.second->get();
+		maintains.push_back(QString::fromStdString(val));
+	}
+	ans["maintains"] = maintains;
+
+	// Conditions
+	if(condition_) {
+		ans["transition"] = condition_->get();
+	}
+	else
+	{
+		CPSLOG_WARN << "No transition condition set in " << ui->mainGroupBox->title().toStdString();
+	}
+
+	//Waveforms
+	QJsonObject waveforms;
+	for (const auto& it : waveformOrder_)
+	{
+		waveforms[QString::fromStdString(it.first)] = it.second->get();
+	}
+	ans["waveforms"] = waveforms;
+
+
+	return ans;
+}
+
 bool
 WidgetMotionPrimitive::_checkDuplicate(const std::string& key)
 {
-	if (presentOverrides_.find(key) != presentOverrides_.end()){
+	if (presentOverrides_.find(key) != presentOverrides_.end())
+	{
 		auto d = new QMessageBox(this);
-		d->setText(QString::asprintf("Each field can either be added to overrides or waveforms, but not both. \"%s\" has already been added.", key.c_str()));
+		d->setText(QString::asprintf(
+				"Each field can either be added to overrides or waveforms, but not both. \"%s\" has already been added.",
+				key.c_str()));
 		d->setWindowTitle("Duplicate Entry");
 		d->open();
 		return true;
@@ -55,18 +104,19 @@ WidgetMotionPrimitive::_checkDuplicate(const std::string& key)
 	return false;
 }
 
-template <typename T>
+template<typename T>
 void
-WidgetMotionPrimitive::_insertOverride(std::map<std::string, T>& map, QVBoxLayout* layout, const std::string& text, T wid)
+WidgetMotionPrimitive::_insertOverride(std::map<std::string, T>& map, QVBoxLayout* layout, const std::string& text,
+									   T wid)
 {
-	const auto &insertItr = map.insert_or_assign(text, wid);
+	const auto& insertItr = map.insert_or_assign(text, wid);
 	int insertionIdx = std::distance(map.begin(), insertItr.first);
 	// Idx 0 contains the widget with the selector
 	layout->insertWidget(1 + insertionIdx, wid);
 	presentOverrides_.insert(text);
 }
 
-template <typename T>
+template<typename T>
 void
 WidgetMotionPrimitive::_delete(std::map<std::string, T>& map, QLayout* layout, const std::string& text, QWidget* wid)
 {
@@ -120,7 +170,8 @@ void
 WidgetMotionPrimitive::on_addMaintains_clicked()
 {
 	const auto& currentText = ui->maintainsOptions->currentText().toStdString();
-	if (maintainOrder_[currentText]) {
+	if (maintainOrder_[currentText])
+	{
 		auto d = new QMessageBox(this);
 		d->setText("This maintain has already been added.");
 		d->setWindowTitle("Duplicate Entry");
@@ -129,7 +180,7 @@ WidgetMotionPrimitive::on_addMaintains_clicked()
 	}
 	auto s = new Selection(currentText, this);
 	QObject::connect(s, &Selection::buttonClicked, this, &WidgetMotionPrimitive::onMaintainDeleteClicked);
-	const auto &insertItr = maintainOrder_.insert_or_assign(currentText, s);
+	const auto& insertItr = maintainOrder_.insert_or_assign(currentText, s);
 	int insertionIdx = std::distance(maintainOrder_.begin(), insertItr.first);
 	// Idx 0 contains the widget with the selector
 	ui->maintainsLayout->insertWidget(1 + insertionIdx, s);
@@ -146,22 +197,33 @@ void
 WidgetMotionPrimitive::on_selectCondition_clicked()
 {
 	//item 0 is the selector
-	while(ui->conditionLayout->count() > 1) {
+	while (ui->conditionLayout->count() > 1)
+	{
 		auto wid = ui->conditionLayout->itemAt(1)->widget();
 		ui->conditionLayout->removeWidget(wid);
 		delete wid;
 	}
 	const auto& conditionOp = ui->conditionOptions->currentText().toStdString();
-	if (conditionOp == "Duration Condition") {
+	if (conditionOp == "Duration Condition")
+	{
 		auto dc = new DurationCondition(this);
 		ui->conditionLayout->insertWidget(1, dc);
-	} else if (conditionOp == "Sensor Data Condition") {
+		condition_ = dc;
+	}
+	else if (conditionOp == "Sensor Data Condition")
+	{
 		auto sdc = new SensorDataCondition(this);
 		ui->conditionLayout->insertWidget(1, sdc);
-	} else if (conditionOp == "Steady State Condition") {
+		condition_ = sdc;
+	}
+	else if (conditionOp == "Steady State Condition")
+	{
 		auto ssc = new SteadyStateCondition(this);
 		ui->conditionLayout->insertWidget(1, ssc);
-	} else {
+		condition_ = ssc;
+	}
+	else
+	{
 		CPSLOG_ERROR << "Unknown condition type!";
 	}
 }

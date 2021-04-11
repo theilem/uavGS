@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <set>
+#include <uavGS/ManeuverPlanner/VisualScripter/IGettableJsonObject.h>
 
 namespace Ui
 {
@@ -11,7 +12,7 @@ class SteadyStateCondition;
 
 class SelectionValue;
 
-class SteadyStateCondition: public QWidget
+class SteadyStateCondition: public QWidget, public IGettableJsonObject
 {
 Q_OBJECT
 
@@ -19,6 +20,9 @@ public:
 	explicit SteadyStateCondition(QWidget* parent = nullptr);
 
 	~SteadyStateCondition();
+
+	QJsonObject
+	get() const override;
 
 private:
 	Ui::SteadyStateCondition* ui;

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>429</width>
-    <height>174</height>
+    <width>1286</width>
+    <height>189</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,8 +26,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>401</width>
-          <height>92</height>
+          <width>1258</width>
+          <height>107</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -40,6 +40,22 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="nameLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Name:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="name"/>
+       </item>
        <item>
         <widget class="QPushButton" name="add">
          <property name="text">

@@ -2,12 +2,13 @@
 #define SINEWAVEFORM_H
 
 #include <QWidget>
+#include <uavGS/ManeuverPlanner/VisualScripter/IGettableJsonObject.h>
 
 namespace Ui {
 class SineWaveform;
 }
 
-class SineWaveform : public QWidget
+class SineWaveform : public QWidget, public IGettableJsonObject
 {
 	Q_OBJECT
 
@@ -16,6 +17,9 @@ public:
 	~SineWaveform();
 
 	void setIdx(int index);
+
+	QJsonObject
+	get() const override;
 
 private:
 	Ui::SineWaveform *ui;

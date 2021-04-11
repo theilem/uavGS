@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <uavGS/ManeuverPlanner/PlanningManager.h>
 #include <set>
+#include "IGettableJsonObject.h"
 
 namespace Ui {
 class WidgetMotionPrimitive;
@@ -19,11 +20,14 @@ class WidgetMotionPrimitive : public QWidget
 	Q_OBJECT
 
 public:
-	explicit WidgetMotionPrimitive(const PlanningManager& pm, int index, QWidget *parent = nullptr);
+	explicit WidgetMotionPrimitive(const IOverridesProvider& pm, int index, QWidget *parent = nullptr);
 	~WidgetMotionPrimitive();
 
 	void
 	setIdx(int index);
+
+	QJsonObject
+	get();
 
 signals:
 	void
@@ -31,7 +35,6 @@ signals:
 
 private:
 	Ui::WidgetMotionPrimitive *ui;
-	const PlanningManager& pm_;
 
 	bool
 	_checkDuplicate(const std::string& key);
@@ -47,9 +50,14 @@ private:
 	//keeps track of which overrides are added in the widget
 	std::unordered_set<std::string> presentOverrides_;
 	//std::set maintains a self balancing tree which allows us to insert in alphabetical order
+
+	// TODO: I thought std::distance on rb iterators was O(1) but it is O(n). Although runtime complexity doesnt really
+	// matter because we shouldn't have that many elements.
 	std::map<std::string, SelectionValue* > overrideOrder_;
 	std::map<std::string, WaveformWrapper* > waveformOrder_;
 	std::map<std::string, Selection*> maintainOrder_;
+
+	IGettableJsonObject* condition_;
 
 private slots:
 	void

@@ -11,6 +11,7 @@
 #include <cpsCore/cps_object>
 #include <boost/signals2/signal.hpp>
 #include <uavGS/ManeuverPlanner/ManeuverEditor/Reflection/ReflectionInterpreter.h>
+#include <uavGS/ManeuverPlanner/VisualScripter/Standalone/IOverridesProvider.h>
 
 class IScheduler;
 class DataHandling;
@@ -20,7 +21,8 @@ class Mission;
 class PlanningManager
 		: public AggregatableObject<DataHandling, GSWidgetFactory, IScheduler>,
 		  public ConfigurableObject<PlanningManagerParams>,
-		  public IRunnableObject
+		  public IRunnableObject,
+		  public IOverridesProvider
 {
 
 public:
@@ -57,13 +59,13 @@ public:
 	getCurrentManeuverSet() const;
 
 	const std::vector<std::string>&
-	getOverrides() const;
+	getOverrides() const override;
 
 	const std::vector<std::string>&
 	getManeuvers() const;
 
 	const std::vector<std::string>&
-	getMaintains() const;
+	getMaintains() const override;
 
 	const std::map<std::string, Mission>&
 	getMission() const;
