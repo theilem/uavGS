@@ -50,22 +50,28 @@ WidgetMotionPrimitive::get()
 	QJsonObject ans;
 
 	// Overrides
-	QJsonObject overrides;
-	for (const auto& it : overrideOrder_)
+	if(!overrideOrder_.empty())
 	{
-		auto val = it.second->get();
-		overrides[QString::fromStdString(it.first)] = val.second;
+		QJsonObject overrides;
+		for (const auto& it : overrideOrder_)
+		{
+			auto val = it.second->get();
+			overrides[QString::fromStdString(it.first)] = val.second;
+		}
+		ans["overrides"] = overrides;
 	}
-	ans["overrides"] = overrides;
 
 	// Maintains
-	QJsonArray maintains;
-	for (const auto& it: maintainOrder_)
+	if(!maintainOrder_.empty())
 	{
-		auto val = it.second->get();
-		maintains.push_back(QString::fromStdString(val));
+		QJsonArray maintains;
+		for (const auto& it: maintainOrder_)
+		{
+			auto val = it.second->get();
+			maintains.push_back(QString::fromStdString(val));
+		}
+		ans["maintains"] = maintains;
 	}
-	ans["maintains"] = maintains;
 
 	// Conditions
 	if(condition_) {
@@ -77,13 +83,15 @@ WidgetMotionPrimitive::get()
 	}
 
 	//Waveforms
-	QJsonObject waveforms;
-	for (const auto& it : waveformOrder_)
+	if(!waveformOrder_.empty())
 	{
-		waveforms[QString::fromStdString(it.first)] = it.second->get();
+		QJsonObject waveforms;
+		for (const auto& it : waveformOrder_)
+		{
+			waveforms[QString::fromStdString(it.first)] = it.second->get();
+		}
+		ans["waveforms"] = waveforms;
 	}
-	ans["waveforms"] = waveforms;
-
 
 	return ans;
 }
@@ -94,6 +102,8 @@ WidgetMotionPrimitive::_checkDuplicate(const std::string& key)
 	if (presentOverrides_.find(key) != presentOverrides_.end())
 	{
 		auto d = new QMessageBox(this);
+		// NOTE: style sheet copy pasted from QDarkStyle.qss
+		d->setStyleSheet("background-color: #31363b"); // Clear style
 		d->setText(QString::asprintf(
 				"Each field can either be added to overrides or waveforms, but not both. \"%s\" has already been added.",
 				key.c_str()));

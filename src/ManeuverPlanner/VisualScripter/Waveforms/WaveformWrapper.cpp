@@ -52,12 +52,10 @@ WaveformWrapper::on_deleteButton_clicked()
 QJsonObject
 WaveformWrapper::get() const
 {
-	QJsonObject ans;
 	if(!widget_)
 	{
 		CPSLOG_WARN << "Waveform wrapper with missing config";
-		return ans;
+		return QJsonObject();
 	}
-	ans[ui->waveformGroupBox->title()] = widget_->get();
-	return ans;
+	return widget_->get();
 }
