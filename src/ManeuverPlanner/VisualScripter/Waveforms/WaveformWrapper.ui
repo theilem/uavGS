@@ -19,6 +19,9 @@
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color:rgb(82, 131, 194)</string>
+     </property>
      <property name="title">
       <string>Waveform Wrapper</string>
      </property>

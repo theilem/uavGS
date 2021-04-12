@@ -37,7 +37,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>f(t) = A sgn(sin(2πf t + γ)) + D</string>
+           <string>f(t) = A sgn(sin(2πf t + φ)) + D</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -124,7 +124,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>γ</string>
+             <string>φ</string>
             </property>
            </widget>
           </item>

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>433</width>
+    <width>225</width>
     <height>241</height>
    </rect>
   </property>
@@ -37,7 +37,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>f(t) = A sin(2πf t + γ) + D</string>
+           <string>f(t) = A sin(2πf t + φ) + D</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -91,7 +91,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>γ</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;φ&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>

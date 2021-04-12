@@ -28,6 +28,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color:rgb(252, 175, 62)</string>
+     </property>
      <property name="title">
       <string>Duration Condition</string>
      </property>

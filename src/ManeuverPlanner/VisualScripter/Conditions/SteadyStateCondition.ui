@@ -16,6 +16,9 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QGroupBox" name="groupBox">
+     <property name="styleSheet">
+      <string notr="true">background-color:rgb(252, 175, 62)</string>
+     </property>
      <property name="title">
       <string>Steady State Condition</string>
      </property>
