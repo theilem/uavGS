@@ -59,68 +59,70 @@ WidgetManeuverViewer::drawManeuverSet()
 	{
 		const ManeuverDescriptor& currentManeuverSet = pm->getCurrentManeuverSet();
 		auto activeIdx = pm->getCurrentManeuverIdx();
-		if (activeIdx < 0 || currentManeuverSet.overrides.empty())
+		if (activeIdx < 0 || currentManeuverSet.second.empty())
 		{
 			scene->addItem(new QGraphicsTextItem(tr("No Maneuver Set Active")));
 			ui->currentManeuverLabel->setText(tr("N/A"));
 		}
 		else
 		{
-			if ((unsigned) activeIdx > currentManeuverSet.overrides.size())
+			if ((unsigned) activeIdx > currentManeuverSet.second.size())
 			{
-				CPSLOG_ERROR << "Current active maneuver idx is greater than number of maneuver items. Consider refreshing.";
+				CPSLOG_ERROR
+						<< "Current active maneuver idx is greater than number of maneuver items. Consider refreshing.";
 			}
 
-			ui->currentManeuverLabel->setText(tr(currentManeuverSet.maneuverName.data()));
+			ui->currentManeuverLabel->setText(tr(currentManeuverSet.first.data()));
 			qreal lastX = 0;
 			// Assuming same number of overrides and transitions, so only checking overrideIt != end
-			for (auto[overrideIt, maintainIt, waveformIt, transitionIt, idx] =
-				 std::tuple(currentManeuverSet.overrides.begin(), currentManeuverSet.maintains.begin(),
-							currentManeuverSet.waveforms.begin(), currentManeuverSet.transitions.begin(), unsigned{0});
-				 overrideIt != currentManeuverSet.overrides.end();
-				 overrideIt++, maintainIt++, waveformIt++, transitionIt++, idx++)
+			for (auto[it, idx] = std::tuple(currentManeuverSet.second.begin(), unsigned{0});
+				 it != currentManeuverSet.second.end(); it++, idx++)
 			{
 				QString text;
-				if (!overrideIt->empty())
+				if (!it->overrides.value.empty())
 				{
 					text += tr("-----------------\n");
 					text += tr("Override Settings\n");
 					text += tr("-----------------\n");
-					for (const auto& override: *overrideIt)
+					for (const auto& override: it->overrides.value)
 					{
 						text += QString::fromStdString(override.first) + tr(":") + QString::number(override.second) +
 								tr("\n");
 					}
 				}
 
-				if (!maintainIt->empty())
+				if (!it->maintains.value.empty())
 				{
 					text += tr("-----------------\n");
 					text += tr("Maintain Settings\n");
 					text += tr("-----------------\n");
-					for (const auto& maintainElem : *maintainIt)
+					for (const auto& maintainElem : it->maintains.value)
 					{
 						text += (tr(maintainElem.data()) + tr("\n"));
 					}
 				}
 
-				if(!waveformIt->empty())
+				if (!it->waveforms.value.empty())
 				{
 					text += tr("-----------------\n");
 					text += tr("Waveform Settings\n");
 					text += tr("-----------------\n");
-					for (const auto& waveElem : *waveformIt)
+					for (const auto& waveElem : it->waveforms.value)
 					{
-						text += (tr(waveElem.first.data()) + tr(":") + tr(waveElem.second.data()) + tr("\n"));
+						std::stringstream ss;
+						boost::property_tree::write_json(ss, waveElem.second);
+						text += (tr(waveElem.first.data()) + tr(":") + tr(ss.str().c_str()));
 					}
 				}
 
-				if(!transitionIt->empty())
+				if (!it->transition.value.empty())
 				{
 					text += tr("-------------------\n");
 					text += tr("Transition Settings\n");
 					text += tr("-------------------\n");
-					text += tr((transitionIt->data()));
+					std::stringstream ss;
+					boost::property_tree::write_json(ss, it->transition.value);
+					text += tr(ss.str().c_str());
 				}
 
 				auto rect = new QGraphicsRectItem();
