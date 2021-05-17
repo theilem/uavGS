@@ -50,19 +50,21 @@ WidgetMotionPrimitive::get()
 	QJsonObject ans;
 
 	// Overrides
-	if(!overrideOrder_.empty())
+	if (!overrideOrder_.empty())
 	{
 		QJsonObject overrides;
 		for (const auto& it : overrideOrder_)
 		{
-			auto val = it.second->get();
-			overrides[QString::fromStdString(it.first)] = val.second;
+			if (const auto& val = it.second->get(); val.has_value())
+			{
+				overrides[QString::fromStdString(it.first)] = val.value().second;
+			}
 		}
 		ans["overrides"] = overrides;
 	}
 
 	// Maintains
-	if(!maintainOrder_.empty())
+	if (!maintainOrder_.empty())
 	{
 		QJsonArray maintains;
 		for (const auto& it: maintainOrder_)
@@ -74,7 +76,8 @@ WidgetMotionPrimitive::get()
 	}
 
 	// Conditions
-	if(condition_) {
+	if (condition_)
+	{
 		ans["transition"] = condition_->get();
 	}
 	else
@@ -83,7 +86,7 @@ WidgetMotionPrimitive::get()
 	}
 
 	//Waveforms
-	if(!waveformOrder_.empty())
+	if (!waveformOrder_.empty())
 	{
 		QJsonObject waveforms;
 		for (const auto& it : waveformOrder_)
@@ -131,7 +134,7 @@ void
 WidgetMotionPrimitive::_delete(std::map<std::string, T>& map, QLayout* layout, const std::string& text, QWidget* wid)
 {
 	presentOverrides_.erase(text);
-	map[text] = nullptr;
+	map.erase(text);
 	layout->removeWidget(wid);
 	delete wid;
 }

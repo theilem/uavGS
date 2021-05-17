@@ -63,7 +63,10 @@ SteadyStateCondition::get() const
 
 	for (const auto& it: values_)
 	{
-		mapping[QString::fromStdString(it.first)] = it.second->get().second;
+		if (const auto& opVal = it.second->get(); opVal.has_value())
+		{
+			mapping[QString::fromStdString(it.first)] = opVal->second;
+		}
 	}
 
 	config["sensor_values"] = mapping;

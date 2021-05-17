@@ -2,8 +2,10 @@
 #define WIDGETMOTIONPRIMITIVE_H
 
 #include <QWidget>
+#include <unordered_set>
+#include <map>
+
 #include <uavGS/ManeuverPlanner/PlanningManager.h>
-#include <set>
 #include "IGettableJsonObject.h"
 
 namespace Ui {
@@ -49,7 +51,6 @@ private:
 
 	//keeps track of which overrides are added in the widget
 	std::unordered_set<std::string> presentOverrides_;
-	//std::set maintains a self balancing tree which allows us to insert in alphabetical order
 
 	// TODO: I thought std::distance on rb iterators was O(1) but it is O(n). Although runtime complexity doesnt really
 	// matter because we shouldn't have that many elements.

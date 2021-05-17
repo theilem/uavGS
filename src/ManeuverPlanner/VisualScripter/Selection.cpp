@@ -1,4 +1,4 @@
-#include "uavGS/ManeuverPlanner/ManeuverEditor/Selection.h"
+#include "uavGS/ManeuverPlanner/VisualScripter/Selection.h"
 #include "ui_Selection.h"
 
 Selection::Selection(const std::string& key, QWidget* parent) :

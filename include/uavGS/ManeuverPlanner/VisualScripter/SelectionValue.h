@@ -1,8 +1,10 @@
 #ifndef SELECTIONVALUE_H
 #define SELECTIONVALUE_H
 
-#include <QWidget>
+#include <optional>
 #include <unordered_set>
+
+#include <QWidget>
 
 #include <cpsCore/Utilities/LinearAlgebra.h>
 
@@ -20,7 +22,7 @@ public:
 
 	~SelectionValue();
 
-	std::pair<const std::string&, FloatingType>
+	std::optional<std::pair<const std::string&, FloatingType>>
 	get() const;
 
 signals:

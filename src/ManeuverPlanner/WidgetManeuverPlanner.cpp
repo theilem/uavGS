@@ -4,6 +4,7 @@
 #include <uavGS/ManeuverPlanner/WidgetManeuverPlanner.h>
 #include <uavGS/ManeuverPlanner/PlanningManager.h>
 #include <uavAP/Core/DataHandling/DataHandling.h>
+#include <uavGS/ManeuverPlanner/VisualScripter/SelectionValue.h>
 
 #include "ui_WidgetManeuverPlanner.h"
 
@@ -74,11 +75,12 @@ void
 WidgetManeuverPlanner::on_apply_clicked()
 {
 	ManeuverOverride overrides;
-	for (const auto&[id, edit]: overrides_)
+	for (const auto& override: overrides_)
 	{
-		if (edit->isEmpty())
-			continue;
-		overrides.insert(std::make_pair(id, edit->getDouble()));
+		if (const auto& opVal = override.second->get(); opVal.has_value())
+		{
+			overrides.insert(opVal.value());
+		}
 	}
 	auto dh = get<DataHandling>();
 
@@ -175,9 +177,12 @@ WidgetManeuverPlanner::contentUpdatedSlot()
 void
 WidgetManeuverPlanner::addOverrideWidget(const std::string& id)
 {
-	auto lv = new NamedLineEdit(id, this);
-	ui->overrides->addWidget(lv);
-	overrides_.insert(std::make_pair(id, lv));
+	// NOTE: copy pasted and adapted from WidgetMotionPrimitive. We should make a common override class to do this
+	auto sv = new SelectionValue(id, this);
+	QObject::connect(sv, &SelectionValue::buttonClicked, this, &WidgetManeuverPlanner::onOverrideDeleteClicked);
+	const auto& insertItr = overrides_.insert_or_assign(id, sv);
+	int insertionIdx = std::distance(overrides_.begin(), insertItr.first);
+	ui->overrides->insertWidget(insertionIdx, sv);
 }
 
 
@@ -188,18 +193,6 @@ WidgetManeuverPlanner::on_addOverride_clicked()
 	if (overrides_.find(id) != overrides_.end())
 		return;
 	addOverrideWidget(id);
-}
-
-void
-WidgetManeuverPlanner::on_removeOverride_clicked()
-{
-	auto it = overrides_.find(ui->overrideList->currentText().toStdString());
-	if (it == overrides_.end())
-		return;
-
-	ui->overrides->removeWidget(it->second);
-	delete it->second;
-	overrides_.erase(it);
 }
 
 void
@@ -227,5 +220,14 @@ WidgetManeuverPlanner::on_defaultsButton_clicked()
 		else
 			CPSLOG_WARN << "Override " << override << " not available in autopilot";
 	}
+}
+
+void
+WidgetManeuverPlanner::onOverrideDeleteClicked(const std::string& key, SelectionValue* wid)
+{
+	wid = overrides_[key];
+	overrides_.erase(key);
+	ui->overrides->removeWidget(wid);
+	delete wid;
 }
 

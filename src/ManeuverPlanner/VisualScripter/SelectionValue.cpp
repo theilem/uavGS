@@ -1,5 +1,4 @@
-#include <uavGS/ManeuverPlanner/ManeuverEditor/WidgetSingletonManeuver.h>
-#include "uavGS/ManeuverPlanner/ManeuverEditor/SelectionValue.h"
+#include "uavGS/ManeuverPlanner/VisualScripter/SelectionValue.h"
 #include "ui_SelectionValue.h"
 
 SelectionValue::SelectionValue(const std::string& key, QWidget* parent) :
@@ -22,8 +21,10 @@ SelectionValue::on_deleteButton_clicked()
 	emit buttonClicked(key_, this);
 }
 
-std::pair<const std::string&, FloatingType>
+std::optional<std::pair<const std::string&, FloatingType>>
 SelectionValue::get() const
 {
+	if (ui->value->text().isEmpty())
+		return std::nullopt;
 	return std::pair<const std::string&, FloatingType>(key_, ui->value->text().toDouble());
 }
