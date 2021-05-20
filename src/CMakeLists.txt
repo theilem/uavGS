@@ -17,6 +17,7 @@ set(EXTERNAL_RESOURCES ${CMAKE_SOURCE_DIR}/extern/QFlightInstruments/qfi.qrc)
 
 add_subdirectory(PID)
 add_subdirectory(MapLogic)
+add_subdirectory(ModelBased)
 add_subdirectory(LayoutGenerator)
 add_subdirectory(SensorData)
 add_subdirectory(ParameterSets)
