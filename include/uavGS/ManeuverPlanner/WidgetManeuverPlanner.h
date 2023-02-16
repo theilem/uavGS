@@ -2,9 +2,10 @@
 #define WIDGETMANEUVERPLANNER_H
 
 
-#include <cpsCore/Aggregation/AggregatableObject.hpp>
-
+#include <map>
 #include <QWidget>
+
+#include <cpsCore/Aggregation/AggregatableObject.hpp>
 #include <uavAP/MissionControl/MissionPlanner/Mission.h>
 #include "uavGS/ParameterSets/NamedLineEdit.h"
 #include "uavGS/ParameterSets/NamedCheckbox.h"
@@ -16,8 +17,9 @@ namespace Ui
 class WidgetManeuverPlanner;
 }
 class PlanningManager;
+class SelectionValue;
 
-class WidgetManeuverPlanner: public QWidget, public AggregatableObject<DataHandling, PlanningManager>
+class WidgetManeuverPlanner: public QWidget, public AggregatableObject<DataHandling, PlanningManager, IScheduler>
 {
 Q_OBJECT
 
@@ -27,6 +29,7 @@ public:
 
 	explicit
 	WidgetManeuverPlanner(QWidget* parent = nullptr);
+
 	~WidgetManeuverPlanner();
 
 	void
@@ -34,6 +37,7 @@ public:
 
 
 private slots:
+
 	void
 	on_apply_clicked();
 
@@ -53,15 +57,15 @@ private slots:
 	on_addOverride_clicked();
 
 	void
-	on_removeOverride_clicked();
-
-	void
 	on_defaultsButton_clicked();
 
 private slots:
 
 	void
 	contentUpdatedSlot();
+
+	void
+	onOverrideDeleteClicked(const std::string& key, SelectionValue* wid);
 
 signals:
 
@@ -73,12 +77,9 @@ private:
 	void
 	addOverrideWidget(const std::string& id);
 
-	Ui::WidgetManeuverPlanner* ui;
+	std::map<std::string, SelectionValue *> overrides_;
 
-	std::map<std::string, Mission> missionMap_;
-	std::map<std::string, NamedLineEdit*> overrides_;
-	std::vector<std::string> overrideList_;
-	std::vector<std::string> maneuversList_;
+	Ui::WidgetManeuverPlanner* ui;
 };
 
 #endif // WIDGETMANEUVERPLANNER_H

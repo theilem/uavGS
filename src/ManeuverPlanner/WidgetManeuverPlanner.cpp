@@ -4,6 +4,7 @@
 #include <uavGS/ManeuverPlanner/WidgetManeuverPlanner.h>
 #include <uavGS/ManeuverPlanner/PlanningManager.h>
 #include <uavAP/Core/DataHandling/DataHandling.h>
+#include <uavGS/ManeuverPlanner/VisualScripter/SelectionValue.h>
 
 #include "ui_WidgetManeuverPlanner.h"
 
@@ -73,12 +74,13 @@ WidgetManeuverPlanner::~WidgetManeuverPlanner()
 void
 WidgetManeuverPlanner::on_apply_clicked()
 {
-	std::map<std::string, FloatingType> overrides;
-	for (const auto&[id, edit]: overrides_)
+	ManeuverOverride overrides;
+	for (const auto& override: overrides_)
 	{
-		if (edit->isEmpty())
-			continue;
-		overrides.insert(std::make_pair(id, edit->getDouble()));
+		if (const auto& opVal = override.second->get(); opVal.has_value())
+		{
+			overrides.insert(opVal.value());
+		}
 	}
 	auto dh = get<DataHandling>();
 
@@ -90,7 +92,7 @@ WidgetManeuverPlanner::on_abort_clicked()
 {
 	auto dh = get<DataHandling>();
 
-	dh->sendData(std::map<std::string, FloatingType>(), Content::OVERRIDE, Target::FLIGHT_CONTROL);
+	dh->sendData(ManeuverOverride(), Content::OVERRIDE, Target::FLIGHT_CONTROL);
 	dh->sendData(true, Content::ABORT_MANEUVER, Target::FLIGHT_ANALYSIS);
 }
 
@@ -120,44 +122,54 @@ WidgetManeuverPlanner::connect()
 	if (auto dh = get<DataHandling>())
 	{
 		dh->subscribeOnData<std::map<std::string, Mission>>(Content::MISSION_LIST, [this](const auto& m)
-		{ missionMap_ = m; emit contentUpdated(); });
+		{ emit contentUpdated(); });
 		dh->subscribeOnData<std::vector<std::string>>(Content::OVERRIDE_LIST, [this](const auto& m)
-		{ overrideList_ = m; emit contentUpdated(); });
+		{ emit contentUpdated(); });
 		dh->subscribeOnData<std::vector<std::string>>(Content::MANEUVER_LIST, [this](const auto& m)
-		{ maneuversList_ = m; emit contentUpdated(); });
+		{ emit contentUpdated(); });
+	}
+	if (auto sched = get<IScheduler>())
+	{
+		sched->schedule([this]
+						{
+							on_update_clicked();
+						}, Seconds(1));
+
 	}
 }
 
 void
 WidgetManeuverPlanner::on_update_clicked()
 {
-	if (auto dh = get<DataHandling>())
+	if (auto pm = get<PlanningManager>())
 	{
-		dh->sendData(DataRequest::MISSION_LIST, Content::REQUEST_DATA, Target::MISSION_CONTROL);
-		dh->sendData(DataRequest::OVERRIDE_LIST, Content::REQUEST_DATA, Target::FLIGHT_CONTROL);
-		dh->sendData(DataRequest::MANEUVERS_LIST, Content::REQUEST_DATA, Target::FLIGHT_ANALYSIS);
+		pm->requestAll();
 	}
 }
 
 void
 WidgetManeuverPlanner::contentUpdatedSlot()
 {
-	ui->missionOptions->clear();
-	for (const auto& it : missionMap_)
+	if (auto pm = get<PlanningManager>())
 	{
-		ui->missionOptions->addItem(QString::fromStdString(it.first));
-	}
-
-	ui->overrideList->clear();
-	for (const auto& it : overrideList_)
-	{
-		ui->overrideList->addItem(QString::fromStdString(it));
-	}
-
-	ui->maneuverOptions->clear();
-	for (const auto& it : maneuversList_)
-	{
-		ui->maneuverOptions->addItem(QString::fromStdString(it));
+		auto missionMap = pm->getMission();
+		ui->missionOptions->clear();
+		for (const auto& it : missionMap)
+		{
+			ui->missionOptions->addItem(QString::fromStdString(it.first));
+		}
+		auto overrideList = pm->getOverrides();
+		ui->overrideList->clear();
+		for (const auto& it : overrideList)
+		{
+			ui->overrideList->addItem(QString::fromStdString(it));
+		}
+		auto maneuversList = pm->getManeuvers();
+		ui->maneuverOptions->clear();
+		for (const auto& it : maneuversList)
+		{
+			ui->maneuverOptions->addItem(QString::fromStdString(it));
+		}
 	}
 }
 
@@ -165,9 +177,12 @@ WidgetManeuverPlanner::contentUpdatedSlot()
 void
 WidgetManeuverPlanner::addOverrideWidget(const std::string& id)
 {
-	auto lv = new NamedLineEdit(id, this);
-	ui->overrides->addWidget(lv);
-	overrides_.insert(std::make_pair(id, lv));
+	// NOTE: copy pasted and adapted from WidgetMotionPrimitive. We should make a common override class to do this
+	auto sv = new SelectionValue(id, this);
+	QObject::connect(sv, &SelectionValue::buttonClicked, this, &WidgetManeuverPlanner::onOverrideDeleteClicked);
+	const auto& insertItr = overrides_.insert_or_assign(id, sv);
+	int insertionIdx = std::distance(overrides_.begin(), insertItr.first);
+	ui->overrides->insertWidget(insertionIdx, sv);
 }
 
 
@@ -178,18 +193,6 @@ WidgetManeuverPlanner::on_addOverride_clicked()
 	if (overrides_.find(id) != overrides_.end())
 		return;
 	addOverrideWidget(id);
-}
-
-void
-WidgetManeuverPlanner::on_removeOverride_clicked()
-{
-	auto it = overrides_.find(ui->overrideList->currentText().toStdString());
-	if (it == overrides_.end())
-		return;
-
-	ui->overrides->removeWidget(it->second);
-	delete it->second;
-	overrides_.erase(it);
 }
 
 void
@@ -209,13 +212,22 @@ WidgetManeuverPlanner::on_defaultsButton_clicked()
 		delete it.second;
 	}
 	overrides_.clear();
-
+	auto overrideList = pm->getOverrides();
 	for (const auto& override : defaultOverrides)
 	{
-		if (std::find(overrideList_.begin(), overrideList_.end(), override) != overrideList_.end())
+		if (std::find(overrideList.begin(), overrideList.end(), override) != overrideList.end())
 			addOverrideWidget(override);
 		else
 			CPSLOG_WARN << "Override " << override << " not available in autopilot";
 	}
+}
+
+void
+WidgetManeuverPlanner::onOverrideDeleteClicked(const std::string& key, SelectionValue* wid)
+{
+	wid = overrides_[key];
+	overrides_.erase(key);
+	ui->overrides->removeWidget(wid);
+	delete wid;
 }
 

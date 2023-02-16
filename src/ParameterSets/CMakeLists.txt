@@ -7,6 +7,7 @@ set(UAVGS_SRCS 	${UAVGS_SRCS}
         ${CMAKE_CURRENT_SOURCE_DIR}/WidgetPopulator.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/WidgetTreeNode.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/WidgetTreeParser.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/GenericParameterConfigurators.cpp
         PARENT_SCOPE)
 
 set(UI_FORMS 	${UI_FORMS}

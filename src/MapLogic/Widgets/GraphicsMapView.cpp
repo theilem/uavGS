@@ -550,9 +550,11 @@ GraphicsMapView::addLocation(const MapLocation& location)
 void
 GraphicsMapView::mouseMoveEvent(QMouseEvent* move)
 {
-	QPointF newCenter = lastCenterTileCoords_ - (move->localPos() - moveStart_) / 256.0;
-	center_ = MapLocation::fromMapTileCoords(newCenter.x(), newCenter.y(), zoom_);
-	viewport()->update();
+	if (move->buttons() & Qt::LeftButton) {
+		QPointF newCenter = lastCenterTileCoords_ - (move->localPos() - moveStart_) / 256.0;
+		center_ = MapLocation::fromMapTileCoords(newCenter.x(), newCenter.y(), zoom_);
+		viewport()->update();
+	}
 }
 
 void

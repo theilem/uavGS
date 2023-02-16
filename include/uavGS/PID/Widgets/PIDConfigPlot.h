@@ -5,14 +5,16 @@
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 #include <cpsCore/Aggregation/AggregatableObject.hpp>
 
-#include <uavGS/PID/PIDConfigurator.h>
+#include "uavGS/ParameterSets/NamedLineEdit.h"
+#include "uavGS/ParameterSets/NamedCheckbox.h"
+#include "uavGS/PID/PIDConfigurator.h"
 
 namespace Ui
 {
 class PIDConfigPlot;
 }
 
-class PIDConfigPlot : public QWidget, public AggregatableObject<PIDConfigurator>
+class PIDConfigPlot: public QWidget, public AggregatableObject<PIDConfigurator>
 {
 Q_OBJECT
 
@@ -75,6 +77,14 @@ private slots:
 	on_send_clicked();
 
 private:
+
+	NamedLineEdit* kp_;
+	NamedLineEdit* ki_;
+	NamedLineEdit* kd_;
+	NamedLineEdit* imax_;
+	NamedLineEdit* ff_;
+	bool angle_;
+
 	Ui::PIDConfigPlot* ui;
 	int key_;
 	QString title;
