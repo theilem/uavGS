@@ -151,6 +151,7 @@ private:
 	QPointF moveStart_;
 	MapLocation lastCenter_;
 	QPointF lastCenterTileCoords_;
+	bool mousePressed_;
 	std::vector<MapLocation> pathHistory_;
 	unsigned int flightPathSize_;
 

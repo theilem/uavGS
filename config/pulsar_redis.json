@@ -3,12 +3,7 @@
 		"redis": {
 			"hosts": {
 				"localhost": {
-					"ip": "127.0.0.1",
-					"auth": "",
-					"port": 6379
-				},
-				"desktop": {
-					"ip": "10.162.12.247",
+					"ip": "192.168.3.21",
 					"auth": "",
 					"port": 6379
 				}
@@ -17,20 +12,12 @@
 				"autopilot": {
 					"host": "localhost",
 					"channel": "to_uavgs"
-				},
-				"forwarding": {
-					"host": "desktop",
-					"channel": "forwarding_to_main"
 				}
 			},
 			"pub": {
 				"autopilot": {
 					"host": "localhost",
 					"channel": "to_uavap"
-				},
-				"forwarding": {
-					"host": "desktop",
-					"channel": "forwarding_from_main"
 				}
 			}
 		}
@@ -63,7 +50,6 @@
 			"pid/pitch"
 		]
 	},
-	"packet_forwarding": {},
 	"layout_generator": {
 		"resource_path": "/usr/local/resources/uavGS/",
 		"layout": {

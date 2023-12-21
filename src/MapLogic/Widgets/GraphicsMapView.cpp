@@ -16,6 +16,8 @@ GraphicsMapView::GraphicsMapView(QWidget* parent) :
 	aircraftScale_ = 1.0;
 	aircraftLocation_ = center_;
 	viewMode_ = ViewMode::FIXED_MODE;
+	lastCenterTileCoords_ = QPointF(0,0);
+	mousePressed_ = false;
 }
 
 void
@@ -550,9 +552,12 @@ GraphicsMapView::addLocation(const MapLocation& location)
 void
 GraphicsMapView::mouseMoveEvent(QMouseEvent* move)
 {
-	QPointF newCenter = lastCenterTileCoords_ - (move->localPos() - moveStart_) / 256.0;
-	center_ = MapLocation::fromMapTileCoords(newCenter.x(), newCenter.y(), zoom_);
-	viewport()->update();
+	if (mousePressed_)
+	{
+		QPointF newCenter = lastCenterTileCoords_ - (move->localPos() - moveStart_) / 256.0;
+		center_ = MapLocation::fromMapTileCoords(newCenter.x(), newCenter.y(), zoom_);
+		viewport()->update();
+	}
 }
 
 void
@@ -561,11 +566,13 @@ GraphicsMapView::mousePressEvent(QMouseEvent* event)
 	moveStart_ = event->localPos();
 	lastCenter_ = center_;
 	lastCenterTileCoords_ = QPointF(lastCenter_.x(zoom_), lastCenter_.y(zoom_));
+	mousePressed_ = true;
 }
 
 void
 GraphicsMapView::mouseReleaseEvent(QMouseEvent* event)
 {
+	mousePressed_ = false;
 }
 
 void
