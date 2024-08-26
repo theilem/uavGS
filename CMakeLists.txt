@@ -1,11 +1,9 @@
-cmake_minimum_required (VERSION 3.0.0)
+cmake_minimum_required (VERSION 3.13)
 project (uavGS)
 
 set (CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -static-libstdc++ -std=c++1z -fPIC")
-
-
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -41,17 +39,15 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif (NOT CMAKE_BUILD_TYPE)
 
-set(SUBMODULE_DIR ${CMAKE_SOURCE_DIR}/extern)
-
-
-include_directories(${CMAKE_SOURCE_DIR}/include
-  ${CMAKE_SOURCE_DIR}/extern
+include_directories(${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_SOURCE_DIR}/extern
+  ${PROJECT_SOURCE_DIR}/extern/QFlightInstruments
   ${Qt5_INCLUDE_DIRS}
   ${Qt5Svg_INCLUDE_DIRS}
   ${Qt5OpenGL_INCLUDE_DIRS})
 
-add_subdirectory(extern/QCustomPlot)
-add_subdirectory(extern/QFlightInstruments)
+add_subdirectory(${PROJECT_SOURCE_DIR}/extern/QCustomPlot)
+add_subdirectory(${PROJECT_SOURCE_DIR}/extern/QFlightInstruments)
 
 add_subdirectory(src)
 #add_subdirectory(tests)
