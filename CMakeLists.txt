@@ -52,7 +52,7 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/extern/QFlightInstruments)
 add_subdirectory(src)
 #add_subdirectory(tests)
 
-install(DIRECTORY include/${CMAKE_PROJECT_NAME} DESTINATION include)
+install(DIRECTORY include/uavGS DESTINATION include)
 # Not to conflict with uavAP. We should probably do this inside uavAP too
-install(DIRECTORY config/ DESTINATION config/${CMAKE_PROJECT_NAME})
-install(DIRECTORY resources/ DESTINATION resources/${CMAKE_PROJECT_NAME})
+install(DIRECTORY config/ DESTINATION config/uavGS)
+install(DIRECTORY resources/ DESTINATION resources/uavGS)
