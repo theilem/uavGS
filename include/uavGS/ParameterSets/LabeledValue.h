@@ -43,14 +43,21 @@ public:
 	bool
 	isEmpty();
 
+	template <typename Type>
 	void
-	set(double val);
+	set(const Type& val);
 
-	void
-	set(float val);
-
-	void
-	set(int val);
+	// void
+	// set(double val);
+	//
+	// void
+	// set(float val);
+	//
+	// void
+	// set(int val);
+	//
+	// void
+	// set(bool val);
 
 	template<typename Type>
 	void
@@ -95,6 +102,15 @@ LabeledValue::getAngle()
 		static_assert(std::is_same<Type, double>::value || std::is_same<Type, float>::value,
 					  "Can only handle float and double for angle");
 	}
+}
+
+template <typename Type>
+void
+LabeledValue::set(const Type& val)
+{
+	QString string;
+	string.setNum(val);
+	value_->setText(string);
 }
 
 #endif //UAVGS_LABELEDVALUE_H

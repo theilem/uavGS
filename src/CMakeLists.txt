@@ -19,6 +19,7 @@ add_subdirectory(SensorData)
 add_subdirectory(ParameterSets)
 add_subdirectory(ManeuverPlanner)
 add_subdirectory(PacketForwarding)
+add_subdirectory(Widgets)
 
 add_executable(uavGS ${UAVGS_SRCS}
 		${UI_FORMS}
@@ -52,6 +53,7 @@ target_link_libraries(uavGS
         uavap_core
 		QCustomPlot
 		QFlightInstruments)
+
 
 install(TARGETS uavGS
         RUNTIME DESTINATION bin

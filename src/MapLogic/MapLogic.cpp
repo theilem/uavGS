@@ -6,170 +6,172 @@
 #include <uavGS/LayoutGenerator/LayoutGenerator.h>
 
 MapLogic::MapLogic() :
-		currentPath_(-1)
+    currentPath_(-1)
 {
 }
 
 bool
 MapLogic::run(RunStage stage)
 {
-	switch (stage)
-	{
-		case RunStage::INIT:
-		{
-			if (!checkIsSet<DataHandling, IScheduler, GSWidgetFactory>())
-			{
-				CPSLOG_ERROR << "MapLogic: missing dependencies.";
-				return true;
-			}
-			if (auto lg = get<LayoutGenerator>())
-			{
-				resourcePath_ = lg->getResourcePath();
-			}
+    switch (stage)
+    {
+    case RunStage::INIT:
+        {
+            if (!checkIsSet<DataHandling, IScheduler, GSWidgetFactory>())
+            {
+                CPSLOG_ERROR << "MapLogic: missing dependencies.";
+                return true;
+            }
+            if (auto lg = get<LayoutGenerator>())
+            {
+                resourcePath_ = lg->getResourcePath();
+            }
 
-			auto wf = get<GSWidgetFactory>();
-			wf->registerWidget<WidgetOverheadMap>();
-			break;
-		}
-		case RunStage::NORMAL:
-		{
+            auto wf = get<GSWidgetFactory>();
+            wf->registerWidget<WidgetOverheadMap>();
+            break;
+        }
+    case RunStage::NORMAL:
+        {
+            auto scheduler = get<IScheduler>();
 
-			auto scheduler = get<IScheduler>();
+            scheduler->schedule([this]
+            {
+                this->askForAll();
+            }, Seconds(1));
 
-			scheduler->schedule([this]
-								{ this->askForAll(); }, Seconds(1));
-
-			auto dh = get<DataHandling>();
-			dh->subscribeOnData<Mission>(Content::MISSION, [this](const auto& m)
-			{
-				this->mission_ = m;
-				onUpdates_();
-			});
-			dh->subscribeOnData<Trajectory>(Content::TRAJECTORY, [this](const auto& t)
-			{
-				this->trajectory_ = t;
-				onUpdates_();
-			});
-			dh->subscribeOnData<Rectanguloid>(Content::SAFETY_BOUNDS, [this](const auto& sb)
-			{
-				this->safetyRect_ = sb;
-				onUpdates_();
-			});
-			break;
-		}
-		default:
-			break;
-	}
-	return false;
+            auto dh = get<DataHandling>();
+            dh->subscribeOnData<Mission>(Content::MISSION, [this](const auto& m)
+            {
+                this->mission_ = m;
+                onUpdates_();
+            });
+            dh->subscribeOnData<Trajectory>(Content::TRAJECTORY, [this](const auto& t)
+            {
+                this->trajectory_ = t;
+                onUpdates_();
+            });
+            dh->subscribeOnData<Rectanguloid>(Content::SAFETY_BOUNDS, [this](const auto& sb)
+            {
+                this->safetyRect_ = sb;
+                onUpdates_();
+            });
+            break;
+        }
+    default:
+        break;
+    }
+    return false;
 }
 
 const std::vector<Waypoint>&
 MapLogic::getWaypoints() const
 {
-	return mission_.waypoints();
+    return mission_.waypoints();
 }
 
 const Trajectory&
 MapLogic::getPath() const
 {
-	return trajectory_;
+    return trajectory_;
 }
 
 int
 MapLogic::getCurrentPathSection() const
 {
-	return currentPath_;
+    return currentPath_;
 }
 
 void
 MapLogic::askForAll()
 {
-	askForMission();
-	askForTrajectory();
-	askForSafetyNet();
-	askForLocalFrame();
+    askForMission();
+    askForTrajectory();
+    askForSafetyNet();
+    askForLocalFrame();
 }
 
 void
 MapLogic::askForMission()
 {
-	if (auto dh = get<DataHandling>())
-	{
-		dh->sendData(DataRequest::MISSION, Content::REQUEST_DATA, Target::MISSION_CONTROL);
-	}
+    askForLocalFrame();
+    if (auto dh = get<DataHandling>())
+    {
+        dh->sendData(DataRequest::MISSION, Content::REQUEST_DATA, Target::MISSION_CONTROL);
+    }
 }
 
 void
 MapLogic::askForTrajectory()
 {
-	if (auto dh = get<DataHandling>())
-	{
-		dh->sendData(DataRequest::TRAJECTORY, Content::REQUEST_DATA, Target::FLIGHT_CONTROL);
-	}
+    if (auto dh = get<DataHandling>())
+    {
+        dh->sendData(DataRequest::TRAJECTORY, Content::REQUEST_DATA, Target::FLIGHT_CONTROL);
+    }
 }
 
 void
 MapLogic::askForSafetyNet()
 {
-	if (auto dh = get<DataHandling>())
-	{
-		dh->sendData(DataRequest::SAFETY_BOUNDS, Content::REQUEST_DATA, Target::FLIGHT_CONTROL);
-	}
+    if (auto dh = get<DataHandling>())
+    {
+        dh->sendData(DataRequest::SAFETY_BOUNDS, Content::REQUEST_DATA, Target::FLIGHT_CONTROL);
+    }
 }
 
 void
 MapLogic::setSafetyBounds(const Rectanguloid& rect)
 {
-	safetyRect_ = rect;
+    safetyRect_ = rect;
 }
 
 const Rectanguloid&
 MapLogic::getSafetyBounds() const
 {
-	return safetyRect_;
+    return safetyRect_;
 }
 
 const SensorData&
 MapLogic::getSensorData() const
 {
-	return sensorData_;
+    return sensorData_;
 }
 
 void
 MapLogic::askForLocalFrame()
 {
-	if (auto dh = get<DataHandling>())
-	{
-		dh->sendData(DataRequest::LOCAL_FRAME, Content::REQUEST_DATA, Target::MISSION_CONTROL);
-	}
+    if (auto dh = get<DataHandling>())
+    {
+        dh->sendData(DataRequest::LOCAL_FRAME, Content::REQUEST_DATA, Target::MISSION_CONTROL);
+    }
 }
 
 std::string
 MapLogic::getMapTileDirectory() const
 {
-	return resourcePath_ + "/map_tiles/";
+    return resourcePath_ + "/map_tiles/";
 }
 
 std::string
 MapLogic::getIconPath() const
 {
-	return resourcePath_ + "/icons/";
+    return resourcePath_ + "/icons/";
 }
 
 void
 MapLogic::setLocalFrame(const VehicleOneFrame& frame)
 {
-	localFrame_ = frame;
+    localFrame_ = frame;
 }
 
 boost::signals2::connection
 MapLogic::subscribeOnUpdates(const boost::signals2::signal<void(void)>::slot_type& slot)
 {
-	return onUpdates_.connect(slot);
+    return onUpdates_.connect(slot);
 }
 
 MapLocation
 MapLogic::getMapCenter() const
 {
-	return MapLocation(params.mapCenter());
+    return MapLocation(params.mapCenter());
 }

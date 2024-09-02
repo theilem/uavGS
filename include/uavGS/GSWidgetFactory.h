@@ -60,16 +60,7 @@ inline typename std::enable_if<std::is_base_of<QWidget, TYPE>::value, void>::typ
 GSWidgetFactory::registerWidget()
 {
 	const std::string type(TYPE::widgetName);
-	CPSLOG_DEBUG << "Added widget " << type;
-	if (creators_.find(type) != creators_.end())
-	{
-		CPSLOG_ERROR << "Widget of that type already exists. Ignore new insertion.";
-		return;
-	}
-	if constexpr (std::is_base_of<IAggregatableObject, TYPE>::value)
-		creators_.insert(std::make_pair(type, [this](QWidget* parent){return this->createWidget<TYPE>(parent);}));
-	else
-		creators_.insert(std::make_pair(type, &TYPE::createGSWidget));
+	registerWidget<TYPE>(type);
 }
 
 template<typename TYPE>

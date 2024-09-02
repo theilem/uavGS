@@ -75,7 +75,7 @@ private:
 
 	Ui::WidgetManeuverPlanner* ui;
 
-	std::map<std::string, Mission> missionMap_;
+	std::vector<std::string> missionList_;
 	std::map<std::string, NamedLineEdit*> overrides_;
 	std::vector<std::string> overrideList_;
 	std::vector<std::string> maneuversList_;

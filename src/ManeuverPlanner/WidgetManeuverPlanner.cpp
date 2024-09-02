@@ -119,8 +119,8 @@ WidgetManeuverPlanner::connect()
 	QObject::connect(this, SIGNAL(contentUpdated()), this, SLOT(contentUpdatedSlot()));
 	if (auto dh = get<DataHandling>())
 	{
-		dh->subscribeOnData<std::map<std::string, Mission>>(Content::MISSION_LIST, [this](const auto& m)
-		{ missionMap_ = m; emit contentUpdated(); });
+		dh->subscribeOnData<std::vector<std::string>>(Content::MISSION_LIST, [this](const auto& m)
+		{ missionList_ = m; emit contentUpdated(); });
 		dh->subscribeOnData<std::vector<std::string>>(Content::OVERRIDE_LIST, [this](const auto& m)
 		{ overrideList_ = m; emit contentUpdated(); });
 		dh->subscribeOnData<std::vector<std::string>>(Content::MANEUVER_LIST, [this](const auto& m)
@@ -143,9 +143,9 @@ void
 WidgetManeuverPlanner::contentUpdatedSlot()
 {
 	ui->missionOptions->clear();
-	for (const auto& it : missionMap_)
+	for (const auto& it : missionList_)
 	{
-		ui->missionOptions->addItem(QString::fromStdString(it.first));
+		ui->missionOptions->addItem(QString::fromStdString(it));
 	}
 
 	ui->overrideList->clear();

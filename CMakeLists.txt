@@ -20,12 +20,6 @@ find_package(Qt5 #5.6
         Svg
         PrintSupport
     REQUIRED)
- 
-#message(Qt5_VERSION ${Qt5_VERSION})
-#message(Qt5Core_VERSION ${Qt5Core_VERSION})
-#message(Qt5Gui_VERSION: ${Qt5Gui_VERSION})
-#message(Qt5OpenGL_VERSION: ${Qt5OpenGL_VERSION})
-#message(Qt5PrintSupport_VERSION: ${Qt5PrintSupport_VERSION})
 
 
 set(SYSTEM_LIBS pthread

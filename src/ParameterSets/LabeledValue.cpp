@@ -55,29 +55,37 @@ LabeledValue::getString()
 	return value_->text().toStdString();
 }
 
-void
-LabeledValue::set(double val)
-{
-	QString string;
-	string.setNum(val);
-	value_->setText(string);
-}
-
-void
-LabeledValue::set(float val)
-{
-	QString string;
-	string.setNum(val);
-	value_->setText(string);
-}
-
-void
-LabeledValue::set(int val)
-{
-	QString string;
-	string.setNum(val);
-	value_->setText(string);
-}
+// void
+// LabeledValue::set(double val)
+// {
+// 	QString string;
+// 	string.setNum(val);
+// 	value_->setText(string);
+// }
+//
+// void
+// LabeledValue::set(float val)
+// {
+// 	QString string;
+// 	string.setNum(val);
+// 	value_->setText(string);
+// }
+//
+// void
+// LabeledValue::set(int val)
+// {
+// 	QString string;
+// 	string.setNum(val);
+// 	value_->setText(string);
+// }
+//
+// void
+// LabeledValue::set(bool val)
+// {
+// 	QString string;
+// 	string.setNum(val);
+// 	value_->setText(string);
+// }
 
 void
 LabeledValue::set(const std::string& val)
