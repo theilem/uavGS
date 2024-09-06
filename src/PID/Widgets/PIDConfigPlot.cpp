@@ -2,138 +2,133 @@
 #include <uavGS/PID/PIDConfigurator.h>
 #include "ui_PIDConfigPlot.h"
 
-PIDConfigPlot::PIDConfigPlot(QWidget *parent) :
-		QWidget(parent), ui(new Ui::PIDConfigPlot), key_(0)
-{
-	ui->setupUi(this);
-	//ui->customPlot->setTitle(QString::fromStdString(name));
-}
 
-void
-PIDConfigPlot::setParams(PIDs pid, const Control::PIDParameters& params)
+PIDConfigPlot::PIDConfigPlot(QWidget* parent, PIDs key) :
+    QWidget(parent),
+    ui(new Ui::PIDConfigPlot), key_(key)
 {
-	key_ = static_cast<int>(pid);
-	auto name = EnumMap<PIDs>::convert(pid);
-	ui->customPlot->setTitle(name);
-	//ui->customPlot->setTname
-	title = QString::fromStdString(name);
-	// Set title and PID params
-	ui->kP->setText(QString::number(params.kp()));
-	ui->kP->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
-	ui->kI->setText(QString::number(params.ki()));
-	ui->kI->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
-	ui->kD->setText(QString::number(params.kd()));
-	ui->kD->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
-	ui->IMax->setText(QString::number(params.imax()));
-	ui->IMax->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
-	ui->FF->setText(QString::number(params.ff()));
-	ui->FF->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
+    ui->setupUi(this);
+    auto name = EnumMap<PIDs>::convert(key_);
+    ui->customPlot->setTitle(name);
+
+    ui->kP->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
+    ui->kI->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
+    ui->kD->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
+    ui->IMax->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
+    ui->FF->setStyleSheet(QString("border: 1px solid gray; width: 60px; height:25px;"));
 }
 
 PIDConfigPlot::~PIDConfigPlot()
 {
-	delete ui;
+    delete ui;
+    for (auto& c : connections_)
+    {
+        QObject::disconnect(c);
+    }
+    syncUpdateSub_.disconnect();
 }
 
 void
-PIDConfigPlot::setData(double current, double target)
+PIDConfigPlot::setData(const TimePoint& t, FloatingType current, FloatingType target, FloatingType integrator)
 {
-	ui->customPlot->addData(current, target);
-}
-
-void
-PIDConfigPlot::sendData()
-{
-	on_send_clicked();
+    ui->customPlot->addData(t, current, target);
+    ui->IntegratorValue->setText(QString::number(integrator));
 }
 
 void
 PIDConfigPlot::connect()
 {
+    connections_.push_back(QObject::connect(ui->kP, &QLineEdit::editingFinished, this, &PIDConfigPlot::onEditEvent));
+    connections_.push_back(QObject::connect(ui->kI, &QLineEdit::editingFinished, this, &PIDConfigPlot::onEditEvent));
+    connections_.push_back(QObject::connect(ui->kD, &QLineEdit::editingFinished, this, &PIDConfigPlot::onEditEvent));
+    connections_.push_back(QObject::connect(ui->IMax, &QLineEdit::editingFinished, this, &PIDConfigPlot::onEditEvent));
+    connections_.push_back(QObject::connect(ui->FF, &QLineEdit::editingFinished, this, &PIDConfigPlot::onEditEvent));
+    connections_.push_back(QObject::connect(ui->applyButton, &QPushButton::clicked, this,
+                                            &PIDConfigPlot::onApplyClicked));
 
-}
+    auto pc = get<PIDConfigurator>();
+    if (!pc)
+        return;
 
-double
-PIDConfigPlot::getkP()
-{
-	return ui->kP->text().toDouble();
-}
+    params_ = pc->getPIDParams(key_);
+    syncStatus_ = pc->getSyncStatus(key_);
 
-double
-PIDConfigPlot::getkI()
-{
-	return ui->kI->text().toDouble();
-}
+    updateParamsDisplay();
+    updateSyncStatusDisplay();
 
-double
-PIDConfigPlot::getkD()
-{
-	return ui->kD->text().toDouble();;
-}
-
-double
-PIDConfigPlot::getFF()
-{
-	return ui->FF->text().toDouble();
-}
-
-double
-PIDConfigPlot::getIMax()
-{
-	return ui->IMax->text().toDouble();
+    syncUpdateSub_ = pc->subscribeOnSyncUpdated([this]()
+    {
+        updateSyncStatusDisplay();
+    });
 }
 
 void
 PIDConfigPlot::resetGraph()
 {
-	ui->customPlot->resetGraph();
+    ui->customPlot->resetGraph();
 }
 
 void
-PIDConfigPlot::setkP(double kP)
+PIDConfigPlot::updateParams()
 {
-	ui->kP->setText(QString::number(kP));
+    params_->kp = ui->kP->text().toFloat();
+    params_->ki = ui->kI->text().toFloat();
+    params_->kd = ui->kD->text().toFloat();
+    params_->imax = ui->IMax->text().toFloat();
+    params_->ff = ui->FF->text().toFloat();
 }
 
 void
-PIDConfigPlot::setkI(double kI)
+PIDConfigPlot::onApplyClicked()
 {
-	ui->kI->setText(QString::number(kI));
+    if (auto pc = get<PIDConfigurator>())
+    {
+        pc->applyPID(key_);
+    }
 }
 
 void
-PIDConfigPlot::setkD(double kD)
+PIDConfigPlot::updateSyncStatusDisplay()
 {
-	ui->kD->setText(QString::number(kD));
+    if (syncStatus_ == nullptr)
+        return;
+    updateParamsDisplay();
+    switch (*syncStatus_)
+    {
+    case PIDConfigurator::PIDSyncStatus::MATCHING:
+        ui->syncStatus->setText("Matching");
+        ui->syncStatus->setStyleSheet("QLabel { background-color : green; color : white; }");
+        break;
+    case PIDConfigurator::PIDSyncStatus::NOT_MATCHING:
+        ui->syncStatus->setText("Mismatch");
+        ui->syncStatus->setStyleSheet("QLabel { background-color : red; color : white; }");
+        break;
+    case PIDConfigurator::PIDSyncStatus::UNKNOWN:
+        ui->syncStatus->setText("Unknown");
+        ui->syncStatus->setStyleSheet("QLabel { background-color : yellow; color : black; }");
+        break;
+    default: break;
+    }
 }
 
 void
-PIDConfigPlot::setFF(double ff)
+PIDConfigPlot::updateParamsDisplay()
 {
-	ui->FF->setText(QString::number(ff));
+    if (params_ == nullptr)
+        return;
+    ui->kP->setText(QString::number(params_->kp()));
+    ui->kI->setText(QString::number(params_->ki()));
+    ui->kD->setText(QString::number(params_->kd()));
+    ui->IMax->setText(QString::number(params_->imax()));
+    ui->FF->setText(QString::number(params_->ff()));
 }
 
 void
-PIDConfigPlot::setIMax(double iMax)
+PIDConfigPlot::onEditEvent()
 {
-	ui->IMax->setText(QString::number(iMax));
+    auto pc = get<PIDConfigurator>();
+    if (!pc)
+        return;
+    updateParams();
+    pc->localChanged(key_);
 }
-
-void
-PIDConfigPlot::on_send_clicked()
-{
-	Control::PIDParameters a;
-	a.kp = ui->kP->text().toDouble();
-	a.ki = ui->kI->text().toDouble();
-	a.kd = ui->kD->text().toDouble();
-	a.ff = ui->FF->text().toDouble();
-	a.imax = ui->IMax->text().toDouble();
-	PIDTuning tune;
-	tune.pid = key_;
-	tune.params = a;
-	if (auto pc = get<PIDConfigurator>())
-	{
-		pc->tunePID(tune);
-	}
-}
-

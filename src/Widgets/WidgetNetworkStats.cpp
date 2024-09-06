@@ -14,6 +14,10 @@
 WidgetNetworkStats::WidgetNetworkStats(QWidget* parent):
     WidgetGeneric(parent)
 {
+    setHandles([]
+               {  }, []
+               {  }, [this]
+               { this->updateStats(); });
 }
 
 WidgetNetworkStats::~WidgetNetworkStats()
@@ -28,8 +32,12 @@ WidgetNetworkStats::connect()
     {
         updateEvent_ = scheduler->schedule([this]
         {
-            this->update();
+            this->contentUpdated();
         }, Milliseconds(0), Milliseconds(100));
+    }
+    else
+    {
+        CPSLOG_ERROR << "No scheduler available. Cannot display network stats.";
     }
 }
 

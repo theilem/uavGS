@@ -3,6 +3,7 @@
 
 #include "QCustomPlot/QCustomPlot.h"
 #include <cpsCore/Aggregation/AggregatableObject.hpp>
+#include <cpsCore/Utilities/Time.hpp>
 
 class PIDConfigurator;
 
@@ -15,7 +16,7 @@ public:
 	setTitle(std::string title);
 
 	void
-	addData(double current, double target);
+	addData(const TimePoint& t, double current, double target);
 
 	void
 	resetGraph();

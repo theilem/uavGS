@@ -20,13 +20,20 @@ public:
 	explicit
 	NamedCheckbox(const std::string& name, QWidget* parent = 0);
 
-	~NamedCheckbox();
+	~NamedCheckbox() override;
 
 	bool
 	get();
 
 	void
 	set(bool val);
+
+	void
+	setFontColor(const QColor& color);
+
+	QColor
+	getFontColor() const;
+
 
 private:
 

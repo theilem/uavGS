@@ -12,6 +12,7 @@ NamedCheckbox::NamedCheckbox(const std::string& name, QWidget* parent) :
 {
 	label_ = new QLabel(QString::fromStdString(name), parent);
 	checkbox_ = new QCheckBox(parent);
+	checkbox_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
 	layout_.addWidget(label_);
 	layout_.addWidget(checkbox_);
@@ -33,4 +34,16 @@ void
 NamedCheckbox::set(bool val)
 {
 	checkbox_->setChecked(val);
+}
+
+void
+NamedCheckbox::setFontColor(const QColor& color)
+{
+	label_->setStyleSheet("QLabel { color : " + color.name() + "; }");
+}
+
+QColor
+NamedCheckbox::getFontColor() const
+{
+	return label_->palette().color(QPalette::WindowText);
 }

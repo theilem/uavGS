@@ -111,6 +111,31 @@ WidgetManeuverPlanner::on_sendMission_clicked()
 	{
 		dh->sendData(ui->missionOptions->currentText().toStdString(), Content::SELECT_MISSION, Target::MISSION_CONTROL);
 	}
+	else
+	{
+		CPSLOG_ERROR << "DataHandling missing, cannot send mission";
+	}
+
+	if (auto sched = get<IScheduler>())
+	{
+		sched->schedule([this]
+		{
+			auto dh = get<DataHandling>();
+			if (dh)
+			{
+				dh->sendData(DataRequest::MISSION, Content::REQUEST_DATA, Target::MISSION_CONTROL);
+			}
+		}, Seconds(1));
+		sched->schedule([this]
+		{
+			auto dh = get<DataHandling>();
+			if (dh)
+			{
+				dh->sendData(DataRequest::TRAJECTORY, Content::REQUEST_DATA, Target::FLIGHT_CONTROL);
+			}
+		}, Seconds(2));
+	}
+
 }
 
 void

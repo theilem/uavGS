@@ -16,8 +16,9 @@ namespace Ui
 class WidgetManeuverPlanner;
 }
 class PlanningManager;
+class IScheduler;
 
-class WidgetManeuverPlanner: public QWidget, public AggregatableObject<DataHandling, PlanningManager>
+class WidgetManeuverPlanner: public QWidget, public AggregatableObject<DataHandling, PlanningManager, IScheduler>
 {
 Q_OBJECT
 
@@ -27,7 +28,8 @@ public:
 
 	explicit
 	WidgetManeuverPlanner(QWidget* parent = nullptr);
-	~WidgetManeuverPlanner();
+
+	~WidgetManeuverPlanner() override;
 
 	void
 	connect();

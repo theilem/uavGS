@@ -9,75 +9,52 @@
 
 namespace Ui
 {
-class PIDConfigPlot;
+    class PIDConfigPlot;
 }
 
 class PIDConfigPlot : public QWidget, public AggregatableObject<PIDConfigurator>
 {
-Q_OBJECT
-
-	friend class WidgetCPGrid;
-
+    Q_OBJECT
 public:
+    PIDConfigPlot(QWidget* parent, PIDs key);
 
-	PIDConfigPlot(QWidget* parent);
+    ~PIDConfigPlot() override;
 
-	void
-	setParams(PIDs pid, const Control::PIDParameters& params);
+    void
+    setData(const TimePoint& t, FloatingType current, FloatingType target, FloatingType integrator);
 
-	void
-	setData(double current, double target);
+    void
+    connect();
 
-	void
-	sendData();
+    void
+    resetGraph();
 
-	void
-	connect();
-
-	double
-	getkP();
-
-	double
-	getkI();
-
-	double
-	getkD();
-
-	double
-	getFF();
-
-	double
-	getIMax();
-
-	void
-	resetGraph();
-
-	void
-	setkP(double kP);
-
-	void
-	setkI(double kI);
-
-	void
-	setkD(double kD);
-
-	void
-	setFF(double ff);
-
-	void
-	setIMax(double iMax);
-
-	~PIDConfigPlot();
+    void
+    updateParams();
 
 private slots:
+    void
+    onApplyClicked();
 
-	void
-	on_send_clicked();
+    void
+    updateSyncStatusDisplay();
+
+    void
+    updateParamsDisplay();
+
+    void
+    onEditEvent();
+
 
 private:
-	Ui::PIDConfigPlot* ui;
-	int key_;
-	QString title;
+    Ui::PIDConfigPlot* ui;
+
+    std::vector<QMetaObject::Connection> connections_;
+    boost::signals2::connection syncUpdateSub_;
+
+    PIDs key_;
+    Control::PIDParameters* params_ = nullptr;
+    PIDConfigurator::PIDSyncStatus* syncStatus_ = nullptr;
 };
 
 #endif // PIDCONFIGPLOT_H

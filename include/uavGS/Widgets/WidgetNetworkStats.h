@@ -18,6 +18,8 @@ class WidgetNetworkStats : public WidgetGeneric,
                            public AggregatableObject<INetworkLayer, IScheduler>
 {
 public:
+	static constexpr auto widgetName = "network_stats";
+
     explicit WidgetNetworkStats(QWidget* parent = nullptr);
 
     ~WidgetNetworkStats();

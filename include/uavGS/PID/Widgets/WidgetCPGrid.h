@@ -9,61 +9,68 @@
 
 namespace Ui
 {
-class WidgetCPGrid;
+    class WidgetCPGrid;
 }
 
 class PIDConfigPlot;
 
 class WidgetCPGrid : public QWidget, public AggregatableObject<PIDConfigurator, GSWidgetFactory, DataHandling>
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
+    static constexpr auto widgetName = "cp_grid";
 
-	static constexpr auto widgetName = "cp_grid";
+    explicit
+    WidgetCPGrid(QWidget* parent = nullptr);
 
-	explicit
-	WidgetCPGrid(QWidget* parent = 0);
+    ~WidgetCPGrid() override;
 
-	~WidgetCPGrid();
-
-	void
-	connect();
+    void
+    connect();
 
 public slots:
+    void
+    on_sendAllParams_clicked();
 
-	void
-	on_sendAllParams_clicked();
+    void
+    on_saveGains_clicked();
+    //
+    // void
+    // on_loadGains_clicked();
 
-	void
-	on_saveGains_clicked();
+    void
+    on_requestParams_clicked();
 
-	void
-	on_loadGains_clicked();
+    void
+    statusUpdatedSlot();
 
-	void
-	on_requestParams_clicked();
+    void
+    clearPlotsSlot();
 
-	void
-	contentUpdatedSlot();
+    void
+    createPlotsSlot();
 
 signals:
+    void
+    statusUpdated();
 
-	void
-	contentUpdated();
+    void
+    clearPlots();
+
+    void
+    createPlots();
 
 private:
+    void
+    onPIDStati(const TimedPIDStati& data);
 
-	void
-	onPIDStati(const PIDStati& data);
+    Ui::WidgetCPGrid* ui;
+    TimedPIDStati pidStati_;
+    std::map<PIDs, PIDConfigPlot*> plots_;
 
-	void
-	drawPlots();
-
-	PIDStati pidStati_;
-	QString title;
-	Ui::WidgetCPGrid* ui;
-	std::map<int, PIDConfigPlot*> plots;
+    boost::signals2::connection pidsClearedSub_;
+    boost::signals2::connection pidsSetSub_;
 };
 
 #endif // WIDGETCPGRID_H

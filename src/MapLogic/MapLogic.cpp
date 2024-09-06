@@ -94,7 +94,6 @@ MapLogic::askForAll()
 void
 MapLogic::askForMission()
 {
-    askForLocalFrame();
     if (auto dh = get<DataHandling>())
     {
         dh->sendData(DataRequest::MISSION, Content::REQUEST_DATA, Target::MISSION_CONTROL);

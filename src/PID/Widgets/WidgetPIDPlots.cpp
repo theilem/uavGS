@@ -72,7 +72,7 @@ WidgetPIDPlots::on_numCols_valueChanged(int)
 }
 
 void
-WidgetPIDPlots::onPIDStati(const PIDStati& stati)
+WidgetPIDPlots::onPIDStati(const TimedPIDStati& stati)
 {
 	pidStati_ = stati;
 	emit contentUpdated();
@@ -112,7 +112,7 @@ WidgetPIDPlots::connect()
 
 	if (auto dh = get<DataHandling>())
 	{
-		dh->subscribeOnData<PIDStati>(Content::PID_STATUS, [this](const auto& status){onPIDStati(status);});
+		dh->subscribeOnData<TimedPIDStati>(Content::PID_STATUS, [this](const auto& status){onPIDStati(status);});
 	}
 }
 
@@ -122,7 +122,9 @@ WidgetPIDPlots::contentUpdatedSlot()
 {
 	if (plots.empty())
 		return;
-	for (const auto& it : pidStati_)
+	const auto& time = pidStati_.first;
+	const auto& stati = pidStati_.second;
+	for (const auto& it : stati)
 	{
 		auto id = static_cast<int>(it.first);
 		auto plot = plots.find(id);
@@ -131,7 +133,7 @@ WidgetPIDPlots::contentUpdatedSlot()
 			CPSLOG_WARN << "PID status id " << id << " does not match any plot";
 			continue;
 		}
-		plot->second->addData(it.second.value, it.second.target);
+		plot->second->addData(time, it.second.value, it.second.target);
 	}
 	this->update();
 }

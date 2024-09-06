@@ -54,12 +54,12 @@ signals:
 private:
 
 	void
-	onPIDStati(const PIDStati& data);
+	onPIDStati(const TimedPIDStati& data);
 
 	void
 	clearGrid();
 
-	PIDStati pidStati_;
+	TimedPIDStati pidStati_;
 	Ui::WidgetPIDPlots* ui;
 	std::map<int, std::shared_ptr<PIDCustomPlot>> plots;
 };

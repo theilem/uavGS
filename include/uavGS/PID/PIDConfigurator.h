@@ -8,48 +8,84 @@
 #ifndef IPIDCONFIGURATOR_H
 #define IPIDCONFIGURATOR_H
 
-#include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
-#include "uavAP/Core/DataHandling/DataHandling.h"
+#include <boost/signals2.hpp>
+
 #include <cpsCore/cps_object>
-#include <QtCore/QObject>
-//#include "uavGS/GSWidgetFactory.h"
+
+#include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
+
+class IScheduler;
+class DataHandling;
 class GSWidgetFactory;
+
 /**
  * @brief   The IPIDConfigurator class serves as an interface for all classes
  *          that have PID tuning functionality.
  */
-class PIDConfigurator : public AggregatableObject<DataHandling, GSWidgetFactory>, public IRunnableObject
+class PIDConfigurator : public AggregatableObject<DataHandling, GSWidgetFactory, IScheduler>, public IRunnableObject
 {
 public:
+    static constexpr TypeId typeId = "pid_configurator";
 
-	static constexpr TypeId typeId = "pid_configurator";
+    enum class PIDSyncStatus
+    {
+        UNKNOWN = 0,
+        MATCHING,
+        NOT_MATCHING,
+    };
 
-	/**
-	 * @brief   tunePID tunes a certain PID with Kp, kI, kD, Imax, and ff gains
-	 * @param   tunePID PIDTuning struct containing integer PID controller ID and gains
-	 * @return  true if request was recieved
-	 */
-	bool
-	tunePID(const PIDTuning& tunePID);
+    bool
+    run(RunStage stage) override;
 
-	/**
-	 * @brief   getPIDMap gets PID map of flying aircraft's cascade
-	 * @return  map from integer PID representation to PIDInfo struct containing
-	 *          human readable name and PID parameters
-	 */
-	const PIDParams&
-	getPIDMap() const;
+    void
+    applyPID(PIDs pid);
 
-	void
-	requestPIDParams();
+    void
+    localChanged(PIDs pid);
 
-	bool
-	run(RunStage stage) override;
+    void
+    requestPIDParams();
+
+    void
+    requestSinglePIDParams(PIDs pid);
+
+    Control::PIDParameters*
+    getPIDParams(PIDs pid);
+
+    PIDSyncStatus*
+    getSyncStatus(PIDs pid);
+
+    std::vector<PIDs>
+    getPIDs() const;
+
+    void
+    savePIDConfig(const std::string& filename);
+
+    using onLocalPIDsCleared = boost::signals2::signal<void()>;
+    using onLocalPIDsSet = boost::signals2::signal<void(PIDParams&, std::map<PIDs, PIDSyncStatus>&)>;
+    using onSyncUpdated = boost::signals2::signal<void()>;
+
+    boost::signals2::connection
+    subscribeOnLocalPIDsCleared(const onLocalPIDsCleared::slot_type& subscriber);
+
+    boost::signals2::connection
+    subscribeOnLocalPIDsSet(const onLocalPIDsSet::slot_type& subscriber, bool callImmediately = false);
+
+    boost::signals2::connection
+    subscribeOnSyncUpdated(const onSyncUpdated::slot_type& subscriber);
 
 private:
+    void
+    checkSync(PIDs pid);
 
-	PIDParams pidParams_;
+    PIDParams localPIDParams_;
+    PIDParams remotePIDParams_;
+    std::map<PIDs, PIDSyncStatus> syncStatus_;
 
+    //Subscribers
+    onLocalPIDsCleared onLocalPIDsCleared_;
+    onLocalPIDsSet onLocalPIDsSet_;
+    onSyncUpdated onSyncUpdated_;
 };
 
 #endif // IPIDCONFIGURATOR_H

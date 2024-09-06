@@ -4,6 +4,7 @@
 
 #include "uavGS/SensorData/SensorDataManager.h"
 #include <uavAP/Core/DataHandling/DataHandling.h>
+#include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include <uavGS/SensorData/WidgetSensorData.h>
 #include <uavGS/SensorData/QFI-Derived/WidgetPFD_GS.h>
 #include <uavGS/SensorData/QFI-Derived/WidgetSix_GS.h>
@@ -11,6 +12,7 @@
 #include <uavAP/Core/Frames/InertialFrame.h>
 #include <uavGS/SensorData/Recording/Recording.h>
 #include <uavGS/Widgets/WidgetNetworkStats.h>
+#include <uavGS/Widgets/NamedDataPlot.h>
 
 #include "uavGS/GSWidgetFactory.h"
 
@@ -34,6 +36,28 @@ SensorDataManager::run(RunStage stage)
             wf->registerWidget<WidgetNAV_GS>();
             wf->registerWidget<Recording>();
             wf->registerWidget<WidgetNetworkStats>();
+            wf->registerWidget<NamedDataPlot>("controller_output_plot",
+                [this](QWidget* parent)
+                {
+                    auto plot = new NamedDataPlot(parent);
+                    plot->initialize<TimedValue<NamedControllerOutput>>();
+                    subscribeOnControllerOutput([plot](const auto& co)
+                    {
+                        plot->onTimedData(co);
+                    });
+                    return plot;
+                });
+            wf->registerWidget<NamedDataPlot>("sensor_data_plot",
+                [this](QWidget* parent)
+                {
+                    auto plot = new NamedDataPlot(parent);
+                    plot->initialize<TimedValue<NamedSensorData>>();
+                    subscribeOnTimedSensorData([plot](const auto& sd)
+                    {
+                        plot->onTimedData(sd);
+                    });
+                    return plot;
+                });
             break;
         }
     case RunStage::NORMAL:
@@ -59,6 +83,12 @@ SensorDataManager::run(RunStage stage)
             {
                 localFrame_ = lf;
             });
+            dh->subscribeOnData<TimedValue<ControllerOutput>>(Content::CONTROLLER_OUTPUT, [this](const auto& co)
+            {
+                TimedValue<NamedControllerOutput> controllerOutput(co.first, NamedControllerOutput(co.second));
+                onControllerOutput_(controllerOutput);
+            });
+
 
             break;
         }
@@ -78,6 +108,9 @@ SensorDataManager::onSensorData(const SensorData& sd)
 
     onSensorDataLocal_(sensorDataLocal_);
     onSensorDataGlobal_(sensorDataGlobal_);
+
+    auto timedSensorData = TimedValue<NamedSensorData>(sd.timestamp, NamedSensorData(sd));
+    onTimedSensorData_(timedSensorData);
 }
 
 boost::signals2::connection
@@ -109,6 +142,18 @@ boost::signals2::connection
 SensorDataManager::subscribeOnMiscValues(const OnMiscValues::slot_type& slot)
 {
     return onMiscValues_.connect(slot);
+}
+
+boost::signals2::connection
+SensorDataManager::subscribeOnControllerOutput(const OnControllerOutput::slot_type& slot)
+{
+    return onControllerOutput_.connect(slot);
+}
+
+boost::signals2::connection
+SensorDataManager::subscribeOnTimedSensorData(const OnTimedSensorData::slot_type& slot)
+{
+    return onTimedSensorData_.connect(slot);
 }
 
 const SensorData&

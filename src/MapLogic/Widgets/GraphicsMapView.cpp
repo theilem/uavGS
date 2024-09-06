@@ -144,6 +144,10 @@ GraphicsMapView::drawMap(QPainter* painter, const QRectF& rect)
 				tile = tile.scaled((int) d, (int) d);
 				mapPainter.drawPixmap(i * d, j * d, d, d, tile);
 			}
+			else
+			{
+				CPSLOG_DEBUG << "Could not load tile at " << path.toStdString();
+			}
 		}
 	}
 	nwCorner_ = MapLocation::fromMapTileCoords(nwXY.x(), nwXY.y(), zoom_);

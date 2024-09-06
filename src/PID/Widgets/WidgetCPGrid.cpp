@@ -10,183 +10,184 @@
 #include "ui_WidgetCPGrid.h"
 
 WidgetCPGrid::WidgetCPGrid(QWidget* parent) :
-		QWidget(parent), ui(new Ui::WidgetCPGrid)
+    QWidget(parent), ui(new Ui::WidgetCPGrid)
 {
-	ui->setupUi(this);
+    ui->setupUi(this);
 }
 
 void
-WidgetCPGrid::onPIDStati(const PIDStati& stati)
+WidgetCPGrid::onPIDStati(const TimedPIDStati& stati)
 {
-	pidStati_ = stati;
-	emit contentUpdated();
+    pidStati_ = stati;
+    statusUpdated();
 }
 
 void
 WidgetCPGrid::on_saveGains_clicked()
 {
-	QJsonObject config;
-	for (auto& it : plots)
-	{
-		QJsonObject gains;
-		gains["kp"] = it.second->getkP();
-		gains["ki"] = it.second->getkI();
-		gains["kd"] = it.second->getkD();
-		gains["ff"] = it.second->getFF();
-		gains["imax"] = it.second->getIMax();
-		config[it.second->title] = gains;
-	}
-	//QJsonObject config = cm_->getFlightConfig();
-	QJsonDocument d(config);
 	QFileDialog dialog;
 	dialog.setWindowTitle("Save json configs");
 	dialog.setFileMode(QFileDialog::AnyFile);
 	dialog.setAcceptMode(QFileDialog::AcceptSave);
-	QString filename;
+	std::string filename;
 	if (dialog.exec())
 	{
-		filename = dialog.selectedFiles().front();
+		filename = dialog.selectedFiles().front().toStdString();
 	}
 	else
 	{
 		CPSLOG_TRACE << "Cancelled json save.";
 		return;
 	}
-	QFile saveFile(filename);
-	if (!saveFile.open(QIODevice::WriteOnly))
+
+	auto pc = get<PIDConfigurator>();
+	if (!pc)
 	{
-		CPSLOG_ERROR << "Could not open " << filename.toStdString() << " for saving.";
+		CPSLOG_ERROR << "Could not get PIDConfigurator.";
 		return;
 	}
-	saveFile.write(d.toJson());
-	saveFile.close();
+	pc->savePIDConfig(filename);
+
 }
 
-void
-WidgetCPGrid::on_loadGains_clicked()
-{
-	QFileDialog dialog;
-	dialog.setWindowTitle("Load json configs");
-	dialog.setFileMode(QFileDialog::ExistingFile);
-	dialog.setAcceptMode(QFileDialog::AcceptOpen);
-	QString filename;
-	if (dialog.exec())
-	{
-		filename = dialog.selectedFiles().front();
-	}
-	else
-	{
-		CPSLOG_TRACE << "Cancelled json save.";
-		return;
-	}
-	QFile loadFile(filename);
-	if (!loadFile.open(QIODevice::ReadOnly))
-	{
-		CPSLOG_ERROR << "Could not open " << filename.toStdString() << " for loading.";
-		return;
-	}
-	QByteArray confData = loadFile.readAll();
-	loadFile.close();
-	QJsonDocument loadDoc(QJsonDocument::fromJson(confData));
-	QJsonObject loadData = loadDoc.object();
-	for (QString s : loadData.keys())
-	{
-		for (auto& it : plots)
-		{
-			if (it.second->title == s)
-			{
-				it.second->setkP(loadData[s].toObject()["kp"].toDouble());
-				it.second->setkI(loadData[s].toObject()["ki"].toDouble());
-				it.second->setkD(loadData[s].toObject()["kd"].toDouble());
-				it.second->setFF(loadData[s].toObject()["ff"].toDouble());
-				it.second->setIMax(loadData[s].toObject()["imax"].toDouble());
-			}
-		}
-	}
-}
+// void
+// WidgetCPGrid::on_loadGains_clicked()
+// {
+// 	QFileDialog dialog;
+// 	dialog.setWindowTitle("Load json configs");
+// 	dialog.setFileMode(QFileDialog::ExistingFile);
+// 	dialog.setAcceptMode(QFileDialog::AcceptOpen);
+// 	QString filename;
+// 	if (dialog.exec())
+// 	{
+// 		filename = dialog.selectedFiles().front();
+// 	}
+// 	else
+// 	{
+// 		CPSLOG_TRACE << "Cancelled json save.";
+// 		return;
+// 	}
+// 	QFile loadFile(filename);
+// 	if (!loadFile.open(QIODevice::ReadOnly))
+// 	{
+// 		CPSLOG_ERROR << "Could not open " << filename.toStdString() << " for loading.";
+// 		return;
+// 	}
+// 	QByteArray confData = loadFile.readAll();
+// 	loadFile.close();
+// 	QJsonDocument loadDoc(QJsonDocument::fromJson(confData));
+// 	QJsonObject loadData = loadDoc.object();
+// 	for (QString s : loadData.keys())
+// 	{
+// 		for (auto& it : plots)
+// 		{
+// 			if (it.second->title == s)
+// 			{
+// 				it.second->setkP(loadData[s].toObject()["kp"].toDouble());
+// 				it.second->setkI(loadData[s].toObject()["ki"].toDouble());
+// 				it.second->setkD(loadData[s].toObject()["kd"].toDouble());
+// 				it.second->setFF(loadData[s].toObject()["ff"].toDouble());
+// 				it.second->setIMax(loadData[s].toObject()["imax"].toDouble());
+// 			}
+// 		}
+// 	}
+// }
 
 void
 WidgetCPGrid::on_requestParams_clicked()
 {
-	if (auto pc = get<PIDConfigurator>())
-	{
-		pc->requestPIDParams();
-		plots.clear();
-	}
+    if (auto pc = get<PIDConfigurator>())
+    {
+        pc->requestPIDParams();
+    }
 }
 
 void
 WidgetCPGrid::on_sendAllParams_clicked()
 {
-	for (auto& it : plots)
-	{
-		it.second->sendData();
-	}
+    auto pc = get<PIDConfigurator>();
+
+    for (const auto& it : plots_)
+    {
+        pc->applyPID(it.first);
+    }
 }
 
 void
-WidgetCPGrid::drawPlots()
+WidgetCPGrid::createPlotsSlot()
 {
-	for (auto it : plots)
-	{
-		ui->gridLayout->removeWidget(it.second);
-		delete it.second;
-	}
-	plots.clear();
-	if (auto pc = get<PIDConfigurator>())
-	{
-		auto wf = get<GSWidgetFactory>();
-		if (!wf)
-			return;
-		int count = 0;
-		for (auto& it : pc->getPIDMap())
-		{
-			auto cp = wf->createWidget<PIDConfigPlot>(this);
-			cp->setParams(it.first, it.second);
-			ui->gridLayout->addWidget(cp, 0, count);
-			plots.insert(std::make_pair(static_cast<int>(it.first), cp));
-			++count;
-		}
-	}
-	else
-		CPSLOG_ERROR << "Cannot connect WidgetCPGrid to PIDMap. ConfigManager missing.";
+    if (!plots_.empty())
+    {
+        CPSLOG_ERROR << "Requested to create plots, but plots already exist.";
+        return;
+    }
+    if (auto pc = get<PIDConfigurator>())
+    {
+        auto wf = get<GSWidgetFactory>();
+        auto pids = pc->getPIDs();
+        int count = 0;
+        for (const auto& pid : pids)
+        {
+            auto plot = new PIDConfigPlot(this, pid);
+            wf->connectWidget(plot);
+            ui->gridLayout->addWidget(plot, 0, count++);
+            plots_.insert({pid, plot});
+        }
+    }
 }
 
 WidgetCPGrid::~WidgetCPGrid()
 {
-	delete ui;
+    delete ui;
 }
 
 void
 WidgetCPGrid::connect()
 {
-	QObject::connect(this, SIGNAL(contentUpdated()), this, SLOT(contentUpdatedSlot()));
-	if (auto dh = get<DataHandling>())
-	{
-		dh->subscribeOnData<PIDStati>(Content::PID_STATUS, [this](const auto& status){onPIDStati(status);});
-	}
+    QObject::connect(this, SIGNAL(statusUpdated()), this, SLOT(statusUpdatedSlot()));
+    QObject::connect(this, SIGNAL(clearPlots()), this, SLOT(clearPlotsSlot()));
+    QObject::connect(this, SIGNAL(createPlots()), this, SLOT(createPlotsSlot()));
+    if (auto dh = get<DataHandling>())
+    {
+        dh->subscribeOnData<TimedPIDStati>(Content::PID_STATUS, [this](const auto& status) { onPIDStati(status); });
+    }
 
-	drawPlots();
+    auto pc = get<PIDConfigurator>();
+    pidsClearedSub_ = pc->subscribeOnLocalPIDsCleared([this] { clearPlots(); });
+    pidsSetSub_ = pc->subscribeOnLocalPIDsSet(
+        [this](PIDParams& params, std::map<PIDs, PIDConfigurator::PIDSyncStatus>& syncStatus)
+        {
+            createPlots();
+        }, true);
 }
 
 void
-WidgetCPGrid::contentUpdatedSlot()
+WidgetCPGrid::statusUpdatedSlot()
 {
-	if (plots.empty())
-	{
-		drawPlots();
-	}
-	if (plots.empty())
-		return;
-	for (auto& it : pidStati_)
-	{
-		auto plot = plots.find(static_cast<int>(it.first));
-		if (plot == plots.end())
-		{
-			CPSLOG_WARN << "PID status id " << static_cast<int>(it.first) << " does not match any plot";
-			continue;
-		}
-		plot->second->setData(it.second.value, it.second.target);
-	}
-	this->update();
+    if (plots_.empty())
+        return;
+    const auto& time = pidStati_.first;
+    const auto& stati = pidStati_.second;
+    for (auto& it : stati)
+    {
+        auto plot = plots_.find(it.first);
+        if (plot == plots_.end())
+        {
+            CPSLOG_WARN << "PID status id " << static_cast<int>(it.first) << " does not match any plot";
+            continue;
+        }
+        plot->second->setData(time, it.second.value, it.second.target, it.second.integrator);
+    }
+    this->update();
+}
+
+void
+WidgetCPGrid::clearPlotsSlot()
+{
+    for (auto& it : plots_)
+    {
+        ui->gridLayout->removeWidget(it.second);
+        delete it.second;
+    }
+    plots_.clear();
 }

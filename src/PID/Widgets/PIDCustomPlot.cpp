@@ -35,11 +35,11 @@ PIDCustomPlot::setTitle(std::string title)
 }
 
 void
-PIDCustomPlot::addData(double current, double target)
+PIDCustomPlot::addData(const TimePoint& t, double current, double target)
 {
 	//Implement rolling window of data points
 	int toRemove = currentGraph_->dataCount() - width() / pixelsPerDataPoint_ - 1;
-	auto time = (double) QDateTime::currentMSecsSinceEpoch();
+	auto time = static_cast<double>(std::chrono::duration_cast<Milliseconds>(t.time_since_epoch()).count());
 	if (toRemove > 0)
 	{
 		double key = currentGraph_->data()->at(toRemove)->key;
@@ -58,7 +58,8 @@ PIDCustomPlot::addData(double current, double target)
 	maxValue = max > maxValue ? max : maxValue;
 	double min = std::min(current, target);
 	minValue = min < minValue ? min : minValue;
-	yAxis->setRange(minValue, maxValue);
+	auto difference = maxValue - minValue;
+	yAxis->setRange(minValue - difference * 0.05, maxValue + difference * 0.05);
 	replot();
 }
 
@@ -85,7 +86,7 @@ PIDCustomPlot::resizeEvent(QResizeEvent *event)
 		double key = currentGraph_->data()->at(toRemove)->key;
 		currentGraph_->data()->removeBefore(key);
 		targetGraph_->data()->removeBefore(key);
-	}\
+	}
 
 	//below copied from QCustomPlot::resizeEvent
 	Q_UNUSED(event)
@@ -99,8 +100,11 @@ PIDCustomPlot::mouseReleaseEvent(QMouseEvent *)
 {
 	if (!currentGraph_->data()->size())
 		return;
-	maxValue = std::max(currentGraph_->data()->at(0)->value, 0.0);
-	minValue = std::min(currentGraph_->data()->at(0)->value, 0.0);
+	// maxValue = std::max(currentGraph_->data()->at(0)->value, 0.0);
+	// minValue = std::min(currentGraph_->data()->at(0)->value, 0.0);
+	// Removing 0.0 as force include
+	maxValue = currentGraph_->data()->at(0)->value;
+	minValue = currentGraph_->data()->at(0)->value;
 	for (int x = 1; x < currentGraph_->data()->size(); x++)
 	{
 		double val = currentGraph_->data()->at(x)->value;
@@ -113,6 +117,7 @@ PIDCustomPlot::mouseReleaseEvent(QMouseEvent *)
 		maxValue = val > maxValue ? val : maxValue;
 		minValue = val < minValue ? val : minValue;
 	}
-	yAxis->setRange(minValue, maxValue);
+	auto difference = maxValue - minValue;
+	yAxis->setRange(minValue - difference * 0.05, maxValue + difference * 0.05);
 	replot();
 }

@@ -3,7 +3,7 @@ project (uavGS)
 
 set (CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -static-libstdc++ -std=c++1z -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++1z -fPIC")
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
