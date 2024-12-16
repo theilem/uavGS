@@ -108,6 +108,9 @@ private:
 	drawCubicSpline(QPainter* painter, std::shared_ptr<CubicSpline> spline, Vector3& lastPoint);
 
 	void
+	drawQuarticSpline(QPainter* painter, std::shared_ptr<QuarticSpline> spline, Vector3& lastPoint);
+
+	void
 	drawOrbit(QPainter* painter, std::shared_ptr<Orbit> orbit, Vector3& lastPoint);
 
 	void

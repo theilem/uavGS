@@ -12,7 +12,6 @@
 #include <uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlannerParams.h>
 #include <uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlannerParams.h>
 #include <uavAP/MissionControl/LocalFrameManager/LocalFrameManagerParams.h>
-#include <uavAP/FlightControl/Safety/OverrideSafetyParams.h>
 
 bool
 PlanningManager::run(RunStage stage)
@@ -29,7 +28,6 @@ PlanningManager::run(RunStage stage)
 
 			auto wf = get<GSWidgetFactory>();
 			wf->registerWidget<WidgetManeuverPlanner>();
-//			wf->registerWidget<WidgetGeneric>();
 			wf->registerWidget<WidgetParameterSets<ManeuverLocalPlannerParams,
 					Content::MANEUVER_LOCAL_PLANNER_PARAMS,
 					Target::FLIGHT_CONTROL>>("maneuver_local_planner");
@@ -39,9 +37,6 @@ PlanningManager::run(RunStage stage)
 			wf->registerWidget<WidgetParameterSets<LocalFrameManagerParams,
 					Content::LOCAL_FRAME_MANAGER_PARAMS,
 					Target::MISSION_CONTROL>>("local_frame_manager");
-//			wf->registerWidget<WidgetParameterSets<OverrideSafetyParams,
-//					Content::OVERRIDE_SAFETY_PARAMS,
-//					Target::FLIGHT_CONTROL>>("override_safety");
 			break;
 		}
 		case RunStage::NORMAL:

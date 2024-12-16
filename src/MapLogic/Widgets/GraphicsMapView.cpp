@@ -317,6 +317,10 @@ GraphicsMapView::drawPathSection(QPainter* painter, std::shared_ptr<IPathSection
 	{
 		drawCubicSpline(painter, spline, lastPoint);
 	}
+	else if (auto quartic = std::dynamic_pointer_cast<QuarticSpline>(ps))
+	{
+		drawQuarticSpline(painter, quartic, lastPoint);
+	}
 	else if (auto line = std::dynamic_pointer_cast<Line>(ps))
 	{
 		drawLine(painter, line, lastPoint);
@@ -379,6 +383,29 @@ GraphicsMapView::drawCubicSpline(QPainter* painter, std::shared_ptr<CubicSpline>
 	for (double u = stepSize; u <= 1; u += stepSize)
 	{
 		auto p = c0 + c1 * u + c2 * pow(u, 2) + c3 * pow(u, 3);
+		QPointF next = LocalFrameToMapPoint(p.x(), p.y());
+		painter->drawLine(first, next);
+		first = next;
+	}
+	lastPoint = spline->getEndPoint();
+}
+
+void
+GraphicsMapView::drawQuarticSpline(QPainter* painter, std::shared_ptr<QuarticSpline> spline,
+								 Vector3& lastPoint)
+{
+	const double stepSize = 0.05;
+	QPointF first = LocalFrameToMapPoint(spline->c0_.x(), spline->c0_.y());
+
+	Vector2 c0 = spline->c0_.head(2);
+	Vector2 c1 = spline->c1_.head(2);
+	Vector2 c2 = spline->c2_.head(2);
+	Vector2 c3 = spline->c3_.head(2);
+	Vector2 c4 = spline->c4_.head(2);
+
+	for (double u = stepSize; u <= 1; u += stepSize)
+	{
+		auto p = c0 + c1 * u + c2 * pow(u, 2) + c3 * pow(u, 3) + c4 * pow(u, 4);
 		QPointF next = LocalFrameToMapPoint(p.x(), p.y());
 		painter->drawLine(first, next);
 		first = next;
