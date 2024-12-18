@@ -7,6 +7,7 @@
 MapLocation::MapLocation(double east, double north) :
 		n_(north), e_(east), zone_(0), hemi_('X'), lat_(0), lon_(0)
 {
+	UTMtoLL(22, n_, e_, zone_, lat_, lon_);
 }
 
 MapLocation

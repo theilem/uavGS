@@ -85,6 +85,7 @@ GraphicsMapView::drawMap(QPainter* painter, const QRectF& rect)
 	painter->setRenderHint(QPainter::Antialiasing);
 	if (viewMode_ == ViewMode::FOLLOW_MODE)
 	{
+
 		focus_ = aircraftLocation_;    //FOLLOW DOES NOT WORK BECAUSE NEED TO CONVERT UTM TO LAT LON
 	}
 	else
