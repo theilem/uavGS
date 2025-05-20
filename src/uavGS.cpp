@@ -22,11 +22,9 @@ main(int argc, char** argv)
 	}
 	else
 	{
-		std::ofstream file;
-		file.open("generate.json", std::ofstream::out);
-		JsonPopulator pop(file);
+		JsonPopulator pop;
 
-		pop.populateContainer(GroundStationHelper());
+		pop.populateContainer<GroundStationHelper>();
 		std::cout << "Populated json" << std::endl;
 		return 0;
 	}

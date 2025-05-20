@@ -13,7 +13,7 @@ MapLocation::MapLocation(double east, double north) :
 MapLocation
 MapLocation::fromJson(const Configuration &json)
 {
-	PropertyMapper<Configuration> pm(json);
+	PropertyMapper pm(json);
 	double x, y;
 	if (pm.add<double>("lat", x, false) && pm.add<double>("lon", y, false))
 		return MapLocation::fromLatLong(x, y);

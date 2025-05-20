@@ -170,9 +170,20 @@ PIDConfigurator::getPIDs() const
 void
 PIDConfigurator::savePIDConfig(const std::string& filename)
 {
-    std::ofstream file(filename);
-    JsonPopulator populator(file);
-    populator << localPIDParams_;
+    Configuration config;
+    for (const auto& [key, value] : localPIDParams_)
+    {
+        JsonPopulator pop;
+        pop & value;
+        config[EnumMap<PIDs>::convert(key)] = pop.getConfig();
+    }
+    std::fstream file(filename, std::ios::out);
+    if (!file.is_open())
+    {
+        CPSLOG_ERROR << "Could not open file " << filename;
+        return;
+    }
+    file << config.dump(4);
 }
 
 boost::signals2::connection

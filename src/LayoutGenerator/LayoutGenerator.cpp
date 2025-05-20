@@ -1,5 +1,4 @@
-﻿#include <boost/property_tree/json_parser.hpp>
-#include <uavAP/Core/DataHandling/DataHandling.h>
+﻿#include <uavAP/Core/DataHandling/DataHandling.h>
 #include <QApplication>
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -267,9 +266,14 @@ LayoutGenerator::addWin()
 		CPSLOG_TRACE << "Cancelled config loading.";
 		return;
 	}
-	Configuration config;
-	boost::property_tree::read_json(confPath.toStdString(), config);
-	PropertyMapper<Configuration> pm(config);
+	std::ifstream file(confPath.toStdString());
+	if (!file.is_open())
+	{
+		CPSLOG_ERROR << "Could not open file " << confPath.toStdString();
+		return;
+	}
+	Configuration config = Configuration::parse(file);
+	PropertyMapper pm(config);
 	LayoutParams p;
 	p.configure(pm);
 	makeScrollableWin(createLayout(p, nullptr));
