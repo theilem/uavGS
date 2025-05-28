@@ -20,7 +20,7 @@ PlanningManager::run(RunStage stage)
 	{
 		case RunStage::INIT:
 		{
-			if (!checkIsSet<DataHandling, GSWidgetFactory>())
+			if (!checkIsSet<EnumBasedDataHandling, GSWidgetFactory>())
 			{
 				CPSLOG_ERROR << "Missing dependencies";
 				return true;

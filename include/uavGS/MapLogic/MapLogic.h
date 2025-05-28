@@ -13,18 +13,21 @@
 #include <uavAP/Core/SensorData.h>
 #include <boost/signals2/signal.hpp>
 
+#include "uavAP/Core/DataHandling/Content.hpp"
+
 class IScheduler;
+template <typename C, typename T>
 class DataHandling;
 class IScheduler;
 class LayoutGenerator;
 class GSWidgetFactory;
 
-class MapLogic: public AggregatableObject<DataHandling, IScheduler, GSWidgetFactory, LayoutGenerator>, public IRunnableObject,
+class MapLogic: public AggregatableObject<DataHandling<Content, Target>, IScheduler, GSWidgetFactory, LayoutGenerator>, public IRunnableObject,
 		public ConfigurableObject<MapLogicParams>
 {
 public:
 
-	static constexpr TypeId typeId = "map_logic";
+	static constexpr auto typeId = "map_logic";
 
 	MapLogic();
 

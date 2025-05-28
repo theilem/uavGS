@@ -13,8 +13,10 @@
 #include <cpsCore/cps_object>
 
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
+#include "uavAP/Core/DataHandling/Content.hpp"
 
 class IScheduler;
+template <typename C, typename T>
 class DataHandling;
 class GSWidgetFactory;
 
@@ -22,10 +24,10 @@ class GSWidgetFactory;
  * @brief   The IPIDConfigurator class serves as an interface for all classes
  *          that have PID tuning functionality.
  */
-class PIDConfigurator : public AggregatableObject<DataHandling, GSWidgetFactory, IScheduler>, public IRunnableObject
+class PIDConfigurator : public AggregatableObject<DataHandling<Content, Target>, GSWidgetFactory, IScheduler>, public IRunnableObject
 {
 public:
-    static constexpr TypeId typeId = "pid_configurator";
+    static constexpr auto typeId = "pid_configurator";
 
     enum class PIDSyncStatus
     {

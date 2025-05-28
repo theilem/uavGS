@@ -10,11 +10,12 @@
 
 class IDC;
 
+template <typename C, typename T>
 class DataHandling;
 class GSWidgetFactory;
 
 class PacketForwarding
-		: public AggregatableObject<IDC, DataHandling, GSWidgetFactory>,
+		: public AggregatableObject<IDC, DataHandling<Content, Target>, GSWidgetFactory>,
 		  public IRunnableObject,
 		  public ConfigurableObject<PacketForwardingParams>
 {

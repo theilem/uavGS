@@ -38,7 +38,7 @@ using GroundStationDefaults = StaticHelper<
 
 using GroundStationHelper = StaticHelper<GroundStationDefaults,
 		NetworkFactory,
-		DataHandling,
+		DataHandling<Content, Target>,
 		GSWidgetFactory,
 		PIDConfigurator,
 		MapLogic,

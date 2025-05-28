@@ -8,17 +8,20 @@
 #include "uavGS/ManeuverPlanner/PlanningManagerParams.h"
 #include <cpsCore/cps_object>
 
+#include "uavAP/Core/DataHandling/Content.hpp"
+
+template <typename C, typename T>
 class DataHandling;
 class GSWidgetFactory;
 
 class PlanningManager
-		: public AggregatableObject<DataHandling, GSWidgetFactory>,
+		: public AggregatableObject<DataHandling<Content, Target>, GSWidgetFactory>,
 		  public ConfigurableObject<PlanningManagerParams>,
 		  public IRunnableObject
 {
 public:
 
-	static constexpr TypeId typeId = "planning_manager";
+	static constexpr auto typeId = "planning_manager";
 
 	bool
 	run(RunStage stage) override;

@@ -12,7 +12,7 @@
 #include "uavGS/ParameterSets/WidgetTreeParser.h"
 
 template<class ParameterSet, Content content, Target target>
-class WidgetParameterSets : public WidgetGeneric, public AggregatableObject<DataHandling>
+class WidgetParameterSets : public WidgetGeneric, public AggregatableObject<DataHandling<Content, Target>>
 {
 public:
 
@@ -40,7 +40,7 @@ template<class ParameterSet, Content content, Target target>
 void
 WidgetParameterSets<ParameterSet, content, target>::connect()
 {
-	if (auto dh = get<DataHandling>())
+	if (auto dh = get<EnumBasedDataHandling>())
 	{
 		dh->template subscribeOnData<ParameterSet>(content, [this](const ParameterSet& p)
 		{
@@ -74,7 +74,7 @@ template<class ParameterSet, Content content, Target target>
 void
 WidgetParameterSets<ParameterSet, content, target>::requestHandle()
 {
-	if (auto dh = get<DataHandling>())
+	if (auto dh = get<EnumBasedDataHandling>())
 	{
 		dh->sendData(content, Content::REQUEST_CONFIG, target);
 	}
@@ -89,7 +89,7 @@ WidgetParameterSets<ParameterSet, content, target>::sendHandle()
 
 	params_.configure(pop);
 
-	if (auto dh = get<DataHandling>())
+	if (auto dh = get<EnumBasedDataHandling>())
 	{
 		dh->sendData(params_, content, target);
 	}

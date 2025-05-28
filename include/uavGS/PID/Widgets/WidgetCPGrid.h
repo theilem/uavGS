@@ -5,7 +5,6 @@
 #include <memory>
 #include <uavGS/PID/PIDConfigurator.h>
 #include <uavGS/GSWidgetFactory.h>
-#include <uavAP/Core/DataHandling/DataHandling.h>
 
 namespace Ui
 {
@@ -13,8 +12,11 @@ namespace Ui
 }
 
 class PIDConfigPlot;
+template <typename C, typename T>
+class DataHandling;
 
-class WidgetCPGrid : public QWidget, public AggregatableObject<PIDConfigurator, GSWidgetFactory, DataHandling>
+class WidgetCPGrid : public QWidget,
+                     public AggregatableObject<PIDConfigurator, GSWidgetFactory, DataHandling<Content, Target>>
 {
     Q_OBJECT
 

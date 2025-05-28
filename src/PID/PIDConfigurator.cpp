@@ -37,7 +37,7 @@ PIDConfigurator::run(RunStage stage)
         }
     case RunStage::NORMAL:
         {
-            auto dh = get<DataHandling>();
+            auto dh = get<EnumBasedDataHandling>();
             dh->subscribeOnData<PIDParams>(Content::PID_PARAMS, [this](const PIDParams& p)
             {
                 onLocalPIDsCleared_();
@@ -80,7 +80,7 @@ PIDConfigurator::run(RunStage stage)
 void
 PIDConfigurator::applyPID(PIDs pid)
 {
-    auto dh = get<DataHandling>();
+    auto dh = get<EnumBasedDataHandling>();
     dh->sendData(PIDTuning{pid, localPIDParams_[pid]}, Content::TUNE_PID, Target::FLIGHT_CONTROL);
     if (syncStatus_[pid] == PIDSyncStatus::NOT_MATCHING)
         syncStatus_[pid] = PIDSyncStatus::UNKNOWN;
@@ -134,7 +134,7 @@ PIDConfigurator::localChanged(PIDs pid)
 void
 PIDConfigurator::requestSinglePIDParams(PIDs pid)
 {
-    auto dh = get<DataHandling>();
+    auto dh = get<EnumBasedDataHandling>();
     dh->sendData(pid, Content::REQUEST_SINGLE_PID_PARAMS, Target::FLIGHT_CONTROL);
 }
 
@@ -209,6 +209,6 @@ PIDConfigurator::subscribeOnSyncUpdated(const onSyncUpdated::slot_type& subscrib
 void
 PIDConfigurator::requestPIDParams()
 {
-    auto dh = get<DataHandling>();
+    auto dh = get<EnumBasedDataHandling>();
     dh->sendData(DataRequest::PID_PARAMS, Content::REQUEST_DATA, Target::FLIGHT_CONTROL);
 }

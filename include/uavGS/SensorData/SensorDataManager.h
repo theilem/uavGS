@@ -12,10 +12,13 @@
 #include <boost/signals2.hpp>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 
+#include "uavAP/Core/DataHandling/Content.hpp"
+
+template <typename C, typename T>
 class DataHandling;
 class GSWidgetFactory;
 
-class SensorDataManager : public AggregatableObject<DataHandling, GSWidgetFactory>, public IRunnableObject
+class SensorDataManager : public AggregatableObject<DataHandling<Content, Target>, GSWidgetFactory>, public IRunnableObject
 {
 public:
     static constexpr TypeId typeId = "sensor_data";

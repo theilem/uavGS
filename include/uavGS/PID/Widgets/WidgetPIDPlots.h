@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <cpsCore/Aggregation/AggregatableObject.hpp>
 #include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
-#include <uavAP/Core/DataHandling/DataHandling.h>
 #include "uavGS/PID/PIDConfigurator.h"
 
 class PIDCustomPlot;
@@ -12,8 +11,10 @@ namespace Ui
 {
 class WidgetPIDPlots;
 }
+template <typename C, typename T>
+class DataHandling;
 
-class WidgetPIDPlots : public QWidget, public AggregatableObject<PIDConfigurator, DataHandling>
+class WidgetPIDPlots : public QWidget, public AggregatableObject<PIDConfigurator, DataHandling<Content, Target>>
 {
 Q_OBJECT
 

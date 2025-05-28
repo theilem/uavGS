@@ -7,6 +7,9 @@
 #include <QMenu>
 
 #include <uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlannerStatus.h>
+#include <uavAP/Core/Frames/VehicleOneFrame.h>
+#include <uavAP/MissionControl/GlobalPlanner/Trajectory.h>
+#include <uavAP/Core/DataHandling/DataHandling.h>
 #include "uavGS/MapLogic/Widgets/GraphicsMapView.h"
 
 GraphicsMapView::GraphicsMapView(QWidget* parent) :
@@ -29,7 +32,7 @@ GraphicsMapView::connect()
 		sdm->subscribeOnSensorDataGlobal([this](const auto& sd)
 										 { this->onSensorData(sd); });
 	}
-	if (auto dh = get<DataHandling>())
+	if (auto dh = get<DataHandling<Content, Target>>())
 	{
 		dh->subscribeOnData<VehicleOneFrame>(Content::LOCAL_FRAME, [this](const auto& f)
 		{ this->onLocalFrame(f); });
@@ -37,7 +40,7 @@ GraphicsMapView::connect()
 		dh->subscribeOnData<ManeuverLocalPlannerStatus>(Content::MANEUVER_LOCAL_PLANNER_STATUS,
 														[this](const ManeuverLocalPlannerStatus& status)
 														{
-															currentSectionIdx_ = status.currentPathSection;
+															currentPathSection_ = status.currentPathSection;
 														});
 	}
 	if (auto ml = get<MapLogic>())
@@ -194,24 +197,16 @@ GraphicsMapView::drawTrajectory(QPainter* painter)
 //	LocalPlannerStatus status = mapLogic->getLocalPlannerStatus();
 	Trajectory traj = mapLogic->getPath();
 
-	if (traj.pathSections.empty())
+	if (traj.aperiodicPart.empty() && traj.periodicPart.empty())
 		return;
 
-	Vector3 lastPoint = traj.pathSections.back()->getEndPoint();
-
-	if (traj.pathSections.size() == 0)
-		return;
-
-
-//	if (status.has_linear_status())
-//	{
-//		if (status.linear_status().is_in_approach() && traj.approachSection)
-//		{
-//			drawPathSection(painter, traj.approachSection, lastPoint);
-//		}
-//	}
-
-	for (const auto& ps : traj.pathSections)
+	std::optional<Vector3> lastPoint;
+	for (const auto& ps : traj.aperiodicPart)
+	{
+		drawPathSection(painter, ps, lastPoint);
+	}
+	lastPoint = traj.periodicPart.back()->getEndPoint();
+	for (const auto& ps : traj.periodicPart)
 	{
 		drawPathSection(painter, ps, lastPoint);
 	}
@@ -255,25 +250,10 @@ GraphicsMapView::highlightActivePath(QPainter* painter) //highlights active path
 		return;
 	}
 
-	bool inApproach = false;
-
-	Trajectory traj = ml->getPath();
-
-	if (currentSectionIdx_ >= traj.pathSections.size())
-	{
-		return;
-	}
-
-	std::shared_ptr<IPathSection> ps;
-	if (inApproach)
-		ps = traj.approachSection;
-	else
-		ps = traj.pathSections.at(currentSectionIdx_);
-
-	if (ps)
+	if (currentPathSection_)
 	{
 		Vector3 lastPoint(0, 0, 0);
-		drawPathSection(painter, ps, lastPoint);
+		drawPathSection(painter, currentPathSection_, lastPoint);
 	}
 }
 
@@ -302,57 +282,59 @@ GraphicsMapView::drawAircraft(QPainter* painter)
 	painter->drawPixmap(aircraftDrawPoint, rotatedAircraftImage);
 }
 
-void
+std::optional<Vector3>
 GraphicsMapView::drawPathSection(QPainter* painter, std::shared_ptr<IPathSection> ps,
-								 Vector3& lastPoint)
+								 const std::optional<Vector3>& lastPoint)
 {
 	if (auto curve = std::dynamic_pointer_cast<Curve>(ps))
 	{
-		drawCurve(painter, curve, lastPoint);
+		return drawCurve(painter, curve, lastPoint);
 	}
-	else if (auto orbit = std::dynamic_pointer_cast<Orbit>(ps))
+	if (auto orbit = std::dynamic_pointer_cast<Orbit>(ps))
 	{
-		drawOrbit(painter, orbit, lastPoint);
+		return drawOrbit(painter, orbit);
 	}
-	else if (auto spline = std::dynamic_pointer_cast<CubicSpline>(ps))
+	if (auto spline = std::dynamic_pointer_cast<CubicSpline>(ps))
 	{
-		drawCubicSpline(painter, spline, lastPoint);
+		return drawCubicSpline(painter, spline);
 	}
-	else if (auto quartic = std::dynamic_pointer_cast<QuarticSpline>(ps))
+	if (auto quartic = std::dynamic_pointer_cast<QuarticSpline>(ps))
 	{
-		drawQuarticSpline(painter, quartic, lastPoint);
+		return drawQuarticSpline(painter, quartic);
 	}
-	else if (auto line = std::dynamic_pointer_cast<Line>(ps))
+	if (auto line = std::dynamic_pointer_cast<Line>(ps))
 	{
-		drawLine(painter, line, lastPoint);
+		return drawLine(painter, line);
 	}
-	else
-	{
-		CPSLOG_WARN << "Unknown PathSection encountered in list during drawTrajectory";
-	}
+	CPSLOG_WARN << "Unknown PathSection encountered in list during drawTrajectory";
+	return std::nullopt;
 }
 
-void
-GraphicsMapView::drawLine(QPainter* painter, std::shared_ptr<Line> line, Vector3& lastPoint)
+std::optional<Vector3>
+GraphicsMapView::drawLine(QPainter* painter, std::shared_ptr<Line> line)
 {
 	QPointF first = LocalFrameToMapPoint(line->origin().x(), line->origin().y());
-	QPointF second = LocalFrameToMapPoint(line->getEndPoint().x(), line->getEndPoint().y());
+	QPointF second = LocalFrameToMapPoint(line->getEndPoint()->x(), line->getEndPoint()->y());
 
 	painter->drawLine(first, second);
-	lastPoint = line->getEndPoint();
+	return line->getEndPoint();
 }
 
-void
-GraphicsMapView::drawCurve(QPainter* painter, std::shared_ptr<Curve> curve, Vector3& lastPoint)
+std::optional<Vector3>
+GraphicsMapView::drawCurve(QPainter* painter, std::shared_ptr<Curve> curve, const std::optional<Vector3>& lastPoint)
 {
+	if (!lastPoint.has_value())
+	{
+		return drawOrbit(painter, curve);
+	}
 	QPointF center = LocalFrameToMapPoint(curve->getCenter().x(), curve->getCenter().y());
 	QPointF toFindRadius = LocalFrameToMapPoint(curve->getCenter().x() + curve->getRadius(),
 												curve->getCenter().y() + curve->getRadius());
 	double rX = toFindRadius.x() - center.x();
-	double rY = -toFindRadius.y() + center.y();
+	double rY = toFindRadius.y() - center.y();
 	QRectF rect(center.x() - rX, center.y() - rY, rX * 2, rY * 2);
-	QPointF start = LocalFrameToMapPoint(lastPoint.x(), lastPoint.y());
-	QPointF end = LocalFrameToMapPoint(curve->getEndPoint().x(), curve->getEndPoint().y());
+	QPointF start = LocalFrameToMapPoint(lastPoint->x(), lastPoint->y());
+	QPointF end = LocalFrameToMapPoint(curve->getEndPoint()->x(), curve->getEndPoint()->y());
 	double startAngle = 16 * std::atan2(center.y() - start.y(), start.x() - center.x())
 						* 180.0 / M_PI; //Qt gives all angles as a multiplier of 16
 	double endAngle = 16 * std::atan2(center.y() - end.y(), end.x() - center.x()) * 180.0 / M_PI;
@@ -366,20 +348,19 @@ GraphicsMapView::drawCurve(QPainter* painter, std::shared_ptr<Curve> curve, Vect
 		spanAngle -= 16 * 360;
 	}
 	painter->drawArc(rect, startAngle, spanAngle);
-	lastPoint = curve->getEndPoint();
+	return curve->getEndPoint();
 }
 
-void
-GraphicsMapView::drawCubicSpline(QPainter* painter, std::shared_ptr<CubicSpline> spline,
-								 Vector3& lastPoint)
+std::optional<Vector3>
+GraphicsMapView::drawCubicSpline(QPainter* painter, std::shared_ptr<CubicSpline> spline)
 {
 	const double stepSize = 0.05;
-	QPointF first = LocalFrameToMapPoint(spline->c0_.x(), spline->c0_.y());
+	QPointF first = LocalFrameToMapPoint(spline->c0.x(), spline->c0.y());
 
-	Vector2 c0 = spline->c0_.head(2);
-	Vector2 c1 = spline->c1_.head(2);
-	Vector2 c2 = spline->c2_.head(2);
-	Vector2 c3 = spline->c3_.head(2);
+	Vector2 c0 = spline->c0.head(2);
+	Vector2 c1 = spline->c1.head(2);
+	Vector2 c2 = spline->c2.head(2);
+	Vector2 c3 = spline->c3.head(2);
 
 	for (double u = stepSize; u <= 1; u += stepSize)
 	{
@@ -388,21 +369,20 @@ GraphicsMapView::drawCubicSpline(QPainter* painter, std::shared_ptr<CubicSpline>
 		painter->drawLine(first, next);
 		first = next;
 	}
-	lastPoint = spline->getEndPoint();
+	return spline->getEndPoint();
 }
 
-void
-GraphicsMapView::drawQuarticSpline(QPainter* painter, std::shared_ptr<QuarticSpline> spline,
-								 Vector3& lastPoint)
+std::optional<Vector3>
+GraphicsMapView::drawQuarticSpline(QPainter* painter, std::shared_ptr<QuarticSpline> spline)
 {
 	const double stepSize = 0.05;
-	QPointF first = LocalFrameToMapPoint(spline->c0_.x(), spline->c0_.y());
+	QPointF first = LocalFrameToMapPoint(spline->c0.x(), spline->c0.y());
 
-	Vector2 c0 = spline->c0_.head(2);
-	Vector2 c1 = spline->c1_.head(2);
-	Vector2 c2 = spline->c2_.head(2);
-	Vector2 c3 = spline->c3_.head(2);
-	Vector2 c4 = spline->c4_.head(2);
+	Vector2 c0 = spline->c0.head(2);
+	Vector2 c1 = spline->c1.head(2);
+	Vector2 c2 = spline->c2.head(2);
+	Vector2 c3 = spline->c3.head(2);
+	Vector2 c4 = spline->c4.head(2);
 
 	for (double u = stepSize; u <= 1; u += stepSize)
 	{
@@ -411,18 +391,18 @@ GraphicsMapView::drawQuarticSpline(QPainter* painter, std::shared_ptr<QuarticSpl
 		painter->drawLine(first, next);
 		first = next;
 	}
-	lastPoint = spline->getEndPoint();
+	return spline->getEndPoint();
 }
 
-void
-GraphicsMapView::drawOrbit(QPainter* painter, std::shared_ptr<Orbit> orbit, Vector3& lastPoint)
+std::optional<Vector3>
+GraphicsMapView::drawOrbit(QPainter* painter, std::shared_ptr<Orbit> orbit)
 {
 	QPointF orbitCenter = LocalFrameToMapPoint(orbit->getCenter().x(), orbit->getCenter().y());
 	QPointF toFindRadius = LocalFrameToMapPoint(orbit->getCenter().x() + orbit->getRadius(),
 												orbit->getCenter().y() + orbit->getRadius());
 	double rX = sqrt(pow(toFindRadius.x() - orbitCenter.x(), 2) + pow(toFindRadius.y() - orbitCenter.y(), 2)) / sqrt(2);
 	painter->drawEllipse(orbitCenter, rX, rX);
-	lastPoint = orbit->getCenter();
+	return std::nullopt;
 }
 
 void

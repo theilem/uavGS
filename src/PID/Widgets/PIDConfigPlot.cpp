@@ -32,7 +32,7 @@ void
 PIDConfigPlot::setData(const TimePoint& t, FloatingType current, FloatingType target, FloatingType integrator)
 {
     ui->customPlot->addData(t, current, target);
-    ui->IntegratorValue->setText(QString::number(integrator));
+    ui->IntegratorValue->setText(QString::number(std::round(integrator * 1000) / 1000.));
 }
 
 void
