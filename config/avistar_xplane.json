@@ -4,7 +4,7 @@
 			"hosts": {
 				"localhost": {
 					"ip": "127.0.0.1",
-					"auth": "",
+					"auth": "pass_linux",
 					"port": 6379
 				}
 			},
