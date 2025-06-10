@@ -29,7 +29,7 @@ public:
 
 	static constexpr auto typeId = "map_logic";
 
-	MapLogic();
+	MapLogic() = default;
 
 	bool
 	run(RunStage stage) override;
@@ -39,9 +39,6 @@ public:
 
 	const Trajectory&
 	getPath() const;
-
-	int
-	getCurrentPathSection() const;
 
 	void
 	askForAll();
@@ -92,7 +89,6 @@ private:
 	Rectanguloid safetyRect_;
 	Mission mission_;
 	Trajectory trajectory_;
-	int currentPath_;
 	ControllerTarget controllerTarget_;
 	SensorData sensorData_;
 	VehicleOneFrame localFrame_;

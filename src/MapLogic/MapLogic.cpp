@@ -5,10 +5,6 @@
 #include <uavGS/MapLogic/Widgets/WidgetOverheadMap.h>
 #include <uavGS/LayoutGenerator/LayoutGenerator.h>
 
-MapLogic::MapLogic() :
-    currentPath_(-1)
-{
-}
 
 bool
 MapLogic::run(RunStage stage)
@@ -74,12 +70,6 @@ const Trajectory&
 MapLogic::getPath() const
 {
     return trajectory_;
-}
-
-int
-MapLogic::getCurrentPathSection() const
-{
-    return currentPath_;
 }
 
 void
