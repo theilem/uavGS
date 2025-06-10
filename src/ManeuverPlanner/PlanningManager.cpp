@@ -9,9 +9,10 @@
 #include <uavAP/Core/DataHandling/DataHandling.h>
 #include "uavGS/ParameterSets/WidgetGeneric.h"
 #include <uavAP/Core/DataHandling/Content.hpp>
-#include <uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlannerParams.h>
 #include <uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlannerParams.h>
 #include <uavAP/MissionControl/LocalFrameManager/LocalFrameManagerParams.h>
+
+#include "uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlanner.h"
 
 bool
 PlanningManager::run(RunStage stage)
@@ -20,7 +21,7 @@ PlanningManager::run(RunStage stage)
 	{
 		case RunStage::INIT:
 		{
-			if (!checkIsSet<EnumBasedDataHandling, GSWidgetFactory>())
+			if (!checkIsSet<DataHandling<Content, Target>, GSWidgetFactory>())
 			{
 				CPSLOG_ERROR << "Missing dependencies";
 				return true;

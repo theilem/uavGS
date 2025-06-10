@@ -13,7 +13,7 @@
 int
 main(int argc, char** argv)
 {
-	CPSLogger::instance()->setLogLevel(LogLevel::WARN);
+	CPSLogger::instance()->setLogLevel(LogLevel::DEBUG);
 	CPSLogger::instance()->setModuleName("uavGS");
 	std::string configPath;
 	if (argc == 2)
@@ -22,10 +22,8 @@ main(int argc, char** argv)
 	}
 	else
 	{
-		JsonPopulator pop;
-
-		pop.populateContainer<GroundStationHelper>();
-		std::cout << "Populated json" << std::endl;
+		auto pop = JsonPopulator::populateContainer<GroundStationHelper>();
+		std::cout << pop.getString() << std::endl;
 		return 0;
 	}
 	QApplication app(argc, argv);

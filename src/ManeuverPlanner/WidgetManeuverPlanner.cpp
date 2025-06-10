@@ -80,7 +80,7 @@ WidgetManeuverPlanner::on_apply_clicked()
 			continue;
 		overrides.insert(std::make_pair(id, edit->getDouble()));
 	}
-	auto dh = get<EnumBasedDataHandling>();
+	auto dh = get<DataHandling<Content, Target>>();
 
 	dh->sendData(overrides, Content::OVERRIDE, Target::FLIGHT_CONTROL);
 }
@@ -88,7 +88,7 @@ WidgetManeuverPlanner::on_apply_clicked()
 void
 WidgetManeuverPlanner::on_abort_clicked()
 {
-	auto dh = get<EnumBasedDataHandling>();
+	auto dh = get<DataHandling<Content, Target>>();
 
 	dh->sendData(std::map<std::string, FloatingType>(), Content::OVERRIDE, Target::FLIGHT_CONTROL);
 	dh->sendData(true, Content::ABORT_MANEUVER, Target::FLIGHT_ANALYSIS);
@@ -97,7 +97,7 @@ WidgetManeuverPlanner::on_abort_clicked()
 void
 WidgetManeuverPlanner::on_sendManeuver_clicked()
 {
-	if (auto dh = get<EnumBasedDataHandling>())
+	if (auto dh = get<DataHandling<Content, Target>>())
 	{
 		dh->sendData(ui->maneuverOptions->currentText().toStdString(), Content::SELECT_MANEUVER_SET,
 					 Target::FLIGHT_ANALYSIS);
@@ -107,7 +107,7 @@ WidgetManeuverPlanner::on_sendManeuver_clicked()
 void
 WidgetManeuverPlanner::on_sendMission_clicked()
 {
-	if (auto dh = get<EnumBasedDataHandling>())
+	if (auto dh = get<DataHandling<Content, Target>>())
 	{
 		dh->sendData(ui->missionOptions->currentText().toStdString(), Content::SELECT_MISSION, Target::MISSION_CONTROL);
 	}
@@ -120,7 +120,7 @@ WidgetManeuverPlanner::on_sendMission_clicked()
 	{
 		sched->schedule([this]
 		{
-			auto dh = get<EnumBasedDataHandling>();
+			auto dh = get<DataHandling<Content, Target>>();
 			if (dh)
 			{
 				dh->sendData(DataRequest::MISSION, Content::REQUEST_DATA, Target::MISSION_CONTROL);
@@ -128,7 +128,7 @@ WidgetManeuverPlanner::on_sendMission_clicked()
 		}, Seconds(1));
 		sched->schedule([this]
 		{
-			auto dh = get<EnumBasedDataHandling>();
+			auto dh = get<DataHandling<Content, Target>>();
 			if (dh)
 			{
 				dh->sendData(DataRequest::TRAJECTORY, Content::REQUEST_DATA, Target::FLIGHT_CONTROL);
@@ -142,7 +142,7 @@ void
 WidgetManeuverPlanner::connect()
 {
 	QObject::connect(this, SIGNAL(contentUpdated()), this, SLOT(contentUpdatedSlot()));
-	if (auto dh = get<EnumBasedDataHandling>())
+	if (auto dh = get<DataHandling<Content, Target>>())
 	{
 		dh->subscribeOnData<std::vector<std::string>>(Content::MISSION_LIST, [this](const auto& m)
 		{ missionList_ = m; emit contentUpdated(); });
@@ -156,7 +156,7 @@ WidgetManeuverPlanner::connect()
 void
 WidgetManeuverPlanner::on_update_clicked()
 {
-	if (auto dh = get<EnumBasedDataHandling>())
+	if (auto dh = get<DataHandling<Content, Target>>())
 	{
 		dh->sendData(DataRequest::MISSION_LIST, Content::REQUEST_DATA, Target::MISSION_CONTROL);
 		dh->sendData(DataRequest::OVERRIDE_LIST, Content::REQUEST_DATA, Target::FLIGHT_CONTROL);

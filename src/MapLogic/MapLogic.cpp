@@ -17,7 +17,7 @@ MapLogic::run(RunStage stage)
     {
     case RunStage::INIT:
         {
-            if (!checkIsSet<EnumBasedDataHandling, IScheduler, GSWidgetFactory>())
+            if (!checkIsSet<DataHandling<Content, Target>, IScheduler, GSWidgetFactory>())
             {
                 CPSLOG_ERROR << "MapLogic: missing dependencies.";
                 return true;
@@ -40,7 +40,7 @@ MapLogic::run(RunStage stage)
                 this->askForAll();
             }, Seconds(1));
 
-            auto dh = get<EnumBasedDataHandling>();
+            auto dh = get<DataHandling<Content, Target>>();
             dh->subscribeOnData<Mission>(Content::MISSION, [this](const auto& m)
             {
                 this->mission_ = m;
@@ -94,7 +94,7 @@ MapLogic::askForAll()
 void
 MapLogic::askForMission()
 {
-    if (auto dh = get<EnumBasedDataHandling>())
+    if (auto dh = get<DataHandling<Content, Target>>())
     {
         dh->sendData(DataRequest::MISSION, Content::REQUEST_DATA, Target::MISSION_CONTROL);
     }
@@ -103,7 +103,7 @@ MapLogic::askForMission()
 void
 MapLogic::askForTrajectory()
 {
-    if (auto dh = get<EnumBasedDataHandling>())
+    if (auto dh = get<DataHandling<Content, Target>>())
     {
         dh->sendData(DataRequest::TRAJECTORY, Content::REQUEST_DATA, Target::FLIGHT_CONTROL);
     }
@@ -112,7 +112,7 @@ MapLogic::askForTrajectory()
 void
 MapLogic::askForSafetyNet()
 {
-    if (auto dh = get<EnumBasedDataHandling>())
+    if (auto dh = get<DataHandling<Content, Target>>())
     {
         dh->sendData(DataRequest::SAFETY_BOUNDS, Content::REQUEST_DATA, Target::FLIGHT_CONTROL);
     }
@@ -139,7 +139,7 @@ MapLogic::getSensorData() const
 void
 MapLogic::askForLocalFrame()
 {
-    if (auto dh = get<EnumBasedDataHandling>())
+    if (auto dh = get<DataHandling<Content, Target>>())
     {
         dh->sendData(DataRequest::LOCAL_FRAME, Content::REQUEST_DATA, Target::MISSION_CONTROL);
     }

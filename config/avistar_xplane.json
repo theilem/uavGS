@@ -1,9 +1,21 @@
 {
+	"plugin_helper": {
+		"plugins": [
+			"/usr/local/lib/libuavcpp_uavgs_plugin.so"
+		]
+	},
+	"cpp_plugin": {
+	},
 	"network": {
 		"redis": {
 			"hosts": {
 				"localhost": {
 					"ip": "127.0.0.1",
+					"auth": "pass_linux",
+					"port": 6379
+				},
+				"remote": {
+					"ip": "149.160.157.39",
 					"auth": "pass_linux",
 					"port": 6379
 				}
@@ -12,12 +24,20 @@
 				"autopilot": {
 					"host": "localhost",
 					"channel": "to_uavgs"
+				},
+				"uavcpp": {
+					"host": "remote",
+					"channel": "to_uavcpp"
 				}
 			},
 			"pub": {
 				"autopilot": {
 					"host": "localhost",
 					"channel": "to_uavap"
+				},
+				"uavcpp": {
+					"host": "remote",
+					"channel": "from_uavcpp"
 				}
 			}
 		}

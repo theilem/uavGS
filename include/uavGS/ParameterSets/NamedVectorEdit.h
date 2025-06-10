@@ -39,14 +39,27 @@ public:
 	bool
 	isEmpty();
 
+	template<typename Vec3D>
 	void
-	set(const Eigen::Vector3d& val);
+	set(const Vec3D& val)
+	{
+		QString string;
+		string.setNum(val.x());
+		editX_->setText(string);
+		string.setNum(val.y());
+		editY_->setText(string);
+		string.setNum(val.z());
+		editZ_->setText(string);
+	}
 
-	void
-	set(const Eigen::Vector3f& val);
-
-	void
-	set(const Eigen::Vector3i& val);
+	// void
+	// set(const Eigen::Vector3d& val);
+	//
+	// void
+	// set(const Eigen::Vector3f& val);
+	//
+	// void
+	// set(const Eigen::Vector3i& val);
 
 private:
 

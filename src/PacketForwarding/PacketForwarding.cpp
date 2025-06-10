@@ -31,7 +31,7 @@ PacketForwarding::run(RunStage stage)
 		}
 		case RunStage::NORMAL:
 		{
-			auto dh = get<EnumBasedDataHandling>();
+			auto dh = get<DataHandling<Content, Target>>();
 
 			dh->subscribeOnPackets([this](const auto& p){forwardPacket(p);});
 

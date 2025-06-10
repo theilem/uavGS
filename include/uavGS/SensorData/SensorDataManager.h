@@ -18,7 +18,8 @@ template <typename C, typename T>
 class DataHandling;
 class GSWidgetFactory;
 
-class SensorDataManager : public AggregatableObject<DataHandling<Content, Target>, GSWidgetFactory>, public IRunnableObject
+class SensorDataManager : public AggregatableObject<DataHandling<Content, Target>, GSWidgetFactory>,
+                          public IRunnableObject
 {
 public:
     static constexpr TypeId typeId = "sensor_data";
@@ -58,6 +59,9 @@ public:
 
     const SensorData&
     getSensorDataLocal();
+
+    const VehicleOneFrame&
+    getLocalFrame() const;
 
 private:
     void

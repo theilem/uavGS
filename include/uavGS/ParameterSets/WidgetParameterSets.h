@@ -40,7 +40,7 @@ template<class ParameterSet, Content content, Target target>
 void
 WidgetParameterSets<ParameterSet, content, target>::connect()
 {
-	if (auto dh = get<EnumBasedDataHandling>())
+	if (auto dh = get<DataHandling<Content, Target>>())
 	{
 		dh->template subscribeOnData<ParameterSet>(content, [this](const ParameterSet& p)
 		{
@@ -74,7 +74,7 @@ template<class ParameterSet, Content content, Target target>
 void
 WidgetParameterSets<ParameterSet, content, target>::requestHandle()
 {
-	if (auto dh = get<EnumBasedDataHandling>())
+	if (auto dh = get<DataHandling<Content, Target>>())
 	{
 		dh->sendData(content, Content::REQUEST_CONFIG, target);
 	}
@@ -89,7 +89,7 @@ WidgetParameterSets<ParameterSet, content, target>::sendHandle()
 
 	params_.configure(pop);
 
-	if (auto dh = get<EnumBasedDataHandling>())
+	if (auto dh = get<DataHandling<Content, Target>>())
 	{
 		dh->sendData(params_, content, target);
 	}

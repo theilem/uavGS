@@ -6,9 +6,10 @@
 
 #include <QWidget>
 #include <uavAP/MissionControl/MissionPlanner/Mission.h>
+
+#include "uavAP/Core/DataHandling/Content.hpp"
 #include "uavGS/ParameterSets/NamedLineEdit.h"
 #include "uavGS/ParameterSets/NamedCheckbox.h"
-#include <uavAP/Core/DataHandling/DataHandling.h>
 #include "uavGS/ParameterSets/NamedLineEdit.h"
 
 namespace Ui
@@ -17,8 +18,10 @@ class WidgetManeuverPlanner;
 }
 class PlanningManager;
 class IScheduler;
+template <typename C, typename T>
+class DataHandling;
 
-class WidgetManeuverPlanner: public QWidget, public AggregatableObject<EnumBasedDataHandling, PlanningManager, IScheduler>
+class WidgetManeuverPlanner: public QWidget, public AggregatableObject<DataHandling<Content, Target>, PlanningManager, IScheduler>
 {
 Q_OBJECT
 

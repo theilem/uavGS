@@ -147,7 +147,7 @@ WidgetCPGrid::connect()
     QObject::connect(this, SIGNAL(statusUpdated()), this, SLOT(statusUpdatedSlot()));
     QObject::connect(this, SIGNAL(clearPlots()), this, SLOT(clearPlotsSlot()));
     QObject::connect(this, SIGNAL(createPlots()), this, SLOT(createPlotsSlot()));
-    if (auto dh = get<EnumBasedDataHandling>())
+    if (auto dh = get<DataHandling<Content, Target>>())
     {
         dh->subscribeOnData<TimedPIDStati>(Content::PID_STATUS, [this](const auto& status) { onPIDStati(status); });
     }

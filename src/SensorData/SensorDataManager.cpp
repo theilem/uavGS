@@ -23,7 +23,7 @@ SensorDataManager::run(RunStage stage)
     {
     case RunStage::INIT:
         {
-            if (!checkIsSet<EnumBasedDataHandling, GSWidgetFactory>())
+            if (!checkIsSet<DataHandling<Content, Target>, GSWidgetFactory>())
             {
                 CPSLOG_ERROR << "SensorDataHandling missing deps";
                 return true;
@@ -62,7 +62,7 @@ SensorDataManager::run(RunStage stage)
         }
     case RunStage::NORMAL:
         {
-            auto dh = get<EnumBasedDataHandling>();
+            auto dh = get<DataHandling<Content, Target>>();
             dh->subscribeOnData<SensorData>(Content::SENSOR_DATA, [this](const auto& sd)
             {
                 onSensorData(sd);
@@ -160,4 +160,10 @@ const SensorData&
 SensorDataManager::getSensorDataLocal()
 {
     return sensorDataLocal_;
+}
+
+const VehicleOneFrame&
+SensorDataManager::getLocalFrame() const
+{
+    return localFrame_;
 }

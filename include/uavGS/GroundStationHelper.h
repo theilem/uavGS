@@ -27,25 +27,28 @@
 
 #include <cpsCore/Framework/StaticHelper.h>
 
+#include "uavGS/XPlane/XPlaneManager.h"
+
 using GroundStationDefaults = StaticHelper<
-		IPC,
-		IDC,
-		SchedulerFactory,
-		TimeProviderFactory,
-		SignalHandler,
-		DataPresentation
+    IPC,
+    IDC,
+    SchedulerFactory,
+    TimeProviderFactory,
+    SignalHandler,
+    DataPresentation
 >;
 
 using GroundStationHelper = StaticHelper<GroundStationDefaults,
-		NetworkFactory,
-		DataHandling<Content, Target>,
-		GSWidgetFactory,
-		PIDConfigurator,
-		MapLogic,
-		LayoutGenerator,
-		SensorDataManager,
-		PlanningManager,
-		PacketForwarding
+                                         NetworkFactory,
+                                         DataHandling<Content, Target>,
+                                         GSWidgetFactory,
+                                         PIDConfigurator,
+                                         MapLogic,
+                                         LayoutGenerator,
+                                         SensorDataManager,
+                                         PlanningManager,
+                                         PacketForwarding,
+                                         XPlaneManager
 >;
 
 

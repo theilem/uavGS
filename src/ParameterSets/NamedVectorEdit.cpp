@@ -56,42 +56,42 @@ NamedVectorEdit::getInt()
 {
 	return Eigen::Vector3i(editX_->text().toInt(), editY_->text().toInt(), editZ_->text().toInt());
 }
-
-void
-NamedVectorEdit::set(const Eigen::Vector3d&  val)
-{
-	QString string;
-	string.setNum(val.x());
-	editX_->setText(string);
-	string.setNum(val.y());
-	editY_->setText(string);
-	string.setNum(val.z());
-	editZ_->setText(string);
-}
-
-void
-NamedVectorEdit::set(const Eigen::Vector3f&  val)
-{
-	QString string;
-	string.setNum(val.x());
-	editX_->setText(string);
-	string.setNum(val.y());
-	editY_->setText(string);
-	string.setNum(val.z());
-	editZ_->setText(string);
-}
-
-void
-NamedVectorEdit::set(const Eigen::Vector3i&  val)
-{
-	QString string;
-	string.setNum(val.x());
-	editX_->setText(string);
-	string.setNum(val.y());
-	editY_->setText(string);
-	string.setNum(val.z());
-	editZ_->setText(string);
-}
+//
+// void
+// NamedVectorEdit::set(const Eigen::Vector3d&  val)
+// {
+// 	QString string;
+// 	string.setNum(val.x());
+// 	editX_->setText(string);
+// 	string.setNum(val.y());
+// 	editY_->setText(string);
+// 	string.setNum(val.z());
+// 	editZ_->setText(string);
+// }
+//
+// void
+// NamedVectorEdit::set(const Eigen::Vector3f&  val)
+// {
+// 	QString string;
+// 	string.setNum(val.x());
+// 	editX_->setText(string);
+// 	string.setNum(val.y());
+// 	editY_->setText(string);
+// 	string.setNum(val.z());
+// 	editZ_->setText(string);
+// }
+//
+// void
+// NamedVectorEdit::set(const Eigen::Vector3i&  val)
+// {
+// 	QString string;
+// 	string.setNum(val.x());
+// 	editX_->setText(string);
+// 	string.setNum(val.y());
+// 	editY_->setText(string);
+// 	string.setNum(val.z());
+// 	editZ_->setText(string);
+// }
 
 bool
 NamedVectorEdit::isEmpty()
