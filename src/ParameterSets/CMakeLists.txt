@@ -4,7 +4,6 @@ set(UAVGS_SRCS 	${UAVGS_SRCS}
         ${CMAKE_CURRENT_SOURCE_DIR}/NamedLineEdit.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/LabeledValue.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/NamedVectorEdit.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/WidgetPopulator.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/WidgetTreeNode.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/WidgetTreeParser.cpp
         PARENT_SCOPE)

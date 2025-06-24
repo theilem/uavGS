@@ -157,6 +157,7 @@ GraphicsMapView::drawMap(QPainter* painter, const QRectF& rect)
             else
             {
                 CPSLOG_DEBUG << "Could not load tile at " << path.toStdString();
+                mapLogic->downloadMapTile(zoom_, nwXY.x() + i, nwXY.y() + j);
             }
         }
     }
@@ -164,8 +165,28 @@ GraphicsMapView::drawMap(QPainter* painter, const QRectF& rect)
     seCorner_ = MapLocation::fromMapTileCoords(seXY.x(), seXY.y(), zoom_);
     xPxM_ = map.width() / (seCorner_.easting() - nwCorner_.easting());
     yPxM_ = map.height() / (nwCorner_.northing() - seCorner_.northing());
-    QPixmap croppedMap = map;
-    painter->drawPixmap(mapDraw, croppedMap);
+    // QPixmap croppedMap = map;
+    painter->drawPixmap(mapDraw, map);
+    painter->resetTransform();  // Reset any transform from mapDraw etc.
+    // Draw text on bottom left for trademark of ArcGIS
+    QFont font = painter->font();
+    font.setPointSize(8);
+    font.setBold(false);
+    painter->setFont(font);
+
+    // Semi-transparent background for readability
+    QColor bgColor(0, 0, 0, 128);
+    QRectF textRect = painter->boundingRect(QRectF(), Qt::AlignLeft,
+        "© Esri, Maxar, Earthstar Geographics, and the GIS User Community");
+    textRect.moveBottomLeft(QPointF(10, rect.height() - 10));
+    painter->fillRect(textRect, bgColor);
+
+    // Draw attribution text
+    painter->setPen(Qt::white);
+    painter->drawText(textRect, Qt::AlignLeft,
+        "© Esri, Maxar, Earthstar Geographics, and the GIS User Community");
+
+
 }
 
 void

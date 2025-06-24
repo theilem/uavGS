@@ -74,9 +74,9 @@ template <typename Type>
 void
 NamedDataPlot::initialize()
 {
-    using ValueType = typename Type::ValueType;
+    using ValueType = typename Type::second_type;
     static_assert(is_named_value_set<ValueType>::value,
-                  "ValueType in TimedValue must be a NamedValueSet, i.e., a struct with named values");
+                  "second_type in TimedValue must be a NamedValueSet, i.e., a struct with named values");
 
     auto parser = NamedValueParser<double>();
     const auto& values = parser.parse(ValueType());
@@ -98,8 +98,8 @@ void
 NamedDataPlot::onTimedData(const Type& timedData)
 {
     static_assert(is_timed_value<Type>::value, "Type must be a TimedValue, i.e., a pair with a time point and a value");
-    static_assert(is_named_value_set<typename Type::ValueType>::value,
-                  "ValueType in TimedValue must be a NamedValueSet, i.e., a struct with named values");
+    static_assert(is_named_value_set<typename Type::second_type>::value,
+                  "second_type in TimedValue must be a NamedValueSet, i.e., a struct with named values");
 
     const auto& time = timedData.first;
     const auto& data = timedData.second;

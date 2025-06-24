@@ -50,7 +50,7 @@ WidgetConfigurableObject<ConfigurableObject>::updateHandle()
 	if (auto co = this->template get<ConfigurableObject>())
 	{
 		auto node = getNode();
-		WidgetPopulator pop(node);
+		WidgetPopulator<true> pop(node);
 
 		co->getParams().configure(pop);
 	}

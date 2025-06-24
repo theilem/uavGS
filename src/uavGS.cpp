@@ -2,7 +2,6 @@
 // Created by mirco on 17.06.20.
 //
 
-#include <boost/property_tree/json_parser.hpp>
 #include <cpsCore/Synchronization/SimpleRunner.h>
 #include "uavGS/GroundStationHelper.h"
 #include <cpsCore/Configuration/JsonPopulator.h>
@@ -13,7 +12,7 @@
 int
 main(int argc, char** argv)
 {
-	CPSLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	CPSLogger::instance()->setLogLevel(LogLevel::WARN);
 	CPSLogger::instance()->setModuleName("uavGS");
 	std::string configPath;
 	if (argc == 2)

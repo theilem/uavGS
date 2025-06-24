@@ -44,7 +44,6 @@ WidgetParameterStruct<ParameterSet, Manager>::connect()
     }
     params_ = man->getWidgetData();
     contentUpdated();
-
 }
 
 template <class ParameterSet, class Manager>
@@ -52,7 +51,7 @@ void
 WidgetParameterStruct<ParameterSet, Manager>::updateHandle()
 {
     auto node = getNode();
-    WidgetPopulator pop(node);
+    WidgetPopulator<true> pop(node);
 
     params_.configure(pop);
 }

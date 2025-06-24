@@ -68,6 +68,6 @@ WidgetNetworkStats::updateStats()
     auto stat = stats.begin()->second;
 
     setTitle(name);
-    WidgetPopulator pop(getNode());
+    WidgetPopulator<false> pop(getNode());
     stat.parse(pop);
 }

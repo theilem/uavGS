@@ -58,7 +58,9 @@ target_link_libraries(uavgs_core
         ${CPS_CORE_LIB}
         uavap_core
         QCustomPlot
-        QFlightInstruments)
+        QFlightInstruments
+        curl
+)
 
 
 target_link_libraries(uavGS

@@ -8,6 +8,8 @@
 #include <cpsCore/Configuration/Parameter.hpp>
 #include <cpsCore/Utilities/LinearAlgebra.h>
 #include <cpsCore/Logging/CPSLogger.h>
+
+#include "cpsCore/Utilities/NamedValue.hpp"
 #include "uavGS/ParameterSets/WidgetTreeNode.h"
 #include "uavGS/ParameterSets/NamedCheckbox.h"
 #include "uavGS/ParameterSets/NamedLineEdit.h"
@@ -33,7 +35,7 @@ template<typename Type>
 WidgetTreeParser&
 WidgetTreeParser::operator&(Type& val)
 {
-	static_assert(is_parameter<Type>::value, "Can only handle parameters");
+	static_assert(is_parameter<Type>::value || is_named_value<Type>::value, "Can only handle parameters or named value");
 	using ValueType = typename Type::ValueType;
 
 	auto it = node_->getNodes().find(val.id);
@@ -80,9 +82,12 @@ WidgetTreeParser::operator&(Type& val)
 	}
 	else
 	{
-		if (val.mandatory)
+		if constexpr (is_parameter<Type>::value)
 		{
-			CPSLOG_ERROR << "Could not find mandatory field: " << val.id;
+			if (val.mandatory)
+			{
+				CPSLOG_ERROR << "Could not find mandatory field: " << val.id;
+			}
 		}
 	}
 	return *this;

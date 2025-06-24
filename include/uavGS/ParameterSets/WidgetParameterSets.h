@@ -55,7 +55,7 @@ void
 WidgetParameterSets<ParameterSet, content, target>::updateHandle()
 {
 	auto node = getNode();
-	WidgetPopulator pop(node);
+	WidgetPopulator<true> pop(node);
 
 	params_.configure(pop);
 }
